@@ -28,6 +28,12 @@ from app.schemas.category import (
     CategoryOut,
     CategoryUpdate,
 )
+from app.schemas.chat import (
+    ChatConversationOut,
+    ChatMessageCreate,
+    ChatMessageOut,
+    ChatUnreadCountOut,
+)
 from app.schemas.common import (
     APIResponse,
     ErrorDetail,
@@ -159,4 +165,8 @@ __all__ = [
     "ReviewUpdate",
     "ReviewOut",
     "ProductReviewSummary",
+    "ChatMessageCreate",
+    "ChatMessageOut",
+    "ChatConversationOut",
+    "ChatUnreadCountOut",
 ]

@@ -5,6 +5,7 @@ Database repository layer package.
 from app.repositories.address import AddressRepository
 from app.repositories.cart import CartRepository
 from app.repositories.category import CategoryRepository
+from app.repositories.chat import ChatRepository
 from app.repositories.coupon import CouponRepository
 from app.repositories.order import OrderRepository
 from app.repositories.plan import PlanRepository
@@ -29,4 +30,5 @@ __all__ = [
     "WishlistRepository",
     "AddressRepository",
     "ReviewRepository",
+    "ChatRepository",
 ]

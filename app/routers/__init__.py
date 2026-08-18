@@ -8,6 +8,7 @@ from app.routers.api_v1 import api_v1_router
 from app.routers.auth import router as auth_router
 from app.routers.cart import router as cart_router
 from app.routers.categories import router as categories_router
+from app.routers.chat import router as chat_router
 from app.routers.coupons import router as coupons_router
 from app.routers.health import router as health_router
 from app.routers.orders import router as orders_router
@@ -35,5 +36,6 @@ __all__ = [
     "wishlist_router",
     "addresses_router",
     "reviews_router",
+    "chat_router",
     "admin_router",
 ]

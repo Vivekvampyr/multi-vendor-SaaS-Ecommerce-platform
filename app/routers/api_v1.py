@@ -5,6 +5,7 @@ from app.routers import (
     auth,
     cart,
     categories,
+    chat,
     coupons,
     health,
     orders,
@@ -34,4 +35,5 @@ api_v1_router.include_router(orders.router)
 api_v1_router.include_router(wishlist.router)
 api_v1_router.include_router(addresses.router)
 api_v1_router.include_router(reviews.router)
+api_v1_router.include_router(chat.router)
 api_v1_router.include_router(admin.router)

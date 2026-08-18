@@ -11,6 +11,7 @@ from app.main import app
 from app.models.address import Address, AddressType
 from app.models.cart import Cart, CartItem
 from app.models.category import Category
+from app.models.chat import ChatMessage
 from app.models.coupon import Coupon, DiscountType
 from app.models.coupon_usage import CouponUsage
 from app.models.order import Order, OrderItem, OrderStatus, PaymentStatus
