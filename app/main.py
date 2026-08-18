@@ -19,8 +19,12 @@ logger = logging.getLogger(__name__)
 
 # Base Paths
 BASE_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = BASE_DIR.parent
 STATIC_DIR = BASE_DIR / "static"
 TEMPLATES_DIR = BASE_DIR / "templates"
+UPLOADS_DIR = PROJECT_ROOT / "uploads"
+UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
+(UPLOADS_DIR / "products").mkdir(parents=True, exist_ok=True)
 
 
 @asynccontextmanager
@@ -60,6 +64,9 @@ register_exception_handlers(app)
 # Mount Static Files
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+# Mount Uploads
+app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
 # Configure Jinja2 Templates Engine
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))

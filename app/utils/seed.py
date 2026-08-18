@@ -67,6 +67,22 @@ def seed_initial_data(db: Session) -> None:
         else:
             logger.info("SaaS Plan '%s' already exists", p["name"])
 
+    # 3. Seed Default Product Categories
+    from app.models.category import Category
+    categories_data = [
+        {"name": "Electronics", "slug": "electronics", "description": "Laptops, smartphones, audio, and gadgets."},
+        {"name": "Fashion & Apparel", "slug": "fashion-apparel", "description": "Clothing, footwear, and accessories."},
+        {"name": "Home & Living", "slug": "home-living", "description": "Furniture, decor, kitchen, and appliances."},
+    ]
+    for c in categories_data:
+        existing_cat = db.query(Category).filter(Category.name == c["name"]).first()
+        if not existing_cat:
+            cat = Category(**c, is_active=True)
+            db.add(cat)
+            logger.info("Seeded Category: %s", c["name"])
+        else:
+            logger.info("Category '%s' already exists", c["name"])
+
     db.commit()
     logger.info("Initial data seeding completed successfully.")
 

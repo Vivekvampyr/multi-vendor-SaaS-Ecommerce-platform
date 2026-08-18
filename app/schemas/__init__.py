@@ -10,6 +10,12 @@ from app.schemas.auth import (
     TokenResponse,
     UserLogin,
 )
+from app.schemas.category import (
+    CategoryBase,
+    CategoryCreate,
+    CategoryOut,
+    CategoryUpdate,
+)
 from app.schemas.common import (
     APIResponse,
     ErrorDetail,
@@ -19,6 +25,13 @@ from app.schemas.common import (
     MessageResponse,
 )
 from app.schemas.plan import PlanBase, PlanCreate, PlanOut, PlanUpdate
+from app.schemas.product import (
+    ProductBase,
+    ProductCreate,
+    ProductImageOut,
+    ProductOut,
+    ProductUpdate,
+)
 from app.schemas.subscription import (
     VendorPlanAssignRequest,
     VendorPlanLimitsOut,
@@ -75,4 +88,13 @@ __all__ = [
     "VendorProfileOut",
     "VendorStatusUpdate",
     "VendorDashboardOverview",
+    "CategoryBase",
+    "CategoryCreate",
+    "CategoryUpdate",
+    "CategoryOut",
+    "ProductBase",
+    "ProductCreate",
+    "ProductUpdate",
+    "ProductOut",
+    "ProductImageOut",
 ]

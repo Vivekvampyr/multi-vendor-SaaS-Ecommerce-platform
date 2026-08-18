@@ -8,7 +8,10 @@ from starlette.testclient import TestClient
 from app.core.database import Base, get_db
 from app.core.security import create_access_token, hash_password
 from app.main import app
+from app.models.category import Category
 from app.models.plan import Plan
+from app.models.product import Product, ProductStatus
+from app.models.product_image import ProductImage
 from app.models.subscription import SubscriptionStatus, VendorSubscription
 from app.models.user import User, UserRole
 from app.models.vendor import VendorProfile, VendorStatus
@@ -212,7 +215,6 @@ def active_vendor_subscription(db_session, test_vendor, test_plan_silver) -> Ven
 @pytest.fixture
 def test_vendor_profile(db_session, test_vendor) -> VendorProfile:
     """Create and return an approved storefront profile for test vendor."""
-    from app.models.vendor import VendorProfile, VendorStatus
     profile = VendorProfile(
         user_id=test_vendor.id,
         store_name="Bob Tech Store",
@@ -232,3 +234,43 @@ def test_vendor_profile(db_session, test_vendor) -> VendorProfile:
     db_session.commit()
     db_session.refresh(profile)
     return profile
+
+
+@pytest.fixture
+def test_category(db_session) -> Category:
+    """Create and return standard test category."""
+    from app.models.category import Category
+    cat = Category(
+        name="Electronics",
+        slug="electronics",
+        description="Smartphones, laptops, and gadgets.",
+        is_active=True,
+    )
+    db_session.add(cat)
+    db_session.commit()
+    db_session.refresh(cat)
+    return cat
+
+
+@pytest.fixture
+def test_product(db_session, test_vendor, test_category) -> Product:
+    """Create and return standard test product."""
+    from app.models.product import Product, ProductStatus
+    prod = Product(
+        vendor_id=test_vendor.id,
+        category_id=test_category.id,
+        name="Wireless Noise Cancelling Headphones",
+        slug="wireless-noise-cancelling-headphones",
+        sku="TECH-WNC-001",
+        description="Premium active noise cancelling over-ear headphones.",
+        short_description="Top-tier noise cancelling audio.",
+        price=199.99,
+        compare_at_price=249.99,
+        stock_quantity=50,
+        status=ProductStatus.PUBLISHED,
+        is_approved=True,
+    )
+    db_session.add(prod)
+    db_session.commit()
+    db_session.refresh(prod)
+    return prod
