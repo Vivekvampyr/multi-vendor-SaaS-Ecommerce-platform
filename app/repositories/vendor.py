@@ -132,6 +132,12 @@ class VendorRepository:
             stmt = stmt.where(VendorProfile.status == status)
         return list(self.db.execute(stmt).scalars().all())
 
+    def delete(self, profile: VendorProfile) -> bool:
+        """Delete vendor profile from database."""
+        self.db.delete(profile)
+        self.db.commit()
+        return True
+
     def count(self, status: Optional[VendorStatus] = None) -> int:
         """Count total vendor profiles."""
         stmt = select(func.count(VendorProfile.id))

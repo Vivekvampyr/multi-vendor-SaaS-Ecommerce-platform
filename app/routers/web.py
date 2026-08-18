@@ -343,28 +343,50 @@ async def vendor_dashboard_page(
     vendor_service = VendorService(db)
     prod_service = ProductService(db)
     order_service = OrderService(db)
+    plan_service = PlanService(db)
 
     vendor_dash = vendor_service.get_vendor_dashboard(vendor_user=current_user)
     _, total_products = prod_service.list_my_products(vendor_id=current_user.id)
     items, total_items = order_service.list_vendor_order_items(vendor_id=current_user.id)
     total_revenue = sum(float(i.vendor_earnings) for i in items)
+    available_plans, _ = plan_service.list_plans(only_active=True)
 
     overview = {
-        "store_name": vendor_dash.vendor_profile.store_name if vendor_dash.vendor_profile else current_user.full_name,
+        "has_store": vendor_dash.vendor_profile is not None,
+        "store_name": vendor_dash.vendor_profile.store_name if vendor_dash.vendor_profile else "",
         "store_slug": vendor_dash.vendor_profile.slug if vendor_dash.vendor_profile else "",
-        "active_plan_name": vendor_dash.plan_limits.plan_name if vendor_dash.plan_limits else "No Plan",
+        "store_description": vendor_dash.vendor_profile.store_description if vendor_dash.vendor_profile else "",
+        "support_email": vendor_dash.vendor_profile.support_email if vendor_dash.vendor_profile else "",
+        "support_phone": vendor_dash.vendor_profile.support_phone if vendor_dash.vendor_profile else "",
+        "business_address": vendor_dash.vendor_profile.business_address if vendor_dash.vendor_profile else "",
+        "city": vendor_dash.vendor_profile.city if vendor_dash.vendor_profile else "",
+        "state": vendor_dash.vendor_profile.state if vendor_dash.vendor_profile else "",
+        "country": vendor_dash.vendor_profile.country if vendor_dash.vendor_profile else "",
+        "postal_code": vendor_dash.vendor_profile.postal_code if vendor_dash.vendor_profile else "",
+        "is_store_active": vendor_dash.vendor_profile.is_store_active if vendor_dash.vendor_profile else False,
+        "active_plan_name": vendor_dash.plan_limits.plan_name if vendor_dash.plan_limits else "No Plan Selected",
+        "active_plan_id": vendor_dash.plan_limits.plan_id if vendor_dash.plan_limits else None,
         "total_products": total_products,
         "max_products_allowed": vendor_dash.plan_limits.max_products if vendor_dash.plan_limits else 0,
         "total_orders": total_items,
         "total_revenue": total_revenue,
         "commission_rate": vendor_dash.plan_limits.commission_rate if vendor_dash.plan_limits else 0.0,
         "status": vendor_dash.status,
+        "can_list_products": vendor_dash.can_list_products,
+        "store_is_live": vendor_dash.store_is_live,
     }
 
     return templates.TemplateResponse(
         request=request,
         name="vendor/dashboard.html",
-        context={"request": request, "current_user": current_user, "overview": overview},
+        context={
+            "request": request,
+            "current_user": current_user,
+            "overview": overview,
+            "profile": vendor_dash.vendor_profile,
+            "subscription": vendor_dash.subscription,
+            "plans": available_plans,
+        },
     )
 
 

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.dependencies import require_vendor
+from app.core.dependencies import require_admin, require_vendor
 from app.models.user import User
 from app.schemas.common import APIResponse
 from app.schemas.vendor import (
@@ -10,6 +10,7 @@ from app.schemas.vendor import (
     VendorProfileCreate,
     VendorProfileOut,
     VendorProfileUpdate,
+    VendorStatusUpdate,
 )
 from app.services.vendor import VendorService
 
@@ -93,6 +94,46 @@ def update_store_profile(
         success=True,
         message="Store profile updated successfully",
         data=VendorProfileOut.model_validate(updated_profile),
+    )
+
+
+@router.delete(
+    "/me",
+    response_model=APIResponse[dict],
+    status_code=status.HTTP_200_OK,
+    summary="Delete vendor store profile (Vendor only)",
+)
+def delete_store_profile(
+    vendor: User = Depends(require_vendor),
+    db: Session = Depends(get_db),
+) -> APIResponse[dict]:
+    vendor_service = VendorService(db)
+    vendor_service.delete_profile(vendor)
+    return APIResponse(
+        success=True,
+        message="Store profile deleted successfully",
+        data={"deleted": True},
+    )
+
+
+@router.put(
+    "/{vendor_user_id}/status",
+    response_model=APIResponse[VendorProfileOut],
+    status_code=status.HTTP_200_OK,
+    summary="Approve, reject, or suspend a vendor store (Admin only alias)",
+)
+def update_vendor_status_alias(
+    vendor_user_id: int,
+    status_in: VendorStatusUpdate,
+    admin_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> APIResponse[VendorProfileOut]:
+    vendor_service = VendorService(db)
+    updated = vendor_service.admin_update_vendor_status(vendor_user_id, status_in)
+    return APIResponse(
+        success=True,
+        message=f"Vendor status updated to {updated.status.value}",
+        data=VendorProfileOut.model_validate(updated),
     )
 
 

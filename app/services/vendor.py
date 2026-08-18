@@ -98,6 +98,13 @@ class VendorService:
 
         return self.vendor_repo.update(profile, update_data)
 
+    def delete_profile(self, vendor_user: User) -> bool:
+        """Delete own vendor store profile."""
+        profile = self.vendor_repo.get_by_user_id(vendor_user.id)
+        if not profile:
+            raise NotFoundException(message="No store profile found to delete")
+        return self.vendor_repo.delete(profile)
+
     def get_my_profile(self, vendor_id: int) -> VendorProfile:
         """Fetch own vendor profile or 404."""
         profile = self.vendor_repo.get_by_user_id(vendor_id)

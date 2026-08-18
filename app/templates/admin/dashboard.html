@@ -532,7 +532,7 @@ function switchTab(tabKey) {
 // 1. Update Vendor Status (Approve / Suspend)
 async function updateVendorStatus(vendorUserId, newStatus) {
     try {
-        await window.Nexus.apiFetch(`/api/v1/vendors/${vendorUserId}/status`, {
+        await window.Nexus.apiFetch(`/api/v1/admin/vendors/${vendorUserId}/status`, {
             method: "PUT",
             body: JSON.stringify({ status: newStatus })
         });
