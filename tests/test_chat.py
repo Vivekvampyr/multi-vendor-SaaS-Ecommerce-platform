@@ -1,6 +1,7 @@
 import pytest
 from starlette.websockets import WebSocketDisconnect
-from app.core.security import create_access_token
+from app.core.security import create_access_token, hash_password
+from app.models.user import User, UserRole
 
 
 def test_rest_chat_endpoints_lifecycle(
@@ -59,6 +60,75 @@ def test_rest_chat_endpoints_lifecycle(
     }
     reply_resp = client.post("/api/v1/chat/messages", json=reply_payload, headers=vendor_headers)
     assert reply_resp.status_code == 201
+
+
+def test_chat_role_permissions_matrix(
+    client,
+    db_session,
+    admin_headers,
+    vendor_headers,
+    customer_headers,
+    test_admin,
+    test_vendor,
+    test_customer,
+):
+    # Setup second customer and second vendor
+    customer2 = User(
+        email="customer2@example.com",
+        hashed_password=hash_password("Cust2Pass123!"),
+        full_name="Second Customer",
+        role=UserRole.CUSTOMER,
+        is_active=True,
+    )
+    vendor2 = User(
+        email="vendor2@example.com",
+        hashed_password=hash_password("Vendor2Pass123!"),
+        full_name="Second Vendor",
+        role=UserRole.VENDOR,
+        is_active=True,
+    )
+    db_session.add_all([customer2, vendor2])
+    db_session.commit()
+
+    # 1. Admin <-> Vendor (Allowed)
+    admin_to_vendor = client.post(
+        "/api/v1/chat/messages",
+        json={"receiver_id": test_vendor.id, "vendor_id": test_vendor.id, "message": "Notice regarding store policies."},
+        headers=admin_headers,
+    )
+    assert admin_to_vendor.status_code == 201
+
+    vendor_to_admin = client.post(
+        "/api/v1/chat/messages",
+        json={"receiver_id": test_admin.id, "vendor_id": test_vendor.id, "message": "Thank you for the update."},
+        headers=vendor_headers,
+    )
+    assert vendor_to_admin.status_code == 201
+
+    # 2. Customer <-> Admin (Forbidden)
+    cust_to_admin = client.post(
+        "/api/v1/chat/messages",
+        json={"receiver_id": test_admin.id, "vendor_id": test_vendor.id, "message": "Help me admin!"},
+        headers=customer_headers,
+    )
+    assert cust_to_admin.status_code == 403
+    assert "Customers and Platform Admins is not permitted" in cust_to_admin.json()["error"]["message"]
+
+    # 3. Customer <-> Customer (Forbidden)
+    cust_to_cust = client.post(
+        "/api/v1/chat/messages",
+        json={"receiver_id": customer2.id, "vendor_id": test_vendor.id, "message": "Hey other buyer!"},
+        headers=customer_headers,
+    )
+    assert cust_to_cust.status_code == 403
+
+    # 4. Vendor <-> Vendor (Forbidden)
+    vendor_to_vendor = client.post(
+        "/api/v1/chat/messages",
+        json={"receiver_id": vendor2.id, "vendor_id": test_vendor.id, "message": "Hey competitor!"},
+        headers=vendor_headers,
+    )
+    assert vendor_to_vendor.status_code == 403
 
 
 def test_send_message_to_self_fails(client, customer_headers, test_customer):

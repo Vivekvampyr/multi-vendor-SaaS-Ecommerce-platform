@@ -2,10 +2,14 @@ import logging
 from typing import List, Tuple
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import BadRequestException, NotFoundException
+from app.core.exceptions import (
+    BadRequestException,
+    ForbiddenException,
+    NotFoundException,
+)
 from app.core.websocket import ws_manager
 from app.models.chat import ChatMessage
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.repositories.chat import ChatRepository
 from app.repositories.user import UserRepository
 from app.schemas.chat import (
@@ -48,6 +52,24 @@ class ChatService:
         receiver = self.user_repo.get_by_id(msg_in.receiver_id)
         if not receiver:
             raise NotFoundException(message=f"Recipient user ID {msg_in.receiver_id} not found")
+
+        # Enforce Chat Role Permissions:
+        # 1. Admin <-> Vendor (Allowed)
+        # 2. Vendor <-> Customer (Allowed)
+        # 3. Admin <-> Admin (Allowed)
+        # 4. Customer <-> Admin (Forbidden)
+        # 5. Customer <-> Customer (Forbidden)
+        # 6. Vendor <-> Vendor (Forbidden)
+        roles = {sender.role, receiver.role}
+        allowed = (
+            (UserRole.ADMIN in roles and UserRole.VENDOR in roles)
+            or (UserRole.VENDOR in roles and UserRole.CUSTOMER in roles)
+            or (sender.role == UserRole.ADMIN and receiver.role == UserRole.ADMIN)
+        )
+        if not allowed:
+            if UserRole.CUSTOMER in roles and UserRole.ADMIN in roles:
+                raise ForbiddenException("Direct communication between Customers and Platform Admins is not permitted.")
+            raise ForbiddenException(f"Direct messaging between {sender.role.value} and {receiver.role.value} is not permitted.")
 
         msg = self.chat_repo.create(
             sender_id=sender.id,
