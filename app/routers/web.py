@@ -475,12 +475,14 @@ async def admin_dashboard_page(
     plan_service = PlanService(db)
     coupon_service = CouponService(db)
     sub_service = SubscriptionService(db)
+    cat_repo = CategoryRepository(db)
 
     stats = admin_service.get_dashboard_stats()
     vendors, _ = vendor_service.admin_list_vendors(skip=0, limit=100)
     plans, _ = plan_service.list_plans(only_active=False, skip=0, limit=100)
     coupons, _ = coupon_service.list_coupons(user=current_user, skip=0, limit=100)
     subscriptions, _ = sub_service.list_subscriptions(skip=0, limit=100)
+    categories = cat_repo.list(only_active=False, skip=0, limit=200)
 
     return templates.TemplateResponse(
         request=request,
@@ -493,5 +495,6 @@ async def admin_dashboard_page(
             "plans": plans,
             "coupons": coupons,
             "subscriptions": subscriptions,
+            "categories": categories,
         },
     )
