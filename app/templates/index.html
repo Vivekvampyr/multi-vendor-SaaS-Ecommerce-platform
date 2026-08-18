@@ -24,9 +24,15 @@
             <a href="/products" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm shadow-xl shadow-lime-500/25 hover:scale-105 transition-all">
                 Explore Marketplace →
             </a>
-            <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
-                Sell on NexusSaaS
-            </a>
+            {% if current_user and current_user.role.value == 'CUSTOMER' %}
+                <a href="/customer/orders" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
+                    Track Your Orders 📦
+                </a>
+            {% elif not current_user or current_user.role.value != 'CUSTOMER' %}
+                <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
+                    Sell on NexusSaaS
+                </a>
+            {% endif %}
         </div>
     </div>
 </section>
@@ -115,7 +121,8 @@
     </div>
 </section>
 
-<!-- SaaS Plans Showcase -->
+<!-- SaaS Plans Showcase (Hidden for logged-in Customer accounts) -->
+{% if not current_user or current_user.role.value != 'CUSTOMER' %}
 <section id="plans" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center max-w-2xl mx-auto mb-12">
         <h2 class="text-3xl font-black text-slate-900 dark:text-white">Merchant SaaS Subscription Plans</h2>
@@ -164,4 +171,5 @@
         {% endfor %}
     </div>
 </section>
+{% endif %}
 {% endblock %}

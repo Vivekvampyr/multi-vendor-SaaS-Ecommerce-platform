@@ -198,19 +198,33 @@
                         <li><a href="/cart" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Cart & Checkout</a></li>
                     </ul>
                 </div>
+                {% if current_user and current_user.role.value == 'CUSTOMER' %}
+                <div>
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Customer Hub</h4>
+                    <ul class="space-y-2 text-xs">
+                        <li><a href="/customer/dashboard" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Account Profile</a></li>
+                        <li><a href="/customer/orders" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">My Orders & Receipts</a></li>
+                        <li><a href="/customer/wishlist" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Saved Wishlist</a></li>
+                        <li><a href="/customer/addresses" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Delivery Addresses</a></li>
+                    </ul>
+                </div>
+                {% else %}
                 <div>
                     <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Merchants</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="/register" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Sell on NexusSaaS</a></li>
+                        <li><a href="/register?role=VENDOR" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Sell on NexusSaaS</a></li>
                         <li><a href="/vendor/dashboard" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Merchant Portal</a></li>
                         <li><a href="/#plans" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">SaaS Pricing Tiers</a></li>
                     </ul>
                 </div>
+                {% endif %}
                 <div>
                     <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Platform</h4>
                     <ul class="space-y-2 text-xs">
                         <li><a href="/docs" target="_blank" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">API Docs (Swagger)</a></li>
+                        {% if current_user and current_user.role.value == 'ADMIN' %}
                         <li><a href="/admin/dashboard" class="hover:text-lime-600 dark:hover:text-lime-400 transition-colors">Admin Panel</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
