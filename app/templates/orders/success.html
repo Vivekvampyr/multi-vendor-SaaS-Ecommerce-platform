@@ -75,7 +75,7 @@ async function simulateOrderPayment() {
     btn.textContent = "Processing payment...";
 
     try {
-        await window.Nexus.apiFetch("/api/v1/orders/{{ order.id }}/simulate-payment", {
+        await window.Nexus.apiFetch("/api/v1/orders/{{ order.id }}/pay", {
             method: "POST",
             body: JSON.stringify({ simulate_status: "SUCCESS" })
         });

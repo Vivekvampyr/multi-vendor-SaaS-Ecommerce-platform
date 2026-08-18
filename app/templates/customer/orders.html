@@ -23,51 +23,99 @@
 
         <!-- Orders Stream -->
         <div class="flex-1 space-y-6">
-            <h1 class="text-2xl font-black text-slate-900 dark:text-white">Order History</h1>
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Order History</h1>
+                    <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Review placed orders, track fulfillment status, and complete pending payments</p>
+                </div>
+                <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs font-bold text-slate-700 dark:text-zinc-300">
+                    {{ orders|length }} Total Orders
+                </span>
+            </div>
 
             {% if orders and orders|length > 0 %}
-                <div class="space-y-4">
+                <div class="space-y-5">
                     {% for ord in orders %}
-                        <div class="glass-panel p-6 rounded-3xl space-y-4">
-                            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-zinc-800 text-xs">
-                                <div>
+                        <div class="glass-panel p-6 rounded-3xl space-y-4 border border-slate-200 dark:border-zinc-800 hover:border-lime-500/40 transition-all shadow-sm" id="order-card-{{ ord.id }}">
+                            <!-- Order Header -->
+                            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-zinc-800 text-xs">
+                                <div class="flex items-center space-x-2">
                                     <span class="text-slate-500 dark:text-zinc-400">Order:</span>
-                                    <strong class="text-slate-900 dark:text-white font-mono ml-1">{{ ord.order_number }}</strong>
-                                    <span class="text-slate-400 dark:text-zinc-500 ml-2">{{ ord.created_at.strftime('%b %d, %Y') }}</span>
+                                    <a href="/orders/{{ ord.id }}/success" class="text-lime-600 dark:text-lime-400 font-mono font-bold hover:underline" title="View receipt & details">
+                                        {{ ord.order_number }} ↗
+                                    </a>
+                                    <span class="text-slate-400 dark:text-zinc-500 ml-2">● {{ ord.created_at.strftime('%b %d, %Y %I:%M %p') }}</span>
                                 </div>
                                 <div class="flex items-center space-x-2">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if ord.status.value == 'PAID' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
-                                        {{ ord.status.value }}
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if ord.status.value == 'PAID' or ord.status.value == 'DELIVERED' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% elif ord.status.value == 'SHIPPED' %}bg-sky-500/20 text-sky-500 border border-sky-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
+                                        STATUS: {{ ord.status.value }}
                                     </span>
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if ord.payment_status.value == 'SUCCESS' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% endif %}">
-                                        {{ ord.payment_status.value }}
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if ord.payment_status.value == 'SUCCESS' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30 animate-pulse{% endif %}">
+                                        PAYMENT: {{ ord.payment_status.value }}
                                     </span>
                                 </div>
                             </div>
 
-                            <div class="space-y-2">
+                            <!-- Order Items List -->
+                            <div class="space-y-2.5">
                                 {% for item in ord.items %}
-                                    <div class="flex items-center justify-between text-xs text-slate-700 dark:text-zinc-300">
-                                        <span>{{ item.quantity }}x {{ item.product_name }}</span>
+                                    <div class="flex items-center justify-between text-xs text-slate-700 dark:text-zinc-300 py-1">
                                         <div class="flex items-center space-x-3">
-                                            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[10px] text-slate-500 dark:text-zinc-400 font-bold">Item: {{ item.status.value }}</span>
+                                            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-center font-bold text-[10px] text-slate-700 dark:text-zinc-300">
+                                                {{ item.quantity }}x
+                                            </span>
+                                            <div>
+                                                <span class="font-bold text-slate-900 dark:text-white">{{ item.product_name }}</span>
+                                                <span class="text-[11px] text-slate-400 dark:text-zinc-500 ml-1">(${{ "%.2f"|format(item.unit_price) }} each)</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-3">
+                                            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[10px] text-slate-500 dark:text-zinc-400 font-bold">
+                                                {{ item.status.value }}
+                                            </span>
                                             <span class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(item.subtotal) }}</span>
                                         </div>
                                     </div>
                                 {% endfor %}
                             </div>
 
-                            <div class="pt-3 border-t border-slate-200 dark:border-zinc-800 flex items-center justify-between">
-                                <span class="text-xs text-slate-500 dark:text-zinc-400">Total Paid</span>
-                                <span class="text-sm font-black text-lime-600 dark:text-lime-400">${{ "%.2f"|format(ord.total_amount) }}</span>
+                            <!-- Order Actions & Total Amount -->
+                            <div class="pt-4 border-t border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs text-slate-500 dark:text-zinc-400">Total Order Amount:</span>
+                                    <span class="text-base font-black text-lime-600 dark:text-lime-400">${{ "%.2f"|format(ord.total_amount) }}</span>
+                                    {% if ord.payment_method %}
+                                        <span class="text-[10px] text-slate-400 dark:text-zinc-500">({{ ord.payment_method }})</span>
+                                    {% endif %}
+                                </div>
+
+                                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                                    <a href="/orders/{{ ord.id }}/success" class="flex-1 sm:flex-initial text-center px-4 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-bold rounded-xl border border-slate-300 dark:border-zinc-800 transition-colors">
+                                        View Receipt
+                                    </a>
+
+                                    {% if ord.payment_status.value != 'SUCCESS' %}
+                                        <button onclick="openPaymentModal({{ ord.id }}, '{{ ord.order_number }}', {{ ord.total_amount }})" class="flex-1 sm:flex-initial px-5 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer flex items-center justify-center space-x-1.5">
+                                            <span>💳 Pay Now (${{ "%.2f"|format(ord.total_amount) }})</span>
+                                        </button>
+                                    {% else %}
+                                        <span class="inline-flex items-center space-x-1 px-3 py-1.5 bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold rounded-xl">
+                                            <span>✓ Paid</span>
+                                        </span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
             {% else %}
                 <div class="glass-panel p-12 rounded-3xl text-center space-y-3">
-                    <p class="text-slate-500 dark:text-zinc-400 text-xs">You have not placed any orders yet.</p>
-                    <a href="/products" class="inline-block px-5 py-2 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-black transition-all shadow-md shadow-lime-500/20">
+                    <div class="w-12 h-12 rounded-2xl bg-lime-500/10 border border-lime-500/20 text-lime-600 dark:text-lime-400 text-xl flex items-center justify-center mx-auto">
+                        📦
+                    </div>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">No Orders Found</h3>
+                    <p class="text-slate-500 dark:text-zinc-400 text-xs">You have not placed any orders yet. Discover items in the catalog!</p>
+                    <a href="/products" class="inline-block px-5 py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-black transition-all shadow-md shadow-lime-500/20 mt-2">
                         Browse Products
                     </a>
                 </div>
@@ -75,4 +123,88 @@
         </div>
     </div>
 </div>
+
+<!-- Modal: Complete Payment Gateway Simulator -->
+<div id="pay-order-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-xl bg-lime-500/20 flex items-center justify-center text-lime-600 dark:text-lime-400 font-bold text-sm">💳</div>
+                <div>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Complete Order Payment</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 font-mono" id="modal-order-number">Order: #ORD-...</p>
+                </div>
+            </div>
+            <button onclick="closePaymentModal()" class="text-slate-400 hover:text-black dark:hover:text-white cursor-pointer">✕</button>
+        </div>
+
+        <div class="space-y-3 text-xs">
+            <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex justify-between items-center">
+                <span class="text-slate-600 dark:text-zinc-400 font-bold">Total Amount to Pay:</span>
+                <span class="text-lg font-black text-lime-600 dark:text-lime-400" id="modal-total-amount">$0.00</span>
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1.5">Payment Method</label>
+                <div class="space-y-2">
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-lime-500/50 bg-lime-500/10 cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <input type="radio" name="modal_payment_method" value="MOCK_GATEWAY" checked class="accent-lime-500">
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Online Payment Gateway (Simulated)</h4>
+                                <p class="text-[10px] text-slate-500 dark:text-zinc-400">Instant credit/debit card, UPI, & Netbanking simulation</p>
+                            </div>
+                        </div>
+                        <span class="text-xs font-black text-lime-600 dark:text-lime-400">INSTANT</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button type="button" onclick="executePayment()" id="modal-pay-submit-btn" class="w-full py-3 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                    Pay Now
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPayOrderId = null;
+
+function openPaymentModal(orderId, orderNumber, totalAmount) {
+    currentPayOrderId = orderId;
+    document.getElementById("modal-order-number").textContent = `Order: ${orderNumber}`;
+    document.getElementById("modal-total-amount").textContent = `$${parseFloat(totalAmount).toFixed(2)}`;
+    document.getElementById("modal-pay-submit-btn").textContent = `Confirm Payment ($${parseFloat(totalAmount).toFixed(2)})`;
+    document.getElementById("modal-pay-submit-btn").disabled = false;
+    document.getElementById("pay-order-modal").classList.remove("hidden");
+}
+
+function closePaymentModal() {
+    document.getElementById("pay-order-modal").classList.add("hidden");
+    currentPayOrderId = null;
+}
+
+async function executePayment() {
+    if (!currentPayOrderId) return;
+    const btn = document.getElementById("modal-pay-submit-btn");
+    btn.disabled = true;
+    btn.textContent = "Processing payment...";
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/orders/${currentPayOrderId}/pay`, {
+            method: "POST",
+            body: JSON.stringify({ simulate_status: "SUCCESS" })
+        });
+        window.Nexus.showToast("Payment completed successfully! Order is now PAID.", "success");
+        closePaymentModal();
+        setTimeout(() => window.location.reload(), 700);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Payment failed to process", "error");
+        btn.disabled = false;
+        btn.textContent = "Pay Now";
+    }
+}
+</script>
 {% endblock %}

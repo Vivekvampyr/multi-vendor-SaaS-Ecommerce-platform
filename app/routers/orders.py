@@ -50,12 +50,21 @@ def checkout(
     status_code=status.HTTP_200_OK,
     summary="Process / Simulate order payment (Customer only)",
 )
+@router.post(
+    "/{order_id}/simulate-payment",
+    response_model=APIResponse[OrderOut],
+    status_code=status.HTTP_200_OK,
+    summary="Process / Simulate order payment alias (Customer only)",
+    include_in_schema=False,
+)
 def pay_order(
     order_id: int,
-    pay_in: OrderPayRequest,
+    pay_in: Optional[OrderPayRequest] = None,
     customer: User = Depends(require_customer),
     db: Session = Depends(get_db),
 ) -> APIResponse[OrderOut]:
+    if pay_in is None:
+        pay_in = OrderPayRequest(simulate_status=PaymentStatus.SUCCESS)
     order_service = OrderService(db)
     paid_order = order_service.process_payment(user=customer, order_id=order_id, request=pay_in)
     return APIResponse(
