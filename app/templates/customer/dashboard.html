@@ -7,52 +7,52 @@
     <div class="flex flex-col md:flex-row gap-8">
         <!-- Sidebar Navigation -->
         <aside class="w-full md:w-64 flex-shrink-0">
-            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
-                <div class="pb-4 border-b border-slate-800">
-                    <h3 class="font-bold text-sm text-white">{{ current_user.full_name }}</h3>
-                    <p class="text-xs text-slate-400 truncate">{{ current_user.email }}</p>
+            <div class="glass-panel p-6 rounded-3xl space-y-3">
+                <div class="pb-4 border-b border-slate-200 dark:border-zinc-800">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">{{ current_user.full_name }}</h3>
+                    <p class="text-xs text-slate-500 dark:text-zinc-400 truncate">{{ current_user.email }}</p>
                 </div>
                 <nav class="space-y-1 text-xs">
-                    <a href="/customer/dashboard" class="block px-3 py-2 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold">👤 Account Overview</a>
-                    <a href="/customer/orders" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">📦 My Orders</a>
-                    <a href="/customer/wishlist" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">💖 Saved Wishlist</a>
-                    <a href="/customer/addresses" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">📍 Saved Addresses</a>
+                    <a href="/customer/dashboard" class="block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">👤 Account Overview</a>
+                    <a href="/customer/orders" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📦 My Orders</a>
+                    <a href="/customer/wishlist" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">💖 Saved Wishlist</a>
+                    <a href="/customer/addresses" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📍 Saved Addresses</a>
                 </nav>
             </div>
         </aside>
 
         <!-- Main Content -->
         <div class="flex-1 space-y-6">
-            <div class="glass-panel p-6 rounded-3xl border border-slate-800">
-                <h2 class="text-lg font-bold text-white mb-4">Account Profile</h2>
+            <div class="glass-panel p-6 rounded-3xl">
+                <h2 class="text-lg font-black text-slate-900 dark:text-white mb-4">Account Profile</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                    <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
-                        <span class="text-slate-400">Full Name</span>
-                        <p class="font-bold text-white text-sm mt-1">{{ current_user.full_name }}</p>
+                    <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
+                        <span class="text-slate-500 dark:text-zinc-400 font-semibold">Full Name</span>
+                        <p class="font-black text-slate-900 dark:text-white text-sm mt-1">{{ current_user.full_name }}</p>
                     </div>
-                    <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800">
-                        <span class="text-slate-400">Email Address</span>
-                        <p class="font-bold text-white text-sm mt-1">{{ current_user.email }}</p>
+                    <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
+                        <span class="text-slate-500 dark:text-zinc-400 font-semibold">Email Address</span>
+                        <p class="font-black text-slate-900 dark:text-white text-sm mt-1">{{ current_user.email }}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <a href="/customer/orders" class="glass-panel p-5 rounded-2xl border border-slate-800 glass-panel-hover block">
+                <a href="/customer/orders" class="glass-panel p-5 rounded-2xl glass-panel-hover block">
                     <span class="text-2xl">📦</span>
-                    <h3 class="font-bold text-sm text-white mt-2">Recent Orders</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">Track packages and receipts</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-2">Recent Orders</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">Track packages and receipts</p>
                 </a>
-                <a href="/customer/wishlist" class="glass-panel p-5 rounded-2xl border border-slate-800 glass-panel-hover block">
+                <a href="/customer/wishlist" class="glass-panel p-5 rounded-2xl glass-panel-hover block">
                     <span class="text-2xl">💖</span>
-                    <h3 class="font-bold text-sm text-white mt-2">Wishlist</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">Saved favorites for later</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-2">Wishlist</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">Saved favorites for later</p>
                 </a>
-                <a href="/customer/addresses" class="glass-panel p-5 rounded-2xl border border-slate-800 glass-panel-hover block">
+                <a href="/customer/addresses" class="glass-panel p-5 rounded-2xl glass-panel-hover block">
                     <span class="text-2xl">📍</span>
-                    <h3 class="font-bold text-sm text-white mt-2">Address Book</h3>
-                    <p class="text-[11px] text-slate-400 mt-1">Manage delivery locations</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-2">Address Book</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-1">Manage delivery locations</p>
                 </a>
             </div>
         </div>

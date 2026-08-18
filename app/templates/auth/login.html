@@ -4,30 +4,30 @@
 
 {% block content %}
 <div class="min-h-[75vh] flex items-center justify-center px-4 py-12">
-    <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-slate-800 shadow-2xl relative">
+    <div class="glass-panel w-full max-w-md p-8 rounded-3xl shadow-2xl relative">
         <div class="text-center mb-8">
-            <h1 class="text-2xl font-black text-white">Welcome Back</h1>
-            <p class="text-xs text-slate-400 mt-2">Sign in to your NexusSaaS customer, vendor, or admin account</p>
+            <h1 class="text-2xl font-black text-slate-900 dark:text-white">Welcome Back</h1>
+            <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Sign in to your NexusSaaS customer, vendor, or admin account</p>
         </div>
 
         <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
-                <input type="email" id="login-email" required placeholder="you@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
+                <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Email Address</label>
+                <input type="email" id="login-email" required placeholder="you@example.com" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 transition-colors">
             </div>
 
             <div>
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
-                <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors">
+                <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Password</label>
+                <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 transition-colors">
             </div>
 
-            <button type="submit" id="login-submit-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-lg shadow-indigo-500/30 transition-all">
+            <button type="submit" id="login-submit-btn" class="w-full py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm shadow-lg shadow-lime-500/25 transition-all">
                 Sign In
             </button>
         </form>
 
-        <div class="mt-6 text-center text-xs text-slate-400">
-            Don't have an account? <a href="/register" class="text-indigo-400 hover:text-indigo-300 font-semibold">Sign Up</a>
+        <div class="mt-6 text-center text-xs text-slate-500 dark:text-zinc-400">
+            Don't have an account? <a href="/register" class="text-lime-600 dark:text-lime-400 hover:underline font-bold">Sign Up</a>
         </div>
     </div>
 </div>

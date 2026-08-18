@@ -7,16 +7,16 @@
     <div class="flex flex-col md:flex-row gap-8">
         <!-- Sidebar Navigation -->
         <aside class="w-full md:w-64 flex-shrink-0">
-            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
-                <div class="pb-4 border-b border-slate-800">
-                    <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">Merchant Portal</span>
-                    <h3 class="font-bold text-sm text-white mt-1">{{ current_user.full_name }}</h3>
+            <div class="glass-panel p-6 rounded-3xl space-y-3">
+                <div class="pb-4 border-b border-slate-200 dark:border-zinc-800">
+                    <span class="px-2.5 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black uppercase">Merchant Portal</span>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1">{{ current_user.full_name }}</h3>
                 </div>
                 <nav class="space-y-1 text-xs">
-                    <a href="/vendor/dashboard" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">📊 Dashboard Overview</a>
-                    <a href="/vendor/products" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🛍️ Products & Inventory</a>
-                    <a href="/vendor/orders" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🚚 Customer Orders</a>
-                    <a href="/vendor/coupons" class="block px-3 py-2 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold">🏷️ Store Coupons</a>
+                    <a href="/vendor/dashboard" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📊 Dashboard Overview</a>
+                    <a href="/vendor/products" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🛍️ Products & Inventory</a>
+                    <a href="/vendor/orders" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🚚 Customer Orders</a>
+                    <a href="/vendor/coupons" class="block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">🏷️ Store Coupons</a>
                 </nav>
             </div>
         </aside>
@@ -25,18 +25,18 @@
         <div class="flex-1 space-y-6">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-2xl font-black text-white">Store Promotional Coupons</h1>
-                    <p class="text-xs text-slate-400 mt-1">Create percentage or fixed discount promotional codes for your products</p>
+                    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Store Promotional Coupons</h1>
+                    <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Create percentage or fixed discount promotional codes for your products</p>
                 </div>
-                <button onclick="document.getElementById('add-coupon-modal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                <button onclick="document.getElementById('add-coupon-modal').classList.remove('hidden')" class="px-4 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
                     + Create Coupon Code
                 </button>
             </div>
 
-            <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+            <div class="glass-panel rounded-3xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
+                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
                             <tr>
                                 <th class="p-4">Coupon Code</th>
                                 <th class="p-4">Discount Value</th>
@@ -45,11 +45,11 @@
                                 <th class="p-4">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                        <tbody class="divide-y divide-slate-200 dark:divide-zinc-800/60 text-slate-700 dark:text-zinc-300">
                             {% for c in coupons %}
-                                <tr class="hover:bg-slate-800/30 transition-colors">
-                                    <td class="p-4 font-mono font-bold text-indigo-300 text-sm">{{ c.code }}</td>
-                                    <td class="p-4 font-bold text-white">
+                                <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors">
+                                    <td class="p-4 font-mono font-bold text-lime-600 dark:text-lime-400 text-sm">{{ c.code }}</td>
+                                    <td class="p-4 font-black text-slate-900 dark:text-white">
                                         {% if c.discount_type.value == 'PERCENTAGE' %}
                                             {{ "%.1f"|format(c.discount_value) }}% OFF
                                         {% else %}
@@ -59,7 +59,7 @@
                                     <td class="p-4">{{ c.used_count }} / {{ c.usage_limit or '∞' }}</td>
                                     <td class="p-4">${{ "%.2f"|format(c.min_order_amount) if c.min_order_amount else '0.00' }}</td>
                                     <td class="p-4">
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if c.is_active %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if c.is_active %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% endif %}">
                                             {% if c.is_active %}ACTIVE{% else %}DISABLED{% endif %}
                                         </span>
                                     </td>
@@ -78,45 +78,45 @@
 </div>
 
 <!-- Add Coupon Modal -->
-<div id="add-coupon-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-            <h3 class="font-bold text-sm text-white">Create New Coupon Code</h3>
-            <button onclick="document.getElementById('add-coupon-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">✕</button>
+<div id="add-coupon-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Create New Coupon Code</h3>
+            <button onclick="document.getElementById('add-coupon-modal').classList.add('hidden')" class="text-slate-400 hover:text-black dark:hover:text-white cursor-pointer">✕</button>
         </div>
 
         <form id="coupon-form" onsubmit="handleCreateCoupon(event)" class="space-y-3 text-xs">
             <div>
-                <label class="block font-semibold text-slate-300 mb-1">Coupon Promo Code</label>
-                <input type="text" id="coup-code" required placeholder="e.g. VIP20" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Coupon Promo Code</label>
+                <input type="text" id="coup-code" required placeholder="e.g. VIP20" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 uppercase placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Discount Type</label>
-                    <select id="coup-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Type</label>
+                    <select id="coup-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
                         <option value="PERCENTAGE">PERCENTAGE (%)</option>
                         <option value="FIXED">FIXED AMOUNT ($)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Discount Value</label>
-                    <input type="number" step="0.01" id="coup-val" required placeholder="20.0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Value</label>
+                    <input type="number" step="0.01" id="coup-val" required placeholder="20.0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Min Order Amount ($)</label>
-                    <input type="number" step="0.01" id="coup-min" value="0.0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Min Order Amount ($)</label>
+                    <input type="number" step="0.01" id="coup-min" value="0.0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
                 </div>
                 <div>
-                    <label class="block font-semibold text-slate-300 mb-1">Total Usage Limit</label>
-                    <input type="number" id="coup-limit" placeholder="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Total Usage Limit</label>
+                    <input type="number" id="coup-limit" placeholder="100" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
                 </div>
             </div>
 
-            <button type="submit" id="create-coup-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+            <button type="submit" id="create-coup-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
                 Create Coupon
             </button>
         </form>

@@ -4,101 +4,101 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <h1 class="text-2xl font-black text-white mb-8">Secure Checkout</h1>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-8">Secure Checkout</h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Delivery & Payment Forms -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Saved Addresses / Street Input -->
-            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <h3 class="font-bold text-sm text-white">1. Delivery Address</h3>
+            <div class="glass-panel p-6 rounded-3xl space-y-4">
+                <h3 class="font-black text-sm text-slate-900 dark:text-white">1. Delivery Address</h3>
 
                 {% if addresses and addresses|length > 0 %}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="saved-addresses-list">
                         {% for addr in addresses %}
-                            <label class="p-4 rounded-2xl border cursor-pointer transition-all {% if addr.is_default %}border-indigo-500 bg-indigo-500/10{% else %}border-slate-800 bg-slate-900/60{% endif %} flex flex-col justify-between">
+                            <label class="p-4 rounded-2xl border cursor-pointer transition-all {% if addr.is_default %}border-lime-500 bg-lime-500/10{% else %}border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60{% endif %} flex flex-col justify-between">
                                 <div class="flex items-start justify-between">
-                                    <span class="font-bold text-xs text-white">{{ addr.full_name }}</span>
-                                    <input type="radio" name="selected_address" value="{{ addr.address_line1 }}, {{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}, {{ addr.country }}" {% if addr.is_default %}checked{% endif %} class="accent-indigo-600">
+                                    <span class="font-bold text-xs text-slate-900 dark:text-white">{{ addr.full_name }}</span>
+                                    <input type="radio" name="selected_address" value="{{ addr.address_line1 }}, {{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}, {{ addr.country }}" {% if addr.is_default %}checked{% endif %} class="accent-lime-500">
                                 </div>
-                                <p class="text-xs text-slate-400 mt-2">{{ addr.address_line1 }}{% if addr.address_line2 %}, {{ addr.address_line2 }}{% endif %}</p>
-                                <p class="text-[11px] text-slate-500">{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</p>
+                                <p class="text-xs text-slate-600 dark:text-zinc-400 mt-2">{{ addr.address_line1 }}{% if addr.address_line2 %}, {{ addr.address_line2 }}{% endif %}</p>
+                                <p class="text-[11px] text-slate-500 dark:text-zinc-500">{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</p>
                             </label>
                         {% endfor %}
                     </div>
                 {% endif %}
 
                 <div class="pt-2">
-                    <label class="block text-xs font-semibold text-slate-300 mb-1">Custom Delivery Address (if not selecting above)</label>
-                    <textarea id="custom-shipping-address" rows="2" placeholder="Street Address, City, State, ZIP, Country" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">{% if default_address %}{{ default_address.address_line1 }}, {{ default_address.city }}, {{ default_address.state }} {{ default_address.postal_code }}, {{ default_address.country }}{% endif %}</textarea>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Custom Delivery Address (if not selecting above)</label>
+                    <textarea id="custom-shipping-address" rows="2" placeholder="Street Address, City, State, ZIP, Country" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">{% if default_address %}{{ default_address.address_line1 }}, {{ default_address.city }}, {{ default_address.state }} {{ default_address.postal_code }}, {{ default_address.country }}{% endif %}</textarea>
                 </div>
             </div>
 
             <!-- Payment Method -->
-            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-                <h3 class="font-bold text-sm text-white">2. Payment Method</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <label class="p-4 rounded-2xl border border-indigo-500/50 bg-indigo-500/10 flex items-center justify-between cursor-pointer">
+            <div class="glass-panel p-6 rounded-3xl space-y-4">
+                <h3 class="font-black text-sm text-slate-900 dark:text-white">2. Payment Method</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label class="p-4 rounded-2xl border border-lime-500/50 bg-lime-500/10 flex items-center justify-between cursor-pointer">
                         <div class="flex items-center space-x-3">
                             <span class="text-xl">💳</span>
                             <div>
-                                <h4 class="font-bold text-xs text-white">Online Payment Gateway</h4>
-                                <p class="text-[11px] text-slate-400">Credit / Debit Cards & Stripe</p>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Online Payment Gateway</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-zinc-400">Credit / Debit Cards & Stripe</p>
                             </div>
                         </div>
-                        <input type="radio" name="payment_method" value="MOCK_GATEWAY" checked class="accent-indigo-600">
+                        <input type="radio" name="payment_method" value="MOCK_GATEWAY" checked class="accent-lime-500">
                     </label>
-                    <label class="p-4 rounded-2xl border border-slate-800 bg-slate-900/60 flex items-center justify-between cursor-pointer">
+                    <label class="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60 flex items-center justify-between cursor-pointer">
                         <div class="flex items-center space-x-3">
                             <span class="text-xl">💵</span>
                             <div>
-                                <h4 class="font-bold text-xs text-white">Cash on Delivery (COD)</h4>
-                                <p class="text-[11px] text-slate-400">Pay upon delivery</p>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Cash on Delivery (COD)</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-zinc-400">Pay upon delivery</p>
                             </div>
                         </div>
-                        <input type="radio" name="payment_method" value="COD" class="accent-indigo-600">
+                        <input type="radio" name="payment_method" value="COD" class="accent-lime-500">
                     </label>
                 </div>
             </div>
         </div>
 
         <!-- Order Summary & Coupon Card -->
-        <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-6 h-fit">
-            <h3 class="font-bold text-base text-white">Summary</h3>
+        <div class="glass-panel p-6 rounded-3xl space-y-6 h-fit">
+            <h3 class="font-black text-base text-slate-900 dark:text-white">Summary</h3>
 
             <!-- Coupon Input -->
             <div class="space-y-2">
-                <label class="block text-xs font-semibold text-slate-300">Promo / Discount Code</label>
+                <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300">Promo / Discount Code</label>
                 <div class="flex space-x-2">
-                    <input type="text" id="coupon-code-input" placeholder="e.g. SUMMER20" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white uppercase placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-                    <button type="button" onclick="applyCoupon()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-xl text-xs font-bold transition-colors">
+                    <input type="text" id="coupon-code-input" placeholder="e.g. SUMMER20" class="flex-1 bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 uppercase placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <button type="button" onclick="applyCoupon()" class="px-4 py-2 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-xl text-xs font-black transition-colors cursor-pointer">
                         Apply
                     </button>
                 </div>
-                <div id="coupon-feedback" class="text-xs hidden"></div>
+                <div id="coupon-feedback" class="text-xs font-bold hidden"></div>
             </div>
 
             <!-- Price Breakdown -->
-            <div class="space-y-3 text-xs text-slate-300 pt-3 border-t border-slate-800">
+            <div class="space-y-3 text-xs text-slate-600 dark:text-zinc-300 pt-3 border-t border-slate-200 dark:border-zinc-800">
                 <div class="flex justify-between">
                     <span>Subtotal</span>
-                    <span class="font-bold text-white">${{ "%.2f"|format(cart.subtotal if cart else 0.0) }}</span>
+                    <span class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(cart.subtotal if cart else 0.0) }}</span>
                 </div>
-                <div class="flex justify-between text-emerald-400" id="discount-row" style="display: none;">
+                <div class="flex justify-between text-lime-600 dark:text-lime-400 font-bold" id="discount-row" style="display: none;">
                     <span>Coupon Discount</span>
                     <span id="discount-val">-$0.00</span>
                 </div>
-                <div class="flex justify-between text-slate-400">
+                <div class="flex justify-between text-slate-500 dark:text-zinc-400">
                     <span>Shipping</span>
-                    <span class="text-emerald-400 font-medium">FREE</span>
+                    <span class="text-lime-600 dark:text-lime-400 font-bold">FREE</span>
                 </div>
-                <div class="border-t border-slate-800 pt-3 flex justify-between text-base font-extrabold text-white">
+                <div class="border-t border-slate-200 dark:border-zinc-800 pt-3 flex justify-between text-base font-black text-slate-900 dark:text-white">
                     <span>Total Amount</span>
-                    <span class="text-indigo-400" id="final-total-val">${{ "%.2f"|format(cart.subtotal if cart else 0.0) }}</span>
+                    <span class="text-lime-600 dark:text-lime-400" id="final-total-val">${{ "%.2f"|format(cart.subtotal if cart else 0.0) }}</span>
                 </div>
             </div>
 
-            <button onclick="placeOrder()" id="place-order-btn" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/30 transition-all">
+            <button onclick="placeOrder()" id="place-order-btn" class="w-full py-3.5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm shadow-xl shadow-lime-500/25 transition-all cursor-pointer">
                 Place Order Now →
             </button>
         </div>
@@ -121,19 +121,19 @@ async function applyCoupon() {
         const data = resp.data;
         if (data.valid) {
             appliedCouponCode = code;
-            feedback.className = "text-xs text-emerald-400";
+            feedback.className = "text-xs text-lime-600 dark:text-lime-400 font-bold";
             feedback.textContent = `✓ Coupon applied! Saved $${data.discount_amount.toFixed(2)}`;
             feedback.classList.remove("hidden");
             document.getElementById("discount-row").style.display = "flex";
             document.getElementById("discount-val").textContent = `-$${data.discount_amount.toFixed(2)}`;
             document.getElementById("final-total-val").textContent = `$${data.final_total.toFixed(2)}`;
         } else {
-            feedback.className = "text-xs text-rose-400";
+            feedback.className = "text-xs text-rose-500 font-bold";
             feedback.textContent = `✕ ${data.message}`;
             feedback.classList.remove("hidden");
         }
     } catch(err) {
-        feedback.className = "text-xs text-rose-400";
+        feedback.className = "text-xs text-rose-500 font-bold";
         feedback.textContent = `✕ ${err.message}`;
         feedback.classList.remove("hidden");
     }
@@ -143,7 +143,6 @@ async function placeOrder() {
     const btn = document.getElementById("place-order-btn");
     let address = document.getElementById("custom-shipping-address").value.trim();
 
-    // Check if a radio address is selected
     const selectedRadio = document.querySelector('input[name="selected_address"]:checked');
     if (selectedRadio) {
         address = selectedRadio.value;

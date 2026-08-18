@@ -122,10 +122,50 @@ window.Nexus = {
     this.clearToken();
     window.location.href = "/login";
   },
+
+  // Theme Management (Light & Dark with Pitch Black & Lime palette)
+  initTheme: function () {
+    const saved = localStorage.getItem("nexus_theme") || "dark";
+    if (saved === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+    this.updateThemeIcons(saved);
+  },
+
+  toggleTheme: function () {
+    const isDark = document.documentElement.classList.contains("dark");
+    const next = isDark ? "light" : "dark";
+    if (next === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("nexus_theme", next);
+    this.updateThemeIcons(next);
+  },
+
+  updateThemeIcons: function (theme) {
+    const sunIcons = document.querySelectorAll(".theme-icon-sun");
+    const moonIcons = document.querySelectorAll(".theme-icon-moon");
+    if (theme === "dark") {
+      sunIcons.forEach((el) => el.classList.remove("hidden"));
+      moonIcons.forEach((el) => el.classList.add("hidden"));
+    } else {
+      sunIcons.forEach((el) => el.classList.add("hidden"));
+      moonIcons.forEach((el) => el.classList.remove("hidden"));
+    }
+  },
 };
 
 // Initialize Cart Badge & Dynamic Handlers on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
+  window.Nexus.initTheme();
   window.Nexus.updateCartBadge();
 
   // Global handler for Add to Cart buttons

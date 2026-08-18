@@ -6,25 +6,25 @@
 <!-- Hero Section -->
 <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
     <div class="absolute inset-0 -z-10 flex items-center justify-center">
-        <div class="w-[600px] h-[600px] bg-gradient-to-tr from-indigo-600/20 to-pink-500/20 rounded-full blur-3xl"></div>
+        <div class="w-[600px] h-[600px] bg-gradient-to-tr from-lime-500/20 via-emerald-500/10 to-lime-600/10 rounded-full blur-3xl"></div>
     </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold mb-6">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-lime-500/10 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-xs font-bold mb-6">
+            <span class="w-2 h-2 rounded-full bg-lime-500 animate-ping"></span>
             <span>Live Multi-Vendor SaaS Platform</span>
         </div>
-        <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
+        <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight sm:leading-none">
             Discover Exceptional Stores, <br class="hidden sm:inline">
-            <span class="bg-gradient-to-r from-indigo-400 via-violet-300 to-pink-400 bg-clip-text text-transparent">Direct from Creators.</span>
+            <span class="bg-gradient-to-r from-lime-600 via-lime-500 to-emerald-500 dark:from-lime-400 dark:via-lime-300 dark:to-emerald-400 bg-clip-text text-transparent">Direct from Creators.</span>
         </h1>
-        <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto">
+        <p class="mt-6 text-base sm:text-lg text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto">
             Shop from thousands of independent verified vendors or launch your own multi-channel online storefront with seamless inventory and instant payouts.
         </p>
         <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/products" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-500/30 hover:scale-105 transition-all">
+            <a href="/products" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm shadow-xl shadow-lime-500/25 hover:scale-105 transition-all">
                 Explore Marketplace →
             </a>
-            <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 font-bold text-sm hover:bg-slate-800 transition-all">
+            <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
                 Sell on NexusSaaS
             </a>
         </div>
@@ -35,20 +35,20 @@
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h2 class="text-2xl font-bold text-white">Shop by Category</h2>
-            <p class="text-xs text-slate-400 mt-1">Browse trending collections curated across top vendors</p>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white">Shop by Category</h2>
+            <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Browse trending collections curated across top vendors</p>
         </div>
-        <a href="/products" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300">View All →</a>
+        <a href="/products" class="text-xs font-bold text-lime-600 dark:text-lime-400 hover:underline">View All →</a>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {% for cat in categories %}
             <a href="/products?category={{ cat.id }}" class="glass-panel p-5 rounded-2xl glass-panel-hover flex items-center space-x-4 group">
-                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                <div class="w-12 h-12 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                     📦
                 </div>
                 <div>
-                    <h3 class="font-semibold text-sm text-white group-hover:text-indigo-400 transition-colors">{{ cat.name }}</h3>
-                    <p class="text-[11px] text-slate-500 mt-0.5">Explore items</p>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors">{{ cat.name }}</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-zinc-500 mt-0.5">Explore items</p>
                 </div>
             </a>
         {% else %}
@@ -61,21 +61,21 @@
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex items-center justify-between mb-8">
         <div>
-            <h2 class="text-2xl font-bold text-white">Featured Products</h2>
-            <p class="text-xs text-slate-400 mt-1">Handpicked quality goods from verified merchants</p>
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white">Featured Products</h2>
+            <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Handpicked quality goods from verified merchants</p>
         </div>
-        <a href="/products" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300">Browse Full Catalog →</a>
+        <a href="/products" class="text-xs font-bold text-lime-600 dark:text-lime-400 hover:underline">Browse Full Catalog →</a>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {% for prod in products %}
-            <div class="glass-panel rounded-2xl overflow-hidden glass-panel-hover flex flex-col justify-between border border-slate-800">
+            <div class="glass-panel rounded-2xl overflow-hidden glass-panel-hover flex flex-col justify-between">
                 <div class="relative">
                     <a href="/products/{{ prod.slug }}">
                         {% if prod.images and prod.images|length > 0 %}
                             <img src="{{ prod.images[0].image_url }}" alt="{{ prod.name }}" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
                         {% else %}
-                            <div class="w-full h-48 bg-slate-900 flex items-center justify-center text-slate-600 font-bold text-xs">No Image</div>
+                            <div class="w-full h-48 bg-slate-200 dark:bg-zinc-900 flex items-center justify-center text-slate-400 dark:text-zinc-600 font-bold text-xs">No Image</div>
                         {% endif %}
                     </a>
                     {% if prod.compare_at_price and prod.compare_at_price > prod.price %}
@@ -83,25 +83,25 @@
                             SALE
                         </span>
                     {% endif %}
-                    <button data-add-to-wishlist="{{ prod.id }}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-slate-950/80 backdrop-blur text-slate-400 hover:text-pink-400 flex items-center justify-center transition-colors">
+                    <button data-add-to-wishlist="{{ prod.id }}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/80 dark:bg-black/80 backdrop-blur text-slate-500 dark:text-zinc-400 hover:text-rose-500 flex items-center justify-center transition-colors shadow">
                         ♥
                     </button>
                 </div>
                 <div class="p-4 flex-1 flex flex-col justify-between">
                     <div>
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">{{ prod.category.name if prod.category else 'General' }}</span>
-                        <h3 class="font-bold text-sm text-white mt-1 hover:text-indigo-300 transition-colors line-clamp-1">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-lime-600 dark:text-lime-400">{{ prod.category.name if prod.category else 'General' }}</span>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1 hover:text-lime-600 dark:hover:text-lime-400 transition-colors line-clamp-1">
                             <a href="/products/{{ prod.slug }}">{{ prod.name }}</a>
                         </h3>
                     </div>
-                    <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                    <div class="mt-4 pt-3 border-t border-slate-200 dark:border-zinc-800 flex items-center justify-between">
                         <div>
-                            <span class="text-base font-extrabold text-white">${{ "%.2f"|format(prod.price) }}</span>
+                            <span class="text-base font-black text-slate-900 dark:text-white">${{ "%.2f"|format(prod.price) }}</span>
                             {% if prod.compare_at_price and prod.compare_at_price > prod.price %}
-                                <span class="text-xs text-slate-500 line-through ml-1.5">${{ "%.2f"|format(prod.compare_at_price) }}</span>
+                                <span class="text-xs text-slate-400 dark:text-zinc-500 line-through ml-1.5">${{ "%.2f"|format(prod.compare_at_price) }}</span>
                             {% endif %}
                         </div>
-                        <button data-add-to-cart="{{ prod.id }}" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all">
+                        <button data-add-to-cart="{{ prod.id }}" class="px-3 py-1.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-black shadow-md shadow-lime-500/20 transition-all">
                             Add +
                         </button>
                     </div>
@@ -118,45 +118,45 @@
 <!-- SaaS Plans Showcase -->
 <section id="plans" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
     <div class="text-center max-w-2xl mx-auto mb-12">
-        <h2 class="text-3xl font-extrabold text-white">Merchant SaaS Subscription Plans</h2>
-        <p class="text-sm text-slate-400 mt-2">Transparent pricing with lower platform commission rates as your store expands</p>
+        <h2 class="text-3xl font-black text-slate-900 dark:text-white">Merchant SaaS Subscription Plans</h2>
+        <p class="text-sm text-slate-500 dark:text-zinc-400 mt-2">Transparent pricing with lower platform commission rates as your store expands</p>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {% for plan in plans %}
-            <div class="glass-panel p-8 rounded-3xl border border-slate-800 relative flex flex-col justify-between hover:border-indigo-500/50 transition-all">
+            <div class="glass-panel p-8 rounded-3xl relative flex flex-col justify-between hover:border-lime-500/50 transition-all">
                 {% if plan.name == 'Gold' %}
-                    <span class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-[10px] font-bold uppercase tracking-wider">
+                    <span class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-lime-500 text-black text-[10px] font-black uppercase tracking-wider shadow-md shadow-lime-500/30">
                         Most Popular
                     </span>
                 {% endif %}
                 <div>
-                    <h3 class="text-xl font-bold text-white">{{ plan.name }}</h3>
-                    <p class="text-xs text-slate-400 mt-1">{{ plan.description or 'Grow your store efficiently' }}</p>
+                    <h3 class="text-xl font-black text-slate-900 dark:text-white">{{ plan.name }}</h3>
+                    <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">{{ plan.description or 'Grow your store efficiently' }}</p>
                     <div class="mt-6 flex items-baseline space-x-1">
-                        <span class="text-4xl font-extrabold text-white">${{ "%.2f"|format(plan.price) }}</span>
-                        <span class="text-xs text-slate-400">/ month</span>
+                        <span class="text-4xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(plan.price) }}</span>
+                        <span class="text-xs text-slate-400 dark:text-zinc-500">/ month</span>
                     </div>
-                    <ul class="mt-6 space-y-3 text-xs text-slate-300">
+                    <ul class="mt-6 space-y-3 text-xs text-slate-600 dark:text-zinc-300">
                         <li class="flex items-center space-x-2">
-                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
                             <span>Up to <strong>{{ plan.max_products }}</strong> Product Listings</span>
                         </li>
                         <li class="flex items-center space-x-2">
-                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
                             <span>Low <strong>{{ "%.1f"|format(plan.commission_rate) }}%</strong> Platform Commission</span>
                         </li>
                         <li class="flex items-center space-x-2">
-                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
                             <span>Real-time Live Customer Chat</span>
                         </li>
                         <li class="flex items-center space-x-2">
-                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
                             <span>Custom Store Coupons & Analytics</span>
                         </li>
                     </ul>
                 </div>
                 <div class="mt-8">
-                    <a href="/register?role=VENDOR" class="block w-full text-center py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/20 transition-colors">
+                    <a href="/register?role=VENDOR" class="block w-full text-center py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-black shadow-lg shadow-lime-500/25 transition-all">
                         Select {{ plan.name }} Plan
                     </a>
                 </div>
