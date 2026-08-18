@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Multi-Vendor SaaS E-Commerce Platform — Foundation{% endblock %}
+
+{% block content %}
+<div class="relative overflow-hidden py-16 sm:py-24">
+    <!-- Background glow -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="text-center space-y-6 max-w-3xl mx-auto">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Phase 1 — Foundation Active</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                Production Multi-Vendor <br>
+                <span class="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
+                    SaaS E-Commerce Engine
+                </span>
+            </h1>
+
+            <p class="text-slate-400 text-lg sm:text-xl font-normal leading-relaxed">
+                A robust, clean, scalable foundation engineered with FastAPI, SQLAlchemy 2.x, PostgreSQL, and Alembic migrations.
+            </p>
+
+            <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
+                <a href="/api/v1/health" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition-all duration-200 text-sm">
+                    View Health Diagnostic
+                </a>
+                <a href="/docs" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold transition-all duration-200 text-sm">
+                    Interactive OpenAPI Docs
+                </a>
+            </div>
+        </div>
+
+        <!-- Architecture Status Grid -->
+        <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur-sm">
+                <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold mb-4">
+                    ⚡
+                </div>
+                <h2 class="text-lg font-bold text-white mb-2">FastAPI Core</h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Configured with Pydantic v2 settings, lifespan event logging, structured error handling, and modular routing.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur-sm">
+                <div class="w-10 h-10 rounded-lg bg-violet-500/20 text-violet-400 flex items-center justify-center font-bold mb-4">
+                    🗄️
+                </div>
+                <h2 class="text-lg font-bold text-white mb-2">SQLAlchemy 2.x & DB</h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Connection pooling with pre-ping, session dependency injection, and timezone-aware base model mixins.
+                </p>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur-sm">
+                <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold mb-4">
+                    🔄
+                </div>
+                <h2 class="text-lg font-bold text-white mb-2">Alembic Migrations</h2>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    Database versioning pipeline pre-configured with declarative metadata discovery and environment settings.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
