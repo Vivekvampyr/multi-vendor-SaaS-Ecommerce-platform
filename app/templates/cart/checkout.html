@@ -3,20 +3,20 @@
 {% block title %}Checkout — NexusSaaS{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-8">Secure Checkout</h1>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-6 sm:mb-8">Secure Checkout</h1>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         <!-- Delivery & Payment Forms -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Saved Addresses / Street Input -->
-            <div class="glass-panel p-6 rounded-3xl space-y-4">
+            <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-4">
                 <h3 class="font-black text-sm text-slate-900 dark:text-white">1. Delivery Address</h3>
 
                 {% if addresses and addresses|length > 0 %}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="saved-addresses-list">
                         {% for addr in addresses %}
-                            <label class="p-4 rounded-2xl border cursor-pointer transition-all {% if addr.is_default %}border-lime-500 bg-lime-500/10{% else %}border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60{% endif %} flex flex-col justify-between">
+                            <label class="p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition-all {% if addr.is_default %}border-lime-500 bg-lime-500/10{% else %}border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60{% endif %} flex flex-col justify-between">
                                 <div class="flex items-start justify-between">
                                     <span class="font-bold text-xs text-slate-900 dark:text-white">{{ addr.full_name }}</span>
                                     <input type="radio" name="selected_address" value="{{ addr.address_line1 }}, {{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}, {{ addr.country }}" {% if addr.is_default %}checked{% endif %} class="accent-lime-500">
@@ -35,9 +35,9 @@
             </div>
 
             <!-- Payment Method -->
-            <div class="glass-panel p-6 rounded-3xl space-y-4">
+            <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-4">
                 <h3 class="font-black text-sm text-slate-900 dark:text-white">2. Payment Method</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <label class="p-4 rounded-2xl border border-lime-500/50 bg-lime-500/10 flex items-center justify-between cursor-pointer">
                         <div class="flex items-center space-x-3">
                             <span class="text-xl">💳</span>

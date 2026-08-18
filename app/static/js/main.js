@@ -173,11 +173,36 @@ window.Nexus = {
     menu.classList.toggle("dropdown-open");
   },
 
-  closeUserDropdown: function () {
-    const menu = document.getElementById("user-dropdown-menu");
-    if (menu) {
-      menu.classList.remove("dropdown-open");
+  // Mobile Navigation Drawer Toggle
+  toggleMobileDrawer: function () {
+    const drawer = document.getElementById("mobile-drawer");
+    const backdrop = document.getElementById("mobile-drawer-backdrop");
+    if (!drawer) return;
+    const isOpen = drawer.classList.contains("drawer-open");
+    if (isOpen) {
+      drawer.classList.remove("drawer-open");
+      drawer.classList.add("drawer-closed");
+      if (backdrop) backdrop.classList.add("hidden");
+      document.body.style.overflow = "";
+    } else {
+      drawer.classList.remove("drawer-closed");
+      drawer.classList.add("drawer-open");
+      if (backdrop) backdrop.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
     }
+  },
+
+  closeMobileDrawer: function () {
+    const drawer = document.getElementById("mobile-drawer");
+    const backdrop = document.getElementById("mobile-drawer-backdrop");
+    if (drawer) {
+      drawer.classList.remove("drawer-open");
+      drawer.classList.add("drawer-closed");
+    }
+    if (backdrop) {
+      backdrop.classList.add("hidden");
+    }
+    document.body.style.overflow = "";
   },
 };
 

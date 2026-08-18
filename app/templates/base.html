@@ -86,42 +86,42 @@
                 </div>
 
                 <!-- Navigation Action Links -->
-                <div class="flex items-center space-x-2 sm:space-x-4">
-                    <!-- Catalog Link -->
-                    <a href="/products" class="text-xs sm:text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-lime-400 transition-colors px-2 py-1">
+                <div class="flex items-center space-x-1.5 sm:space-x-4">
+                    <!-- Catalog Link (hidden on small mobile, accessible via drawer) -->
+                    <a href="/products" class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-lime-400 transition-colors px-2 py-1">
                         Catalog
                     </a>
 
                     <!-- Theme Toggle Button (Light/Dark) -->
                     <button onclick="window.Nexus.toggleTheme()" class="theme-toggle-btn p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-lime-400 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all cursor-pointer" title="Toggle Light/Dark Theme">
                         <!-- Sun Icon (shown in Dark mode to switch to light) -->
-                        <svg class="theme-icon-sun w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="theme-icon-sun w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
                         <!-- Moon Icon (shown in Light mode to switch to dark) -->
-                        <svg class="theme-icon-moon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="theme-icon-moon w-4.5 h-4.5 sm:w-5 sm:h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                         </svg>
                     </button>
 
                     <!-- Wishlist Icon -->
                     <a href="/customer/wishlist" class="p-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-lime-600 dark:hover:text-lime-400 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all relative" title="My Wishlist">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
                     </a>
 
                     <!-- Shopping Cart Icon -->
                     <a href="/cart" class="p-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-lime-600 dark:hover:text-lime-400 hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all relative" title="Shopping Cart">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
-                        <span class="cart-count-badge absolute -top-1 -right-1 w-5 h-5 bg-lime-500 text-black text-[10px] font-black rounded-full flex items-center justify-center hidden shadow-sm shadow-lime-500/50">0</span>
+                        <span class="cart-count-badge absolute -top-1 -right-1 w-4.5 h-4.5 sm:w-5 sm:h-5 bg-lime-500 text-black text-[9px] sm:text-[10px] font-black rounded-full flex items-center justify-center hidden shadow-sm shadow-lime-500/50">0</span>
                     </a>
 
-                    <!-- User Account / Portal Links -->
+                    <!-- Desktop User Account / Portal Dropdown -->
                     {% if current_user %}
-                        <div id="user-menu-container" class="relative group">
+                        <div id="user-menu-container" class="relative group hidden md:block">
                             <button id="user-menu-btn" onclick="window.Nexus.toggleUserDropdown(event)" class="flex items-center space-x-2 p-1.5 pl-3 pr-2 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-lime-500/40 text-xs font-bold text-slate-900 dark:text-white transition-all cursor-pointer select-none">
                                 <span>{{ current_user.full_name }}</span>
                                 <span class="px-1.5 py-0.5 text-[9px] uppercase font-black tracking-wider rounded bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">
@@ -156,17 +156,145 @@
                             </div>
                         </div>
                     {% else %}
-                        <a href="/login" class="text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 transition-colors">
-                            Log In
-                        </a>
-                        <a href="/register" class="text-xs sm:text-sm font-black px-4 py-2 rounded-xl bg-lime-500 hover:bg-lime-400 text-black shadow-lg shadow-lime-500/25 transition-all">
-                            Sign Up
-                        </a>
+                        <div class="hidden md:flex items-center space-x-2">
+                            <a href="/login" class="text-xs sm:text-sm font-semibold px-4 py-2 rounded-xl bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 transition-colors">
+                                Log In
+                            </a>
+                            <a href="/register" class="text-xs sm:text-sm font-black px-4 py-2 rounded-xl bg-lime-500 hover:bg-lime-400 text-black shadow-lg shadow-lime-500/25 transition-all">
+                                Sign Up
+                            </a>
+                        </div>
                     {% endif %}
+
+                    <!-- Mobile Hamburger Menu Button (visible on mobile screens) -->
+                    <button onclick="window.Nexus.toggleMobileDrawer()" class="md:hidden p-2 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-800 dark:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all cursor-pointer" title="Open Navigation Menu">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Slide-in Drawer Backdrop -->
+    <div id="mobile-drawer-backdrop" onclick="window.Nexus.closeMobileDrawer()" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden transition-opacity"></div>
+
+    <!-- Mobile Slide-in Drawer Navigation Panel -->
+    <div id="mobile-drawer" class="fixed top-0 right-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-zinc-950 border-l border-slate-200 dark:border-zinc-900 z-50 p-6 flex flex-col justify-between shadow-2xl drawer-closed overflow-y-auto">
+        <div class="space-y-6">
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800">
+                <a href="/" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-lime-500 flex items-center justify-center font-black text-black text-sm">N</div>
+                    <span class="font-black text-base text-slate-900 dark:text-white">NexusSaaS</span>
+                </a>
+                <button onclick="window.Nexus.closeMobileDrawer()" class="p-1.5 rounded-lg text-slate-400 hover:text-black dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Mobile Search Bar -->
+            <form action="/products" method="GET" class="relative">
+                <input type="text" name="search" placeholder="Search marketplace..." value="{{ request.query_params.get('search', '') }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </form>
+
+            <!-- User Status Card (if logged in) -->
+            {% if current_user %}
+                <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-xs text-slate-900 dark:text-white">{{ current_user.full_name }}</div>
+                        <div class="text-[11px] text-slate-500 dark:text-zinc-400 truncate max-w-[150px]">{{ current_user.email }}</div>
+                    </div>
+                    <span class="px-2 py-0.5 text-[9px] uppercase font-black tracking-wider rounded bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">
+                        {{ current_user.role.value }}
+                    </span>
+                </div>
+            {% endif %}
+
+            <!-- Navigation Links Stream -->
+            <nav class="space-y-1.5 text-xs font-semibold text-slate-700 dark:text-zinc-300">
+                <a href="/products" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-lime-600 dark:hover:text-white transition-colors">
+                    <span>🛍️ Explore Catalog</span>
+                </a>
+                <a href="/cart" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-lime-600 dark:hover:text-white transition-colors">
+                    <div class="flex items-center space-x-3">
+                        <span>🛒 Shopping Cart</span>
+                    </div>
+                    <span class="cart-count-badge px-2 py-0.5 text-[10px] font-black rounded-full bg-lime-500 text-black hidden">0</span>
+                </a>
+                <a href="/customer/wishlist" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-lime-600 dark:hover:text-white transition-colors">
+                    <span>💖 My Wishlist</span>
+                </a>
+
+                {% if current_user %}
+                    <div class="pt-3 pb-1">
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-zinc-500 px-3">Account & Management</span>
+                    </div>
+
+                    {% if current_user.role.value == "CUSTOMER" %}
+                        <a href="/customer/dashboard" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>👤 Account Profile</span>
+                        </a>
+                        <a href="/customer/orders" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>📦 My Orders & Tracking</span>
+                        </a>
+                        <a href="/customer/addresses" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>📍 Delivery Addresses</span>
+                        </a>
+                    {% elif current_user.role.value == "VENDOR" %}
+                        <a href="/vendor/dashboard" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>📊 Store Dashboard</span>
+                        </a>
+                        <a href="/vendor/products" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>🛍️ Products & Inventory</span>
+                        </a>
+                        <a href="/vendor/orders" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>🚚 Customer Orders</span>
+                        </a>
+                        <a href="/vendor/coupons" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>🏷️ Store Coupons</span>
+                        </a>
+                    {% elif current_user.role.value == "ADMIN" %}
+                        <a href="/admin/dashboard" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>⚡ Admin Control Panel</span>
+                        </a>
+                        <a href="/docs" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+                            <span>📑 Swagger API Docs</span>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </nav>
+        </div>
+
+        <!-- Drawer Footer -->
+        <div class="pt-6 border-t border-slate-200 dark:border-zinc-800 space-y-3">
+            {% if current_user %}
+                <button onclick="window.Nexus.logout()" class="w-full py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 text-xs font-bold transition-colors cursor-pointer flex items-center justify-center space-x-2">
+                    <span>🚪 Sign Out</span>
+                </button>
+            {% else %}
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="/login" onclick="window.Nexus.closeMobileDrawer()" class="block text-center py-2.5 rounded-xl bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-bold transition-colors">
+                        Log In
+                    </a>
+                    <a href="/register" onclick="window.Nexus.closeMobileDrawer()" class="block text-center py-2.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-black shadow-md shadow-lime-500/25 transition-all">
+                        Sign Up
+                    </a>
+                </div>
+            {% endif %}
+
+            <div class="flex items-center justify-between text-[11px] text-slate-400 dark:text-zinc-500 pt-1">
+                <span>NexusSaaS Platform</span>
+                <span class="text-lime-600 dark:text-lime-400 font-bold">● Online</span>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content Area -->
     <main class="flex-grow">

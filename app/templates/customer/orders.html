@@ -3,20 +3,25 @@
 {% block title %}My Orders — NexusSaaS{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div class="flex flex-col md:flex-row gap-8">
-        <!-- Sidebar Navigation -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div class="flex flex-col md:flex-row gap-6 sm:gap-8">
+        <!-- Responsive Sidebar / Mobile Pill Navigation -->
         <aside class="w-full md:w-64 flex-shrink-0">
-            <div class="glass-panel p-6 rounded-3xl space-y-3">
-                <div class="pb-4 border-b border-slate-200 dark:border-zinc-800">
-                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">{{ current_user.full_name }}</h3>
-                    <p class="text-xs text-slate-500 dark:text-zinc-400 truncate">{{ current_user.email }}</p>
+            <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-3">
+                <div class="pb-3 border-b border-slate-200 dark:border-zinc-800 flex md:block items-center justify-between">
+                    <div>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">{{ current_user.full_name }}</h3>
+                        <p class="text-xs text-slate-500 dark:text-zinc-400 truncate max-w-[200px]">{{ current_user.email }}</p>
+                    </div>
+                    <span class="md:hidden px-2 py-0.5 text-[9px] uppercase font-black tracking-wider rounded bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">
+                        {{ current_user.role.value }}
+                    </span>
                 </div>
-                <nav class="space-y-1 text-xs">
-                    <a href="/customer/dashboard" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">👤 Account Overview</a>
-                    <a href="/customer/orders" class="block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">📦 My Orders</a>
-                    <a href="/customer/wishlist" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">💖 Saved Wishlist</a>
-                    <a href="/customer/addresses" class="block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📍 Saved Addresses</a>
+                <nav class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
+                    <a href="/customer/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">👤 Overview</a>
+                    <a href="/customer/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">📦 Orders</a>
+                    <a href="/customer/wishlist" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">💖 Wishlist</a>
+                    <a href="/customer/addresses" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📍 Addresses</a>
                 </nav>
             </div>
         </aside>
