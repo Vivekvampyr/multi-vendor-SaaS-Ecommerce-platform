@@ -6,14 +6,17 @@ from app.core.database import get_db
 from app.core.dependencies import require_admin
 from app.models.subscription import SubscriptionStatus
 from app.models.user import User
+from app.models.vendor import VendorStatus
 from app.schemas.admin import AdminDashboardStats
 from app.schemas.common import APIResponse
 from app.schemas.subscription import (
     VendorPlanAssignRequest,
     VendorSubscriptionOut,
 )
+from app.schemas.vendor import VendorProfileOut, VendorStatusUpdate
 from app.services.admin import AdminService
 from app.services.subscription import SubscriptionService
+from app.services.vendor import VendorService
 
 router = APIRouter(prefix="/admin", tags=["Admin & Analytics"])
 
@@ -83,4 +86,67 @@ def assign_vendor_plan(
         success=True,
         message="Vendor plan assigned successfully",
         data=VendorSubscriptionOut.model_validate(subscription),
+    )
+
+
+@router.get(
+    "/vendors",
+    response_model=APIResponse[List[VendorProfileOut]],
+    status_code=status.HTTP_200_OK,
+    summary="List vendor store profiles with verification filter (Admin only)",
+)
+def list_vendor_profiles(
+    status_filter: Optional[VendorStatus] = Query(default=None, alias="status"),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=20, ge=1, le=100),
+    admin_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> APIResponse[List[VendorProfileOut]]:
+    vendor_service = VendorService(db)
+    profiles, total = vendor_service.admin_list_vendors(status=status_filter, skip=skip, limit=limit)
+    return APIResponse(
+        success=True,
+        message=f"Retrieved {len(profiles)} vendor profiles (total: {total})",
+        data=[VendorProfileOut.model_validate(p) for p in profiles],
+    )
+
+
+@router.get(
+    "/vendors/{vendor_user_id}",
+    response_model=APIResponse[VendorProfileOut],
+    status_code=status.HTTP_200_OK,
+    summary="View vendor store profile details (Admin only)",
+)
+def get_vendor_profile(
+    vendor_user_id: int,
+    admin_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> APIResponse[VendorProfileOut]:
+    vendor_service = VendorService(db)
+    profile = vendor_service.get_my_profile(vendor_user_id)
+    return APIResponse(
+        success=True,
+        message="Vendor store profile retrieved",
+        data=VendorProfileOut.model_validate(profile),
+    )
+
+
+@router.put(
+    "/vendors/{vendor_user_id}/status",
+    response_model=APIResponse[VendorProfileOut],
+    status_code=status.HTTP_200_OK,
+    summary="Approve, reject, or suspend a vendor store (Admin only)",
+)
+def update_vendor_status(
+    vendor_user_id: int,
+    status_in: VendorStatusUpdate,
+    admin_user: User = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> APIResponse[VendorProfileOut]:
+    vendor_service = VendorService(db)
+    updated = vendor_service.admin_update_vendor_status(vendor_user_id, status_in)
+    return APIResponse(
+        success=True,
+        message=f"Vendor status updated to {updated.status.value}",
+        data=VendorProfileOut.model_validate(updated),
     )

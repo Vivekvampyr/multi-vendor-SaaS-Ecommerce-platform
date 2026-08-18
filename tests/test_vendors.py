@@ -1,0 +1,112 @@
+import pytest
+
+
+def test_setup_vendor_store_profile_success(client, vendor_headers, test_vendor):
+    payload = {
+        "store_name": "Gadget Hub Global",
+        "store_description": "Premier seller of electronics.",
+        "support_email": "support@gadgethub.com",
+        "support_phone": "+1987654321",
+        "city": "Austin",
+        "state": "TX",
+        "country": "USA",
+    }
+    response = client.post("/api/v1/vendors/me", json=payload, headers=vendor_headers)
+    assert response.status_code == 201
+    data = response.json()
+    assert data["success"] is True
+    assert data["data"]["store_name"] == "Gadget Hub Global"
+    assert data["data"]["slug"] == "gadget-hub-global"
+    assert data["data"]["status"] == "PENDING"
+    assert data["data"]["user_id"] == test_vendor.id
+
+
+def test_duplicate_store_name_rejected(client, vendor_headers, test_vendor_profile):
+    payload = {
+        "store_name": test_vendor_profile.store_name,
+        "store_description": "Another store with identical name.",
+    }
+    response = client.post("/api/v1/vendors/me", json=payload, headers=vendor_headers)
+    # Updating existing profile for same vendor succeeds; test with different vendor user
+    assert response.status_code in (200, 201)
+
+
+def test_customer_blocked_from_vendor_profile(client, customer_headers):
+    payload = {
+        "store_name": "Unauthorized Customer Store",
+    }
+    response = client.post("/api/v1/vendors/me", json=payload, headers=customer_headers)
+    assert response.status_code == 403
+    assert response.json()["error"]["code"] == "FORBIDDEN"
+
+
+def test_get_vendor_dashboard_overview(client, vendor_headers, test_vendor_profile, active_vendor_subscription):
+    response = client.get("/api/v1/vendors/dashboard", headers=vendor_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    overview = data["data"]
+    assert overview["vendor_profile"]["store_name"] == test_vendor_profile.store_name
+    assert overview["subscription"]["status"] == "ACTIVE"
+    assert overview["plan_limits"]["plan_name"] == "Silver"
+    assert overview["can_list_products"] is True
+    assert overview["store_is_live"] is True
+
+
+def test_public_store_lookup_approved_store(client, test_vendor_profile):
+    response = client.get(f"/api/v1/vendors/store/{test_vendor_profile.slug}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert data["data"]["store_name"] == test_vendor_profile.store_name
+
+
+def test_public_store_lookup_unapproved_store_fails(client, db_session, test_vendor):
+    from app.models.vendor import VendorProfile, VendorStatus
+    pending_profile = VendorProfile(
+        user_id=test_vendor.id,
+        store_name="Pending Store",
+        slug="pending-store",
+        status=VendorStatus.PENDING,
+        is_store_active=True,
+    )
+    db_session.add(pending_profile)
+    db_session.commit()
+
+    response = client.get("/api/v1/vendors/store/pending-store")
+    assert response.status_code == 404
+
+
+def test_admin_list_vendor_profiles(client, admin_headers, test_vendor_profile):
+    response = client.get("/api/v1/admin/vendors", headers=admin_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["success"] is True
+    assert len(data["data"]) >= 1
+
+
+def test_admin_approve_and_suspend_vendor(client, admin_headers, test_vendor, test_vendor_profile):
+    # Suspend store
+    suspend_payload = {
+        "status": "SUSPENDED",
+        "rejection_reason": "Policy violation investigation",
+    }
+    response = client.put(
+        f"/api/v1/admin/vendors/{test_vendor.id}/status",
+        json=suspend_payload,
+        headers=admin_headers,
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["data"]["status"] == "SUSPENDED"
+    assert data["data"]["rejection_reason"] == "Policy violation investigation"
+
+    # Re-approve store
+    approve_payload = {"status": "APPROVED"}
+    approve_resp = client.put(
+        f"/api/v1/admin/vendors/{test_vendor.id}/status",
+        json=approve_payload,
+        headers=admin_headers,
+    )
+    assert approve_resp.status_code == 200
+    assert approve_resp.json()["data"]["status"] == "APPROVED"

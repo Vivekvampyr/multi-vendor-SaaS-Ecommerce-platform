@@ -9,6 +9,7 @@ from app.routers.health import router as health_router
 from app.routers.plans import router as plans_router
 from app.routers.subscriptions import router as subscriptions_router
 from app.routers.user import router as user_router
+from app.routers.vendors import router as vendors_router
 
 __all__ = [
     "api_v1_router",
@@ -17,5 +18,6 @@ __all__ = [
     "user_router",
     "plans_router",
     "subscriptions_router",
+    "vendors_router",
     "admin_router",
 ]

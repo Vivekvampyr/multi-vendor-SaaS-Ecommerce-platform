@@ -33,6 +33,14 @@ from app.schemas.user import (
     UserPasswordUpdate,
     UserUpdate,
 )
+from app.schemas.vendor import (
+    VendorDashboardOverview,
+    VendorProfileBase,
+    VendorProfileCreate,
+    VendorProfileOut,
+    VendorProfileUpdate,
+    VendorStatusUpdate,
+)
 
 __all__ = [
     "APIResponse",
@@ -61,4 +69,10 @@ __all__ = [
     "VendorPlanAssignRequest",
     "VendorPlanLimitsOut",
     "AdminDashboardStats",
+    "VendorProfileBase",
+    "VendorProfileCreate",
+    "VendorProfileUpdate",
+    "VendorProfileOut",
+    "VendorStatusUpdate",
+    "VendorDashboardOverview",
 ]

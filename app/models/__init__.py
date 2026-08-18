@@ -8,6 +8,7 @@ from app.models.base import BaseModel, TimestampMixin
 from app.models.plan import Plan
 from app.models.subscription import SubscriptionStatus, VendorSubscription
 from app.models.user import User, UserRole
+from app.models.vendor import VendorProfile, VendorStatus
 
 __all__ = [
     "Base",
@@ -18,4 +19,6 @@ __all__ = [
     "Plan",
     "VendorSubscription",
     "SubscriptionStatus",
+    "VendorProfile",
+    "VendorStatus",
 ]

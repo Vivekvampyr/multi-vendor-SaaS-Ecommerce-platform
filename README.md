@@ -4,13 +4,14 @@ A production-oriented, scalable SaaS Multi-Vendor E-Commerce platform built with
 
 ---
 
-## 📌 Project Status: Phase 3 Active (Admin & SaaS Plans Completed)
+## 📌 Project Status: Phase 4 Active (Vendor Management Completed)
 
 This project is built incrementally across clearly defined phases.
 * **Phase 1 (Project Foundation)**: Completed
 * **Phase 2 (Authentication & RBAC)**: Completed
 * **Phase 3 (Admin & SaaS Plans)**: Completed
-* **Next Phase**: **Phase 4 (Vendor Management)**
+* **Phase 4 (Vendor Management)**: Completed
+* **Next Phase**: **Phase 5 (Product Management)**
 
 ---
 
@@ -24,7 +25,8 @@ This project is built incrementally across clearly defined phases.
 - **Settings & Config**: `pydantic-settings` (Type-safe `.env` loading)
 - **Security & Authentication**: `bcrypt==4.0.1`, `PyJWT` (JWT Access & Refresh token rotation)
 - **Role-Based Access Control (RBAC)**: `ADMIN`, `VENDOR`, `CUSTOMER`
-- **SaaS Subscription Subsystem**: Dynamic SaaS plan creation, product listing limits, and platform commission tiers
+- **SaaS Subscription Engine**: Plan limits, commission percentage tiers, and vendor subscriptions
+- **Vendor Store Subsystem**: Storefront profile customization, administrative verification status (`PENDING`, `APPROVED`, `REJECTED`, `SUSPENDED`), and unified vendor dashboard metrics
 
 ### Frontend (Server-Side Rendered)
 - **Template Engine**: Jinja2
@@ -51,7 +53,8 @@ app/
 │   ├── base.py               # Declarative Base, BaseModel, and TimestampMixin
 │   ├── plan.py               # SaaS Plan model (product listing limits & commission %)
 │   ├── subscription.py       # VendorSubscription model (status, lifecycle, duration)
-│   └── user.py               # User model & UserRole enum (ADMIN, VENDOR, CUSTOMER)
+│   ├── user.py               # User model & UserRole enum (ADMIN, VENDOR, CUSTOMER)
+│   └── vendor.py             # VendorProfile model & VendorStatus enum
 ├── schemas/
 │   ├── __init__.py
 │   ├── admin.py              # AdminDashboardStats schema
@@ -59,28 +62,32 @@ app/
 │   ├── common.py             # Standardized APIResponse, ErrorResponse, HealthResponse
 │   ├── plan.py               # PlanCreate, PlanOut, PlanUpdate schemas
 │   ├── subscription.py       # VendorSubscriptionOut, VendorPlanLimitsOut schemas
-│   └── user.py               # UserCreate, UserOut, UserUpdate, UserPasswordUpdate
+│   ├── user.py               # UserCreate, UserOut, UserUpdate, UserPasswordUpdate
+│   └── vendor.py             # VendorProfileCreate, VendorProfileOut, VendorDashboardOverview
 ├── routers/
 │   ├── __init__.py
-│   ├── admin.py              # Admin dashboard metrics and subscription overrides
+│   ├── admin.py              # Admin dashboard metrics and vendor store moderation
 │   ├── api_v1.py             # Main API v1 router aggregator
 │   ├── auth.py               # Auth endpoints (/register, /login, /refresh, /me)
 │   ├── health.py             # Health check endpoints (/health, /api/v1/health)
 │   ├── plans.py              # SaaS Plan public catalog & admin CRUD (/plans)
 │   ├── subscriptions.py      # Vendor plan selection, limits, and cancellation
-│   └── user.py               # User management endpoints (/users/me, /users)
+│   ├── user.py               # User management endpoints (/users/me, /users)
+│   └── vendors.py            # Vendor storefront, profile, and dashboard (/vendors)
 ├── services/
 │   ├── __init__.py
 │   ├── admin.py              # Admin metrics aggregation service
 │   ├── auth.py               # AuthService (registration, auth, token generation)
 │   ├── plan.py               # PlanService (plan creation, constraints, validation)
 │   ├── subscription.py       # SubscriptionService (plan assignment, limits, lifecycle)
-│   └── user.py               # UserService (profile updates, password change)
+│   ├── user.py               # UserService (profile updates, password change)
+│   └── vendor.py             # VendorService (store setup, dashboard, admin review)
 ├── repositories/
 │   ├── __init__.py
 │   ├── plan.py               # PlanRepository (CRUD for SaaS plans)
 │   ├── subscription.py       # SubscriptionRepository (CRUD for vendor subscriptions)
-│   └── user.py               # UserRepository (CRUD for User)
+│   ├── user.py               # UserRepository (CRUD for User)
+│   └── vendor.py             # VendorRepository (CRUD for VendorProfile)
 ├── templates/
 │   ├── base.html             # Main Jinja2 layout with Tailwind CSS
 │   └── index.html            # Foundation status view
@@ -97,9 +104,10 @@ alembic/                      # Alembic database migrations
 ├── script.py.mako
 └── versions/
     ├── 2026_08_18_0001_create_users_table.py
-    └── 2026_08_18_0002_create_plans_and_subscriptions.py
+    ├── 2026_08_18_0002_create_plans_and_subscriptions.py
+    └── 2026_08_18_0003_create_vendor_profiles_table.py
 
-tests/                        # Automated test suite (50 tests passing)
+tests/                        # Automated test suite (58 tests passing)
 ├── __init__.py
 ├── conftest.py               # Fixtures, test database, and role-based test tokens
 ├── test_admin.py             # Admin metrics and manual assignment tests
@@ -109,7 +117,8 @@ tests/                        # Automated test suite (50 tests passing)
 ├── test_plans.py             # Plan CRUD, validation, and permissions tests
 ├── test_rbac.py              # Role permissions & ownership tests
 ├── test_subscriptions.py     # Vendor subscription and limit enforcement tests
-└── test_users.py             # Profile and password change tests
+├── test_users.py             # Profile and password change tests
+└── test_vendors.py           # Vendor profile, dashboard, and moderation tests
 
 .env.example
 .gitignore
@@ -145,7 +154,7 @@ pip install -r requirements.txt
 ### 3. Database Migrations (Alembic)
 
 ```bash
-# Apply migrations to create users, plans, and subscriptions tables
+# Apply migrations to create users, plans, subscriptions, and vendor profiles tables
 alembic upgrade head
 ```
 
@@ -166,30 +175,23 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 ---
 
-## 🔑 Phase 3 API Endpoints
+## 🔑 Phase 4 API Endpoints
 
-### SaaS Plans (`/api/v1/plans`)
+### Vendor Management (`/api/v1/vendors`)
 | Method | Endpoint | Description | Access |
 |---|---|---|---|
-| `GET` | `/api/v1/plans` | List available active SaaS plans | Public |
-| `GET` | `/api/v1/plans/{plan_id}` | Retrieve specific plan details | Public |
-| `POST` | `/api/v1/plans` | Create a new SaaS plan | `ADMIN` only |
-| `PUT` | `/api/v1/plans/{plan_id}` | Update SaaS plan pricing or limits | `ADMIN` only |
-| `DELETE` | `/api/v1/plans/{plan_id}` | Delete SaaS plan (blocked if active subscribers) | `ADMIN` only |
+| `GET` | `/api/v1/vendors/dashboard` | Unified vendor dashboard overview & limits | `VENDOR` only |
+| `GET` | `/api/v1/vendors/me` | Retrieve own storefront profile | `VENDOR` only |
+| `POST` | `/api/v1/vendors/me` | Setup vendor storefront profile | `VENDOR` only |
+| `PUT` | `/api/v1/vendors/me` | Update storefront profile & settings | `VENDOR` only |
+| `GET` | `/api/v1/vendors/store/{slug}` | View public vendor store page | Public |
 
-### Vendor Subscriptions (`/api/v1/subscriptions`)
+### Admin Vendor Moderation (`/api/v1/admin`)
 | Method | Endpoint | Description | Access |
 |---|---|---|---|
-| `GET` | `/api/v1/subscriptions/my-plan` | View active plan limits and commission % | `VENDOR` only |
-| `POST` | `/api/v1/subscriptions/select-plan` | Select or switch SaaS plan | `VENDOR` only |
-| `POST` | `/api/v1/subscriptions/cancel` | Cancel active SaaS plan subscription | `VENDOR` only |
-
-### Admin Operations (`/api/v1/admin`)
-| Method | Endpoint | Description | Access |
-|---|---|---|---|
-| `GET` | `/api/v1/admin/dashboard` | Aggregated platform metrics and analytics | `ADMIN` only |
-| `GET` | `/api/v1/admin/subscriptions` | List all vendor subscriptions | `ADMIN` only |
-| `POST` | `/api/v1/admin/vendors/{id}/assign-plan` | Manually assign or override vendor plan | `ADMIN` only |
+| `GET` | `/api/v1/admin/vendors` | List all vendor profiles with status filter | `ADMIN` only |
+| `GET` | `/api/v1/admin/vendors/{id}` | View vendor store profile details | `ADMIN` only |
+| `PUT` | `/api/v1/admin/vendors/{id}/status` | Approve, reject, or suspend a vendor store | `ADMIN` only |
 
 ---
 
@@ -198,10 +200,10 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```bash
 pytest -v
 ```
-*(All 50 unit and integration tests passing)*
+*(All 58 unit and integration tests passing)*
 
 ---
 
 ## 🔜 Next Step
 
-* **PHASE 4 — Vendor Management** (Vendor profile, Vendor dashboard API, Vendor verification status, Vendor subscription display, Vendor settings).
+* **PHASE 5 — Product Management** (Category model, Product CRUD, Product ownership checks, Product SKU, Pricing, Inventory quantity, Product status, Multi-image upload, Primary image, Image ordering, Image deletion/replacement, and Listing limits enforcement based on active SaaS plan).

@@ -11,6 +11,7 @@ from app.main import app
 from app.models.plan import Plan
 from app.models.subscription import SubscriptionStatus, VendorSubscription
 from app.models.user import User, UserRole
+from app.models.vendor import VendorProfile, VendorStatus
 
 # In-memory SQLite database for deterministic, fast isolated test runs
 TEST_DATABASE_URL = "sqlite:///:memory:"
@@ -206,3 +207,28 @@ def active_vendor_subscription(db_session, test_vendor, test_plan_silver) -> Ven
     db_session.commit()
     db_session.refresh(sub)
     return sub
+
+
+@pytest.fixture
+def test_vendor_profile(db_session, test_vendor) -> VendorProfile:
+    """Create and return an approved storefront profile for test vendor."""
+    from app.models.vendor import VendorProfile, VendorStatus
+    profile = VendorProfile(
+        user_id=test_vendor.id,
+        store_name="Bob Tech Store",
+        slug="bob-tech-store",
+        store_description="High quality electronics and gadgets.",
+        support_email="support@bobtech.com",
+        support_phone="+1234567890",
+        business_address="123 Innovation Drive",
+        city="San Francisco",
+        state="CA",
+        country="USA",
+        postal_code="94105",
+        status=VendorStatus.APPROVED,
+        is_store_active=True,
+    )
+    db_session.add(profile)
+    db_session.commit()
+    db_session.refresh(profile)
+    return profile
