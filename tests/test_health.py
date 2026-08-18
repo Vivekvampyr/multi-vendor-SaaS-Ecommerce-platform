@@ -25,8 +25,7 @@ def test_root_html_view(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "text/html" in response.headers["content-type"]
-    assert "Multi-Vendor" in response.text
-    assert "Phase 1 — Foundation Active" in response.text
+    assert "NexusSaaS" in response.text
 
 
 def test_openapi_docs_available(client):

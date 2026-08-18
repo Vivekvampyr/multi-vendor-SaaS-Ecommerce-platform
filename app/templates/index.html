@@ -1,72 +1,167 @@
 {% extends "base.html" %}
 
-{% block title %}Multi-Vendor SaaS E-Commerce Platform — Foundation{% endblock %}
+{% block title %}NexusSaaS — Next-Gen Multi-Vendor Marketplace{% endblock %}
 
 {% block content %}
-<div class="relative overflow-hidden py-16 sm:py-24">
-    <!-- Background glow -->
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div class="text-center space-y-6 max-w-3xl mx-auto">
-            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Phase 1 — Foundation Active</span>
-            </div>
-
-            <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white leading-tight">
-                Production Multi-Vendor <br>
-                <span class="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-                    SaaS E-Commerce Engine
-                </span>
-            </h1>
-
-            <p class="text-slate-400 text-lg sm:text-xl font-normal leading-relaxed">
-                A robust, clean, scalable foundation engineered with FastAPI, SQLAlchemy 2.x, PostgreSQL, and Alembic migrations.
-            </p>
-
-            <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
-                <a href="/api/v1/health" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold shadow-lg shadow-indigo-600/30 transition-all duration-200 text-sm">
-                    View Health Diagnostic
-                </a>
-                <a href="/docs" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold transition-all duration-200 text-sm">
-                    Interactive OpenAPI Docs
-                </a>
-            </div>
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
+    <div class="absolute inset-0 -z-10 flex items-center justify-center">
+        <div class="w-[600px] h-[600px] bg-gradient-to-tr from-indigo-600/20 to-pink-500/20 rounded-full blur-3xl"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold mb-6">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span>Live Multi-Vendor SaaS Platform</span>
         </div>
-
-        <!-- Architecture Status Grid -->
-        <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur-sm">
-                <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold mb-4">
-                    ⚡
-                </div>
-                <h2 class="text-lg font-bold text-white mb-2">FastAPI Core</h2>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Configured with Pydantic v2 settings, lifespan event logging, structured error handling, and modular routing.
-                </p>
-            </div>
-
-            <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur-sm">
-                <div class="w-10 h-10 rounded-lg bg-violet-500/20 text-violet-400 flex items-center justify-center font-bold mb-4">
-                    🗄️
-                </div>
-                <h2 class="text-lg font-bold text-white mb-2">SQLAlchemy 2.x & DB</h2>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Connection pooling with pre-ping, session dependency injection, and timezone-aware base model mixins.
-                </p>
-            </div>
-
-            <div class="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/60 backdrop-blur-sm">
-                <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold mb-4">
-                    🔄
-                </div>
-                <h2 class="text-lg font-bold text-white mb-2">Alembic Migrations</h2>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    Database versioning pipeline pre-configured with declarative metadata discovery and environment settings.
-                </p>
-            </div>
+        <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
+            Discover Exceptional Stores, <br class="hidden sm:inline">
+            <span class="bg-gradient-to-r from-indigo-400 via-violet-300 to-pink-400 bg-clip-text text-transparent">Direct from Creators.</span>
+        </h1>
+        <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto">
+            Shop from thousands of independent verified vendors or launch your own multi-channel online storefront with seamless inventory and instant payouts.
+        </p>
+        <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a href="/products" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold text-sm shadow-xl shadow-indigo-500/30 hover:scale-105 transition-all">
+                Explore Marketplace →
+            </a>
+            <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-900 border border-slate-700 hover:border-slate-500 text-slate-200 font-bold text-sm hover:bg-slate-800 transition-all">
+                Sell on NexusSaaS
+            </a>
         </div>
     </div>
-</div>
+</section>
+
+<!-- Categories Grid -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-white">Shop by Category</h2>
+            <p class="text-xs text-slate-400 mt-1">Browse trending collections curated across top vendors</p>
+        </div>
+        <a href="/products" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300">View All →</a>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+        {% for cat in categories %}
+            <a href="/products?category={{ cat.id }}" class="glass-panel p-5 rounded-2xl glass-panel-hover flex items-center space-x-4 group">
+                <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    📦
+                </div>
+                <div>
+                    <h3 class="font-semibold text-sm text-white group-hover:text-indigo-400 transition-colors">{{ cat.name }}</h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5">Explore items</p>
+                </div>
+            </a>
+        {% else %}
+            <div class="col-span-full py-8 text-center text-slate-500 text-sm">No categories loaded.</div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-2xl font-bold text-white">Featured Products</h2>
+            <p class="text-xs text-slate-400 mt-1">Handpicked quality goods from verified merchants</p>
+        </div>
+        <a href="/products" class="text-xs font-semibold text-indigo-400 hover:text-indigo-300">Browse Full Catalog →</a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for prod in products %}
+            <div class="glass-panel rounded-2xl overflow-hidden glass-panel-hover flex flex-col justify-between border border-slate-800">
+                <div class="relative">
+                    <a href="/products/{{ prod.slug }}">
+                        {% if prod.images and prod.images|length > 0 %}
+                            <img src="{{ prod.images[0].image_url }}" alt="{{ prod.name }}" class="w-full h-48 object-cover hover:scale-105 transition-transform duration-300">
+                        {% else %}
+                            <div class="w-full h-48 bg-slate-900 flex items-center justify-center text-slate-600 font-bold text-xs">No Image</div>
+                        {% endif %}
+                    </a>
+                    {% if prod.compare_at_price and prod.compare_at_price > prod.price %}
+                        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-full bg-rose-500 text-white text-[10px] font-bold">
+                            SALE
+                        </span>
+                    {% endif %}
+                    <button data-add-to-wishlist="{{ prod.id }}" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-slate-950/80 backdrop-blur text-slate-400 hover:text-pink-400 flex items-center justify-center transition-colors">
+                        ♥
+                    </button>
+                </div>
+                <div class="p-4 flex-1 flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-400">{{ prod.category.name if prod.category else 'General' }}</span>
+                        <h3 class="font-bold text-sm text-white mt-1 hover:text-indigo-300 transition-colors line-clamp-1">
+                            <a href="/products/{{ prod.slug }}">{{ prod.name }}</a>
+                        </h3>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <span class="text-base font-extrabold text-white">${{ "%.2f"|format(prod.price) }}</span>
+                            {% if prod.compare_at_price and prod.compare_at_price > prod.price %}
+                                <span class="text-xs text-slate-500 line-through ml-1.5">${{ "%.2f"|format(prod.compare_at_price) }}</span>
+                            {% endif %}
+                        </div>
+                        <button data-add-to-cart="{{ prod.id }}" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 transition-all">
+                            Add +
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full py-12 text-center text-slate-500 text-sm">
+                No products published yet. Be the first vendor to add products!
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- SaaS Plans Showcase -->
+<section id="plans" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center max-w-2xl mx-auto mb-12">
+        <h2 class="text-3xl font-extrabold text-white">Merchant SaaS Subscription Plans</h2>
+        <p class="text-sm text-slate-400 mt-2">Transparent pricing with lower platform commission rates as your store expands</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {% for plan in plans %}
+            <div class="glass-panel p-8 rounded-3xl border border-slate-800 relative flex flex-col justify-between hover:border-indigo-500/50 transition-all">
+                {% if plan.name == 'Gold' %}
+                    <span class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white text-[10px] font-bold uppercase tracking-wider">
+                        Most Popular
+                    </span>
+                {% endif %}
+                <div>
+                    <h3 class="text-xl font-bold text-white">{{ plan.name }}</h3>
+                    <p class="text-xs text-slate-400 mt-1">{{ plan.description or 'Grow your store efficiently' }}</p>
+                    <div class="mt-6 flex items-baseline space-x-1">
+                        <span class="text-4xl font-extrabold text-white">${{ "%.2f"|format(plan.price) }}</span>
+                        <span class="text-xs text-slate-400">/ month</span>
+                    </div>
+                    <ul class="mt-6 space-y-3 text-xs text-slate-300">
+                        <li class="flex items-center space-x-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span>Up to <strong>{{ plan.max_products }}</strong> Product Listings</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span>Low <strong>{{ "%.1f"|format(plan.commission_rate) }}%</strong> Platform Commission</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span>Real-time Live Customer Chat</span>
+                        </li>
+                        <li class="flex items-center space-x-2">
+                            <span class="text-emerald-400 font-bold">✓</span>
+                            <span>Custom Store Coupons & Analytics</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-8">
+                    <a href="/register?role=VENDOR" class="block w-full text-center py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/20 transition-colors">
+                        Select {{ plan.name }} Plan
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
 {% endblock %}

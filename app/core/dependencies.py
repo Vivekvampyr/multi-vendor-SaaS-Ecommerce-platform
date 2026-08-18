@@ -1,5 +1,5 @@
 from typing import Callable, List, Optional
-from fastapi import Depends
+from fastapi import Depends, Request
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
@@ -15,6 +15,35 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login/oauth2",
     auto_error=False,
 )
+
+
+def get_optional_user_for_web(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """
+    Extracts user from Authorization header OR 'access_token' cookie without raising 401.
+    Ideal for server-rendered HTML views.
+    """
+    token = None
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+    elif "access_token" in request.cookies:
+        token = request.cookies.get("access_token")
+
+    if not token:
+        return None
+
+    try:
+        payload = decode_token(token)
+        if payload.get("type") != "access":
+            return None
+        user_id = int(payload.get("sub"))
+        user_repo = UserRepository(db)
+        return user_repo.get_by_id(user_id)
+    except Exception:
+        return None
 
 
 def get_current_user(

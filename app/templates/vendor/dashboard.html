@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Vendor Merchant Dashboard — NexusSaaS{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+                <div class="pb-4 border-b border-slate-800">
+                    <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">Merchant Portal</span>
+                    <h3 class="font-bold text-sm text-white mt-1">{{ overview.store_name if overview else current_user.full_name }}</h3>
+                    <p class="text-[11px] text-slate-400">Plan: <strong class="text-indigo-400">{{ overview.active_plan_name if overview else 'Active' }}</strong></p>
+                </div>
+                <nav class="space-y-1 text-xs">
+                    <a href="/vendor/dashboard" class="block px-3 py-2 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold">📊 Dashboard Overview</a>
+                    <a href="/vendor/products" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🛍️ Products & Inventory</a>
+                    <a href="/vendor/orders" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🚚 Customer Orders</a>
+                    <a href="/vendor/coupons" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🏷️ Store Coupons</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- KPI Metrics & Overview -->
+        <div class="flex-1 space-y-6">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-black text-white">Merchant Dashboard</h1>
+                {% if overview and overview.store_slug %}
+                    <a href="/stores/{{ overview.store_slug }}" target="_blank" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold rounded-xl transition-colors">
+                        ↗ View Public Storefront
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- KPI Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <span class="text-xs text-slate-400 font-semibold">Active Products</span>
+                    <div class="flex items-baseline space-x-2 mt-2">
+                        <span class="text-2xl font-black text-white">{{ overview.total_products if overview else 0 }}</span>
+                        <span class="text-xs text-slate-500">/ {{ overview.max_products_allowed if overview else 10 }} limit</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <span class="text-xs text-slate-400 font-semibold">Total Sold Items</span>
+                    <div class="mt-2">
+                        <span class="text-2xl font-black text-white">{{ overview.total_orders if overview else 0 }}</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <span class="text-xs text-slate-400 font-semibold">Net Vendor Revenue</span>
+                    <div class="mt-2">
+                        <span class="text-2xl font-black text-emerald-400">${{ "%.2f"|format(overview.total_revenue if overview else 0.0) }}</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <span class="text-xs text-slate-400 font-semibold">Commission Tier</span>
+                    <div class="mt-2">
+                        <span class="text-2xl font-black text-indigo-400">{{ "%.1f"|format(overview.commission_rate if overview else 20.0) }}%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Store Profile Details -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                <h3 class="font-bold text-sm text-white">Store Verification Status</h3>
+                <div class="flex items-center space-x-3 text-xs">
+                    <span class="px-3 py-1 rounded-full font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {{ overview.status.value if overview else 'APPROVED' }}
+                    </span>
+                    <span class="text-slate-400">Your store is active and visible in marketplace search and category feeds.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

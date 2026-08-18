@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Control Panel — NexusSaaS{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-black text-white">Platform Administration</h1>
+            <p class="text-xs text-slate-400 mt-1">Global platform metrics, SaaS subscriptions, and merchant store moderation</p>
+        </div>
+        <a href="/docs" target="_blank" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold rounded-xl transition-colors">
+            📑 Open Swagger API Docs
+        </a>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400 font-semibold">Total Registered Users</span>
+            <div class="mt-2 text-2xl font-black text-white">{{ stats.total_users if stats else 0 }}</div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400 font-semibold">Active Store Vendors</span>
+            <div class="mt-2 text-2xl font-black text-indigo-400">{{ stats.total_vendors if stats else 0 }}</div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400 font-semibold">Total Listed Products</span>
+            <div class="mt-2 text-2xl font-black text-white">{{ stats.total_products if stats else 0 }}</div>
+        </div>
+
+        <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400 font-semibold">Active SaaS Subscriptions</span>
+            <div class="mt-2 text-2xl font-black text-emerald-400">{{ stats.active_subscriptions if stats else 0 }}</div>
+        </div>
+    </div>
+
+    <!-- Vendor Stores Moderation Table -->
+    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+        <h2 class="text-lg font-bold text-white">Vendor Stores Moderation</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
+                    <tr>
+                        <th class="p-4">Merchant Name</th>
+                        <th class="p-4">Store Name</th>
+                        <th class="p-4">Verification Status</th>
+                        <th class="p-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                    {% for v in vendors %}
+                        <tr class="hover:bg-slate-800/30 transition-colors" id="vendor-row-{{ v.id }}">
+                            <td class="p-4 font-bold text-white">{{ v.user.full_name if v.user else 'Vendor #' ~ v.user_id }}</td>
+                            <td class="p-4 text-indigo-300 font-semibold">{{ v.store_name }}</td>
+                            <td class="p-4">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if v.status.value == 'APPROVED' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% elif v.status.value == 'PENDING' %}bg-amber-500/20 text-amber-300 border border-amber-500/30{% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
+                                    {{ v.status.value }}
+                                </span>
+                            </td>
+                            <td class="p-4 space-x-2">
+                                {% if v.status.value != 'APPROVED' %}
+                                    <button onclick="updateVendorStatus({{ v.id }}, 'APPROVED')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-[11px] transition-colors">
+                                        Approve
+                                    </button>
+                                {% endif %}
+                                {% if v.status.value != 'SUSPENDED' %}
+                                    <button onclick="updateVendorStatus({{ v.id }}, 'SUSPENDED')" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-semibold text-[11px] transition-colors">
+                                        Suspend
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="p-8 text-center text-slate-500">No merchant vendor profiles found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+async function updateVendorStatus(profileId, newStatus) {
+    try {
+        await window.Nexus.apiFetch(`/api/v1/vendors/${profileId}/status`, {
+            method: "PUT",
+            body: JSON.stringify({ status: newStatus })
+        });
+        window.Nexus.showToast(`Vendor store status updated to ${newStatus}`, "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message, "error");
+    }
+}
+</script>
+{% endblock %}

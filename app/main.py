@@ -11,6 +11,7 @@ from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.routers import health
 from app.routers.api_v1 import api_v1_router
+from app.routers.web import web_router
 from app.utils.logging import setup_logging
 
 # Configure logging
@@ -68,22 +69,10 @@ if STATIC_DIR.exists():
 # Mount Uploads
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 
-# Configure Jinja2 Templates Engine
-templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
-
-# Mount API Routers
+# Mount API and Web Routers
+app.include_router(web_router)
 app.include_router(api_v1_router, prefix=settings.API_V1_STR)
 app.include_router(health.router)  # Direct /health root alias
-
-
-@app.get("/", response_class=HTMLResponse, tags=["Web UI"], include_in_schema=False)
-async def root_view(request: Request):
-    """Landing and foundation status view rendered via Jinja2."""
-    return templates.TemplateResponse(
-        request=request,
-        name="index.html",
-        context={"request": request, "project_name": settings.PROJECT_NAME},
-    )
 
 
 if __name__ == "__main__":

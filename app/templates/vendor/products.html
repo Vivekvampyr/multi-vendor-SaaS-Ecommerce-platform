@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Products — Vendor Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+                <div class="pb-4 border-b border-slate-800">
+                    <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">Merchant Portal</span>
+                    <h3 class="font-bold text-sm text-white mt-1">{{ current_user.full_name }}</h3>
+                </div>
+                <nav class="space-y-1 text-xs">
+                    <a href="/vendor/dashboard" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">📊 Dashboard Overview</a>
+                    <a href="/vendor/products" class="block px-3 py-2 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold">🛍️ Products & Inventory</a>
+                    <a href="/vendor/orders" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🚚 Customer Orders</a>
+                    <a href="/vendor/coupons" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🏷️ Store Coupons</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Product Management Table -->
+        <div class="flex-1 space-y-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-black text-white">Store Catalog & Products</h1>
+                    <p class="text-xs text-slate-400 mt-1">Manage listings, SKUs, inventory levels, and prices</p>
+                </div>
+                <button onclick="document.getElementById('add-product-modal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                    + Add New Product
+                </button>
+            </div>
+
+            <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
+                            <tr>
+                                <th class="p-4">Product Name & SKU</th>
+                                <th class="p-4">Price</th>
+                                <th class="p-4">Stock</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4">Category</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                            {% for p in products %}
+                                <tr class="hover:bg-slate-800/30 transition-colors">
+                                    <td class="p-4">
+                                        <div class="font-bold text-white text-sm">{{ p.name }}</div>
+                                        <div class="text-[11px] text-indigo-400">SKU: {{ p.sku }}</div>
+                                    </td>
+                                    <td class="p-4 font-bold text-white">${{ "%.2f"|format(p.price) }}</td>
+                                    <td class="p-4">
+                                        <span class="{% if p.stock_quantity > 0 %}text-emerald-400{% else %}text-rose-400{% endif %} font-bold">
+                                            {{ p.stock_quantity }}
+                                        </span>
+                                    </td>
+                                    <td class="p-4">
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                            {{ p.status.value }}
+                                        </span>
+                                    </td>
+                                    <td class="p-4 text-slate-400">{{ p.category.name if p.category else 'General' }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-slate-500">No products added yet. Click "+ Add New Product" to create your first listing.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Product Modal -->
+<div id="add-product-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="font-bold text-sm text-white">Create New Product Listing</h3>
+            <button onclick="document.getElementById('add-product-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <form id="create-product-form" onsubmit="handleCreateProduct(event)" class="space-y-3 text-xs">
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Product Title</label>
+                <input type="text" id="prod-name" required placeholder="e.g. Wireless Noise-Cancelling Headphones" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">SKU Code</label>
+                    <input type="text" id="prod-sku" required placeholder="e.g. WN-HEAD-001" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Category</label>
+                    <select id="prod-cat" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Price ($)</label>
+                    <input type="number" step="0.01" id="prod-price" required placeholder="99.99" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Initial Stock Units</label>
+                    <input type="number" id="prod-stock" required value="10" min="0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Description</label>
+                <textarea id="prod-desc" rows="3" placeholder="Describe the specifications and features..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"></textarea>
+            </div>
+
+            <button type="submit" id="create-prod-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                Publish Product
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+async function handleCreateProduct(e) {
+    e.preventDefault();
+    const btn = document.getElementById("create-prod-btn");
+    btn.disabled = true;
+    btn.textContent = "Publishing...";
+
+    const payload = {
+        name: document.getElementById("prod-name").value.trim(),
+        sku: document.getElementById("prod-sku").value.trim(),
+        category_id: parseInt(document.getElementById("prod-cat").value),
+        price: parseFloat(document.getElementById("prod-price").value),
+        stock_quantity: parseInt(document.getElementById("prod-stock").value),
+        description: document.getElementById("prod-desc").value.trim(),
+        status: "PUBLISHED"
+    };
+
+    try {
+        await window.Nexus.apiFetch("/api/v1/products", {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("Product published successfully!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to publish product", "error");
+        btn.disabled = false;
+        btn.textContent = "Publish Product";
+    }
+}
+</script>
+{% endblock %}

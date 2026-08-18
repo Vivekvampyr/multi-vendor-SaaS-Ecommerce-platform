@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Orders — Vendor Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-3">
+                <div class="pb-4 border-b border-slate-800">
+                    <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 text-[10px] font-bold uppercase">Merchant Portal</span>
+                    <h3 class="font-bold text-sm text-white mt-1">{{ current_user.full_name }}</h3>
+                </div>
+                <nav class="space-y-1 text-xs">
+                    <a href="/vendor/dashboard" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">📊 Dashboard Overview</a>
+                    <a href="/vendor/products" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🛍️ Products & Inventory</a>
+                    <a href="/vendor/orders" class="block px-3 py-2 rounded-xl bg-indigo-600/20 text-indigo-300 font-bold">🚚 Customer Orders</a>
+                    <a href="/vendor/coupons" class="block px-3 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">🏷️ Store Coupons</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Orders Fulfillment Table -->
+        <div class="flex-1 space-y-6">
+            <div>
+                <h1 class="text-2xl font-black text-white">Sold Items & Fulfillment</h1>
+                <p class="text-xs text-slate-400 mt-1">Update customer order line items from Processing to Shipped & Delivered</p>
+            </div>
+
+            <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
+                            <tr>
+                                <th class="p-4">Item Details</th>
+                                <th class="p-4">Qty & Price</th>
+                                <th class="p-4">Commission Split</th>
+                                <th class="p-4">Your Net Earnings</th>
+                                <th class="p-4">Fulfillment Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                            {% for item in items %}
+                                <tr class="hover:bg-slate-800/30 transition-colors">
+                                    <td class="p-4">
+                                        <div class="font-bold text-white text-sm">{{ item.product_name }}</div>
+                                        <div class="text-[11px] text-indigo-400">SKU: {{ item.product_sku }}</div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div>{{ item.quantity }}x ${{ "%.2f"|format(item.unit_price) }}</div>
+                                        <div class="text-[11px] text-slate-400">Subtotal: ${{ "%.2f"|format(item.subtotal) }}</div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="text-slate-400">{{ "%.1f"|format(item.commission_rate) }}% commission</div>
+                                        <div class="text-[11px] text-rose-400">-${{ "%.2f"|format(item.commission_amount) }}</div>
+                                    </td>
+                                    <td class="p-4 font-bold text-emerald-400 text-sm">
+                                        ${{ "%.2f"|format(item.vendor_earnings) }}
+                                    </td>
+                                    <td class="p-4">
+                                        <select onchange="updateFulfillmentStatus({{ item.id }}, this.value)" class="bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1 text-xs text-white focus:outline-none focus:border-indigo-500">
+                                            <option value="PENDING" {% if item.status.value == 'PENDING' %}selected{% endif %}>PENDING</option>
+                                            <option value="PROCESSING" {% if item.status.value == 'PROCESSING' %}selected{% endif %}>PROCESSING</option>
+                                            <option value="SHIPPED" {% if item.status.value == 'SHIPPED' %}selected{% endif %}>SHIPPED</option>
+                                            <option value="DELIVERED" {% if item.status.value == 'DELIVERED' %}selected{% endif %}>DELIVERED</option>
+                                            <option value="CANCELLED" {% if item.status.value == 'CANCELLED' %}selected{% endif %}>CANCELLED</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-slate-500">No sold order line items found yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function updateFulfillmentStatus(itemId, newStatus) {
+    try {
+        await window.Nexus.apiFetch(`/api/v1/orders/items/${itemId}/status`, {
+            method: "PUT",
+            body: JSON.stringify({ status: newStatus })
+        });
+        window.Nexus.showToast(`Order item updated to ${newStatus}`, "success");
+    } catch(err) {
+        window.Nexus.showToast(err.message, "error");
+    }
+}
+</script>
+{% endblock %}
