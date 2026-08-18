@@ -9,6 +9,8 @@ from app.core.database import Base, get_db
 from app.core.security import create_access_token, hash_password
 from app.main import app
 from app.models.category import Category
+from app.models.coupon import Coupon, DiscountType
+from app.models.coupon_usage import CouponUsage
 from app.models.plan import Plan
 from app.models.product import Product, ProductStatus
 from app.models.product_image import ProductImage
@@ -274,3 +276,44 @@ def test_product(db_session, test_vendor, test_category) -> Product:
     db_session.commit()
     db_session.refresh(prod)
     return prod
+
+
+@pytest.fixture
+def test_platform_coupon(db_session) -> Coupon:
+    """Create and return standard platform-wide coupon (15% off, max $30 cap, min $50 order)."""
+    coupon = Coupon(
+        code="PLATFORM15",
+        description="15% off platform wide",
+        discount_type=DiscountType.PERCENTAGE,
+        discount_value=15.00,
+        max_discount_amount=30.00,
+        min_order_amount=50.00,
+        usage_limit=100,
+        user_limit=2,
+        vendor_id=None,
+        is_active=True,
+    )
+    db_session.add(coupon)
+    db_session.commit()
+    db_session.refresh(coupon)
+    return coupon
+
+
+@pytest.fixture
+def test_vendor_coupon(db_session, test_vendor) -> Coupon:
+    """Create and return vendor-specific coupon ($20 fixed off, min $100 order)."""
+    coupon = Coupon(
+        code="BOB20OFF",
+        description="$20 off orders from Bob Tech Store",
+        discount_type=DiscountType.FIXED,
+        discount_value=20.00,
+        min_order_amount=100.00,
+        usage_limit=50,
+        user_limit=1,
+        vendor_id=test_vendor.id,
+        is_active=True,
+    )
+    db_session.add(coupon)
+    db_session.commit()
+    db_session.refresh(coupon)
+    return coupon

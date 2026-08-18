@@ -5,6 +5,7 @@ Business logic and service layer package.
 from app.services.admin import AdminService
 from app.services.auth import AuthService
 from app.services.category import CategoryService
+from app.services.coupon import CouponService
 from app.services.plan import PlanService
 from app.services.product import ProductService
 from app.services.subscription import SubscriptionService
@@ -20,4 +21,5 @@ __all__ = [
     "VendorService",
     "CategoryService",
     "ProductService",
+    "CouponService",
 ]

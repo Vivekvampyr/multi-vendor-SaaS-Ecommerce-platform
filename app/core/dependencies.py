@@ -58,6 +58,33 @@ def get_current_user(
     return user
 
 
+def get_optional_user(
+    token: Optional[str] = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> Optional[User]:
+    """
+    Optional authentication dependency.
+    Returns authenticated User if valid Bearer token provided, otherwise None.
+    """
+    if not token:
+        return None
+    try:
+        payload = decode_token(token)
+        if payload.get("type") != "access":
+            return None
+        subject = payload.get("sub")
+        if not subject:
+            return None
+        user_id = int(subject)
+        user_repo = UserRepository(db)
+        user = user_repo.get_by_id(user_id)
+        if user and user.is_active:
+            return user
+        return None
+    except Exception:
+        return None
+
+
 def get_current_active_user(
     current_user: User = Depends(get_current_user),
 ) -> User:

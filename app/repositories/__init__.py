@@ -3,6 +3,7 @@ Database repository layer package.
 """
 
 from app.repositories.category import CategoryRepository
+from app.repositories.coupon import CouponRepository
 from app.repositories.plan import PlanRepository
 from app.repositories.product import ProductImageRepository, ProductRepository
 from app.repositories.subscription import SubscriptionRepository
@@ -17,4 +18,5 @@ __all__ = [
     "CategoryRepository",
     "ProductRepository",
     "ProductImageRepository",
+    "CouponRepository",
 ]

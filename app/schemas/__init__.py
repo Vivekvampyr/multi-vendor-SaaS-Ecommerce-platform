@@ -24,6 +24,14 @@ from app.schemas.common import (
     HealthResponse,
     MessageResponse,
 )
+from app.schemas.coupon import (
+    CouponBase,
+    CouponCreate,
+    CouponOut,
+    CouponUpdate,
+    CouponValidateRequest,
+    CouponValidationResult,
+)
 from app.schemas.plan import PlanBase, PlanCreate, PlanOut, PlanUpdate
 from app.schemas.product import (
     ProductBase,
@@ -97,4 +105,10 @@ __all__ = [
     "ProductUpdate",
     "ProductOut",
     "ProductImageOut",
+    "CouponBase",
+    "CouponCreate",
+    "CouponUpdate",
+    "CouponOut",
+    "CouponValidateRequest",
+    "CouponValidationResult",
 ]
