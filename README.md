@@ -4,7 +4,7 @@ A production-oriented, scalable SaaS Multi-Vendor E-Commerce platform built with
 
 ---
 
-## 📌 Project Status: Phase 6 Active (Coupons, Discounts & Offers Completed)
+## 📌 Project Status: Phase 7 Active (Cart, Orders & Payments Completed)
 
 This project is built incrementally across clearly defined phases.
 * **Phase 1 (Project Foundation)**: Completed
@@ -13,7 +13,8 @@ This project is built incrementally across clearly defined phases.
 * **Phase 4 (Vendor Management)**: Completed
 * **Phase 5 (Product Management)**: Completed
 * **Phase 6 (Coupons, Discounts & Offers)**: Completed
-* **Next Phase**: **Phase 7 (Cart, Orders & Payments)**
+* **Phase 7 (Cart, Orders & Payments)**: Completed
+* **Next Phase**: **Phase 8 (Customer Features & Wishlist)**
 
 ---
 
@@ -31,6 +32,7 @@ This project is built incrementally across clearly defined phases.
 - **Vendor Store Subsystem**: Storefront profile customization, administrative verification status (`PENDING`, `APPROVED`, `REJECTED`, `SUSPENDED`), and unified vendor dashboard metrics
 - **Product & Catalog Subsystem**: Hierarchical categories, multi-image product catalog with local/cloud upload storage, SKU and inventory tracking, and dynamic SaaS plan listing limit enforcement
 - **Promotions & Discount Engine**: Platform-wide and vendor-scoped coupons, percentage & fixed amount calculation, maximum discount caps, minimum order value thresholds, date-range scheduling, and global/per-user usage limit tracking
+- **Multi-Vendor Cart, Orders & Settlement Engine**: Guest & customer shopping carts, stock checks, multi-vendor order checkout, plan-based platform commission calculation per item, vendor earnings ledger, simulated payment gateway integration, and line-item fulfillment tracking
 
 ### Frontend (Server-Side Rendered)
 - **Template Engine**: Jinja2
@@ -55,9 +57,11 @@ app/
 ├── models/
 │   ├── __init__.py           # Model exports for Alembic auto-discovery
 │   ├── base.py               # Declarative Base, BaseModel, and TimestampMixin
+│   ├── cart.py               # Cart & CartItem models
 │   ├── category.py           # Category model (hierarchical parent-child support)
 │   ├── coupon.py             # Coupon model (PERCENTAGE/FIXED, limits, vendor scope)
 │   ├── coupon_usage.py       # CouponUsage model (tracking user redemptions)
+│   ├── order.py              # Order & OrderItem models (OrderStatus, PaymentStatus)
 │   ├── plan.py               # SaaS Plan model (product listing limits & commission %)
 │   ├── product.py            # Product model (SKU, inventory, pricing, status)
 │   ├── product_image.py      # ProductImage model (multi-image, primary selector)
@@ -68,9 +72,11 @@ app/
 │   ├── __init__.py
 │   ├── admin.py              # AdminDashboardStats schema
 │   ├── auth.py               # UserLogin, TokenResponse, TokenRefresh schemas
+│   ├── cart.py               # CartItemAdd, CartItemOut, CartOut
 │   ├── category.py           # CategoryCreate, CategoryOut, CategoryUpdate
 │   ├── common.py             # Standardized APIResponse, ErrorResponse, HealthResponse
 │   ├── coupon.py             # CouponCreate, CouponOut, CouponValidateRequest, CouponValidationResult
+│   ├── order.py              # OrderCheckoutRequest, OrderOut, OrderItemOut, OrderPayRequest
 │   ├── plan.py               # PlanCreate, PlanOut, PlanUpdate schemas
 │   ├── product.py            # ProductCreate, ProductOut, ProductImageOut
 │   ├── subscription.py       # VendorSubscriptionOut, VendorPlanLimitsOut schemas
@@ -81,9 +87,11 @@ app/
 │   ├── admin.py              # Admin dashboard metrics and vendor store moderation
 │   ├── api_v1.py             # Main API v1 router aggregator
 │   ├── auth.py               # Auth endpoints (/register, /login, /refresh, /me)
+│   ├── cart.py               # Shopping cart management (/cart)
 │   ├── categories.py         # Category public catalog & admin CRUD (/categories)
 │   ├── coupons.py            # Coupon creation, management & validation (/coupons)
 │   ├── health.py             # Health check endpoints (/health, /api/v1/health)
+│   ├── orders.py             # Multi-vendor checkout, orders & payment processing (/orders)
 │   ├── plans.py              # SaaS Plan public catalog & admin CRUD (/plans)
 │   ├── products.py           # Product catalog, multi-image upload & management (/products)
 │   ├── subscriptions.py      # Vendor plan selection, limits, and cancellation
@@ -93,8 +101,10 @@ app/
 │   ├── __init__.py
 │   ├── admin.py              # Admin metrics aggregation service
 │   ├── auth.py               # AuthService (registration, auth, token generation)
+│   ├── cart.py               # CartService (cart items, stock checks)
 │   ├── category.py           # CategoryService (category lifecycle & validation)
 │   ├── coupon.py             # CouponService (promotions, limits & discount calculation)
+│   ├── order.py              # OrderService (checkout, commission splits, payments)
 │   ├── plan.py               # PlanService (plan creation, constraints, validation)
 │   ├── product.py            # ProductService (listing limit enforcement, multi-image)
 │   ├── subscription.py       # SubscriptionService (plan assignment, limits, lifecycle)
@@ -102,8 +112,10 @@ app/
 │   └── vendor.py             # VendorService (store setup, dashboard, admin review)
 ├── repositories/
 │   ├── __init__.py
+│   ├── cart.py               # CartRepository (CRUD for carts and items)
 │   ├── category.py           # CategoryRepository (CRUD for categories)
 │   ├── coupon.py             # CouponRepository (CRUD for coupons & usage logs)
+│   ├── order.py              # OrderRepository (CRUD for orders and line items)
 │   ├── plan.py               # PlanRepository (CRUD for SaaS plans)
 │   ├── product.py            # ProductRepository & ProductImageRepository
 │   ├── subscription.py       # SubscriptionRepository (CRUD for vendor subscriptions)
@@ -132,9 +144,10 @@ alembic/                      # Alembic database migrations
     ├── 2026_08_18_0002_create_plans_and_subscriptions.py
     ├── 2026_08_18_0003_create_vendor_profiles_table.py
     ├── 2026_08_18_0004_create_categories_products_images_tables.py
-    └── 2026_08_18_0005_create_coupons_and_usage_tables.py
+    ├── 2026_08_18_0005_create_coupons_and_usage_tables.py
+    └── 2026_08_18_0006_create_cart_and_orders_tables.py
 
-tests/                        # Automated test suite (80 tests passing)
+tests/                        # Automated test suite (86 tests passing)
 ├── __init__.py
 ├── conftest.py               # Fixtures, test database, and role-based test tokens
 ├── test_admin.py             # Admin metrics and manual assignment tests
@@ -142,6 +155,7 @@ tests/                        # Automated test suite (80 tests passing)
 ├── test_config_and_errors.py
 ├── test_coupons.py           # Coupon creation, isolation, limits, and calculation tests
 ├── test_health.py
+├── test_orders.py            # Cart, checkout, multi-vendor splits & payment tests
 ├── test_plans.py             # Plan CRUD, validation, and permissions tests
 ├── test_products.py          # Category, Product, Multi-Image, and Plan Limit tests
 ├── test_rbac.py              # Role permissions & ownership tests
@@ -205,17 +219,27 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 ---
 
-## 🔑 Phase 6 API Endpoints
+## 🔑 Phase 7 API Endpoints
 
-### Coupons & Discount Calculation (`/api/v1/coupons`)
+### Shopping Cart (`/api/v1/cart`)
 | Method | Endpoint | Description | Access |
 |---|---|---|---|
-| `POST` | `/api/v1/coupons` | Create coupon (Admin: platform-wide; Vendor: store-scoped) | `ADMIN` / `VENDOR` |
-| `GET` | `/api/v1/coupons` | List coupons (Admin sees all; Vendor sees own) | `ADMIN` / `VENDOR` |
-| `GET` | `/api/v1/coupons/{id}` | Get coupon details | Owner / `ADMIN` |
-| `PUT` | `/api/v1/coupons/{id}` | Update coupon promotion rules/limits | Owner / `ADMIN` |
-| `DELETE` | `/api/v1/coupons/{id}` | Delete coupon | Owner / `ADMIN` |
-| `POST` | `/api/v1/coupons/validate` | Validate coupon code & calculate real-time discount | Public / Customer |
+| `GET` | `/api/v1/cart` | Get shopping cart contents & subtotal | Public / Customer |
+| `POST` | `/api/v1/cart/items` | Add product to cart (checks inventory stock) | Public / Customer |
+| `PUT` | `/api/v1/cart/items/{id}` | Update line item quantity | Public / Customer |
+| `DELETE` | `/api/v1/cart/items/{id}` | Remove line item | Public / Customer |
+| `DELETE` | `/api/v1/cart` | Clear entire shopping cart | Public / Customer |
+
+### Orders & Checkout (`/api/v1/orders`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `POST` | `/api/v1/orders/checkout` | Checkout cart into multi-vendor order | `CUSTOMER` only |
+| `POST` | `/api/v1/orders/{id}/pay` | Simulate payment execution (`SUCCESS`/`FAILED`) | `CUSTOMER` only |
+| `GET` | `/api/v1/orders/my-orders` | Customer order history | `CUSTOMER` only |
+| `GET` | `/api/v1/orders/vendor/my-orders` | Vendor sold items & earnings ledger | `VENDOR` only |
+| `GET` | `/api/v1/orders/{id}` | Retrieve order details & line items | Owner / Vendor / Admin |
+| `PUT` | `/api/v1/orders/items/{id}/status` | Update fulfillment status (`PROCESSING`, `SHIPPED`, `DELIVERED`) | Vendor owner / Admin |
+| `GET` | `/api/v1/orders/admin/all` | List all platform orders | `ADMIN` only |
 
 ---
 
@@ -224,10 +248,10 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```bash
 pytest -v
 ```
-*(All 80 unit and integration tests passing)*
+*(All 86 unit and integration tests passing)*
 
 ---
 
 ## 🔜 Next Step
 
-* **PHASE 7 — Cart, Orders & Payments** (Shopping Cart model, Cart Item model, Order model with OrderStatus enum, OrderItem model with snapshot pricing, Vendor earnings & Platform commission splits calculation per item, Stripe/Razorpay mock integration, and Order status lifecycle management).
+* **PHASE 8 — Customer Features & Wishlist** (Wishlist & WishlistItem models, Add/Remove products to wishlist, Customer Saved Addresses, Customer product reviews & ratings with verified purchase checks).

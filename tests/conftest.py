@@ -8,9 +8,11 @@ from starlette.testclient import TestClient
 from app.core.database import Base, get_db
 from app.core.security import create_access_token, hash_password
 from app.main import app
+from app.models.cart import Cart, CartItem
 from app.models.category import Category
 from app.models.coupon import Coupon, DiscountType
 from app.models.coupon_usage import CouponUsage
+from app.models.order import Order, OrderItem, OrderStatus, PaymentStatus
 from app.models.plan import Plan
 from app.models.product import Product, ProductStatus
 from app.models.product_image import ProductImage
