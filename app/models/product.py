@@ -60,6 +60,12 @@ class Product(BaseModel):
         cascade="all, delete-orphan",
         order_by="ProductImage.display_order.asc()",
     )
+    reviews = relationship(
+        "Review",
+        back_populates="product",
+        cascade="all, delete-orphan",
+        order_by="Review.id.desc()",
+    )
 
     def __repr__(self) -> str:
         return f"<Product(id={self.id}, name='{self.name}', sku='{self.sku}', price={self.price})>"

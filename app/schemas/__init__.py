@@ -2,6 +2,12 @@
 Pydantic validation and serialization schemas.
 """
 
+from app.schemas.address import (
+    AddressBase,
+    AddressCreate,
+    AddressOut,
+    AddressUpdate,
+)
 from app.schemas.admin import AdminDashboardStats
 from app.schemas.auth import (
     TokenPayload,
@@ -53,6 +59,12 @@ from app.schemas.product import (
     ProductOut,
     ProductUpdate,
 )
+from app.schemas.review import (
+    ProductReviewSummary,
+    ReviewCreate,
+    ReviewOut,
+    ReviewUpdate,
+)
 from app.schemas.subscription import (
     VendorPlanAssignRequest,
     VendorPlanLimitsOut,
@@ -74,6 +86,10 @@ from app.schemas.vendor import (
     VendorProfileOut,
     VendorProfileUpdate,
     VendorStatusUpdate,
+)
+from app.schemas.wishlist import (
+    WishlistItemAdd,
+    WishlistItemOut,
 )
 
 __all__ = [
@@ -133,4 +149,14 @@ __all__ = [
     "OrderItemStatusUpdate",
     "OrderOut",
     "OrderItemOut",
+    "WishlistItemAdd",
+    "WishlistItemOut",
+    "AddressBase",
+    "AddressCreate",
+    "AddressUpdate",
+    "AddressOut",
+    "ReviewCreate",
+    "ReviewUpdate",
+    "ReviewOut",
+    "ProductReviewSummary",
 ]

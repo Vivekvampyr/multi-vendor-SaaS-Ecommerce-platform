@@ -4,7 +4,7 @@ A production-oriented, scalable SaaS Multi-Vendor E-Commerce platform built with
 
 ---
 
-## 📌 Project Status: Phase 7 Active (Cart, Orders & Payments Completed)
+## 📌 Project Status: Phase 8 Active (Customer Features & Wishlist Completed)
 
 This project is built incrementally across clearly defined phases.
 * **Phase 1 (Project Foundation)**: Completed
@@ -14,7 +14,8 @@ This project is built incrementally across clearly defined phases.
 * **Phase 5 (Product Management)**: Completed
 * **Phase 6 (Coupons, Discounts & Offers)**: Completed
 * **Phase 7 (Cart, Orders & Payments)**: Completed
-* **Next Phase**: **Phase 8 (Customer Features & Wishlist)**
+* **Phase 8 (Customer Features & Wishlist)**: Completed
+* **Next Phase**: **Phase 9 (Real-time Live Chat Subsystem)**
 
 ---
 
@@ -33,6 +34,7 @@ This project is built incrementally across clearly defined phases.
 - **Product & Catalog Subsystem**: Hierarchical categories, multi-image product catalog with local/cloud upload storage, SKU and inventory tracking, and dynamic SaaS plan listing limit enforcement
 - **Promotions & Discount Engine**: Platform-wide and vendor-scoped coupons, percentage & fixed amount calculation, maximum discount caps, minimum order value thresholds, date-range scheduling, and global/per-user usage limit tracking
 - **Multi-Vendor Cart, Orders & Settlement Engine**: Guest & customer shopping carts, stock checks, multi-vendor order checkout, plan-based platform commission calculation per item, vendor earnings ledger, simulated payment gateway integration, and line-item fulfillment tracking
+- **Customer Experience & Social Proof Engine**: Customer product wishlists, saved multi-address management with default designation, and product star ratings (1-5) with automated verified buyer purchase history verification
 
 ### Frontend (Server-Side Rendered)
 - **Template Engine**: Jinja2
@@ -56,6 +58,7 @@ app/
 │   └── security.py           # bcrypt password hashing and JWT token handlers
 ├── models/
 │   ├── __init__.py           # Model exports for Alembic auto-discovery
+│   ├── address.py            # Address model & AddressType enum (HOME, WORK, OTHER)
 │   ├── base.py               # Declarative Base, BaseModel, and TimestampMixin
 │   ├── cart.py               # Cart & CartItem models
 │   ├── category.py           # Category model (hierarchical parent-child support)
@@ -65,11 +68,14 @@ app/
 │   ├── plan.py               # SaaS Plan model (product listing limits & commission %)
 │   ├── product.py            # Product model (SKU, inventory, pricing, status)
 │   ├── product_image.py      # ProductImage model (multi-image, primary selector)
+│   ├── review.py             # Review model (ratings, verified buyer badges)
 │   ├── subscription.py       # VendorSubscription model (status, lifecycle, duration)
 │   ├── user.py               # User model & UserRole enum (ADMIN, VENDOR, CUSTOMER)
-│   └── vendor.py             # VendorProfile model & VendorStatus enum
+│   ├── vendor.py             # VendorProfile model & VendorStatus enum
+│   └── wishlist.py           # WishlistItem model (user saved products)
 ├── schemas/
 │   ├── __init__.py
+│   ├── address.py            # AddressCreate, AddressOut, AddressUpdate schemas
 │   ├── admin.py              # AdminDashboardStats schema
 │   ├── auth.py               # UserLogin, TokenResponse, TokenRefresh schemas
 │   ├── cart.py               # CartItemAdd, CartItemOut, CartOut
@@ -79,11 +85,14 @@ app/
 │   ├── order.py              # OrderCheckoutRequest, OrderOut, OrderItemOut, OrderPayRequest
 │   ├── plan.py               # PlanCreate, PlanOut, PlanUpdate schemas
 │   ├── product.py            # ProductCreate, ProductOut, ProductImageOut
+│   ├── review.py             # ReviewCreate, ReviewOut, ProductReviewSummary
 │   ├── subscription.py       # VendorSubscriptionOut, VendorPlanLimitsOut schemas
 │   ├── user.py               # UserCreate, UserOut, UserUpdate, UserPasswordUpdate
-│   └── vendor.py             # VendorProfileCreate, VendorProfileOut, VendorDashboardOverview
+│   ├── vendor.py             # VendorProfileCreate, VendorProfileOut, VendorDashboardOverview
+│   └── wishlist.py           # WishlistItemAdd, WishlistItemOut
 ├── routers/
 │   ├── __init__.py
+│   ├── addresses.py          # Saved Customer Addresses API (/addresses)
 │   ├── admin.py              # Admin dashboard metrics and vendor store moderation
 │   ├── api_v1.py             # Main API v1 router aggregator
 │   ├── auth.py               # Auth endpoints (/register, /login, /refresh, /me)
@@ -94,11 +103,14 @@ app/
 │   ├── orders.py             # Multi-vendor checkout, orders & payment processing (/orders)
 │   ├── plans.py              # SaaS Plan public catalog & admin CRUD (/plans)
 │   ├── products.py           # Product catalog, multi-image upload & management (/products)
+│   ├── reviews.py            # Product Reviews & Ratings API (/reviews & /products/{id}/reviews)
 │   ├── subscriptions.py      # Vendor plan selection, limits, and cancellation
 │   ├── user.py               # User management endpoints (/users/me, /users)
-│   └── vendors.py            # Vendor storefront, profile, and dashboard (/vendors)
+│   ├── vendors.py            # Vendor storefront, profile, and dashboard (/vendors)
+│   └── wishlist.py           # Customer Wishlist API (/wishlist)
 ├── services/
 │   ├── __init__.py
+│   ├── address.py            # AddressService (address CRUD, default switching)
 │   ├── admin.py              # Admin metrics aggregation service
 │   ├── auth.py               # AuthService (registration, auth, token generation)
 │   ├── cart.py               # CartService (cart items, stock checks)
@@ -107,20 +119,25 @@ app/
 │   ├── order.py              # OrderService (checkout, commission splits, payments)
 │   ├── plan.py               # PlanService (plan creation, constraints, validation)
 │   ├── product.py            # ProductService (listing limit enforcement, multi-image)
+│   ├── review.py             # ReviewService (ratings, verified checks, statistical aggregation)
 │   ├── subscription.py       # SubscriptionService (plan assignment, limits, lifecycle)
 │   ├── user.py               # UserService (profile updates, password change)
-│   └── vendor.py             # VendorService (store setup, dashboard, admin review)
+│   ├── vendor.py             # VendorService (store setup, dashboard, admin review)
+│   └── wishlist.py           # WishlistService (wishlist items, availability)
 ├── repositories/
 │   ├── __init__.py
+│   ├── address.py            # AddressRepository (CRUD for customer addresses)
 │   ├── cart.py               # CartRepository (CRUD for carts and items)
 │   ├── category.py           # CategoryRepository (CRUD for categories)
 │   ├── coupon.py             # CouponRepository (CRUD for coupons & usage logs)
 │   ├── order.py              # OrderRepository (CRUD for orders and line items)
 │   ├── plan.py               # PlanRepository (CRUD for SaaS plans)
 │   ├── product.py            # ProductRepository & ProductImageRepository
+│   ├── review.py             # ReviewRepository (reviews, purchase checks, rating statistics)
 │   ├── subscription.py       # SubscriptionRepository (CRUD for vendor subscriptions)
 │   ├── user.py               # UserRepository (CRUD for User)
-│   └── vendor.py             # VendorRepository (CRUD for VendorProfile)
+│   ├── vendor.py             # VendorRepository (CRUD for VendorProfile)
+│   └── wishlist.py           # WishlistRepository (CRUD for wishlist items)
 ├── templates/
 │   ├── base.html             # Main Jinja2 layout with Tailwind CSS
 │   └── index.html            # Foundation status view
@@ -145,15 +162,17 @@ alembic/                      # Alembic database migrations
     ├── 2026_08_18_0003_create_vendor_profiles_table.py
     ├── 2026_08_18_0004_create_categories_products_images_tables.py
     ├── 2026_08_18_0005_create_coupons_and_usage_tables.py
-    └── 2026_08_18_0006_create_cart_and_orders_tables.py
+    ├── 2026_08_18_0006_create_cart_and_orders_tables.py
+    └── 2026_08_18_0007_create_customer_features_tables.py
 
-tests/                        # Automated test suite (86 tests passing)
+tests/                        # Automated test suite (90 tests passing)
 ├── __init__.py
 ├── conftest.py               # Fixtures, test database, and role-based test tokens
 ├── test_admin.py             # Admin metrics and manual assignment tests
 ├── test_auth.py              # Auth & token lifecycle tests
 ├── test_config_and_errors.py
 ├── test_coupons.py           # Coupon creation, isolation, limits, and calculation tests
+├── test_customer_features.py # Wishlist, Address, and Verified Review tests
 ├── test_health.py
 ├── test_orders.py            # Cart, checkout, multi-vendor splits & payment tests
 ├── test_plans.py             # Plan CRUD, validation, and permissions tests
@@ -219,27 +238,31 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 ---
 
-## 🔑 Phase 7 API Endpoints
+## 🔑 Phase 8 API Endpoints
 
-### Shopping Cart (`/api/v1/cart`)
+### Customer Wishlist (`/api/v1/wishlist`)
 | Method | Endpoint | Description | Access |
 |---|---|---|---|
-| `GET` | `/api/v1/cart` | Get shopping cart contents & subtotal | Public / Customer |
-| `POST` | `/api/v1/cart/items` | Add product to cart (checks inventory stock) | Public / Customer |
-| `PUT` | `/api/v1/cart/items/{id}` | Update line item quantity | Public / Customer |
-| `DELETE` | `/api/v1/cart/items/{id}` | Remove line item | Public / Customer |
-| `DELETE` | `/api/v1/cart` | Clear entire shopping cart | Public / Customer |
+| `GET` | `/api/v1/wishlist` | List customer wishlist products | `CUSTOMER` only |
+| `POST` | `/api/v1/wishlist` | Add product to wishlist | `CUSTOMER` only |
+| `DELETE` | `/api/v1/wishlist/{product_id}` | Remove product from wishlist | `CUSTOMER` only |
 
-### Orders & Checkout (`/api/v1/orders`)
+### Saved Customer Addresses (`/api/v1/addresses`)
 | Method | Endpoint | Description | Access |
 |---|---|---|---|
-| `POST` | `/api/v1/orders/checkout` | Checkout cart into multi-vendor order | `CUSTOMER` only |
-| `POST` | `/api/v1/orders/{id}/pay` | Simulate payment execution (`SUCCESS`/`FAILED`) | `CUSTOMER` only |
-| `GET` | `/api/v1/orders/my-orders` | Customer order history | `CUSTOMER` only |
-| `GET` | `/api/v1/orders/vendor/my-orders` | Vendor sold items & earnings ledger | `VENDOR` only |
-| `GET` | `/api/v1/orders/{id}` | Retrieve order details & line items | Owner / Vendor / Admin |
-| `PUT` | `/api/v1/orders/items/{id}/status` | Update fulfillment status (`PROCESSING`, `SHIPPED`, `DELIVERED`) | Vendor owner / Admin |
-| `GET` | `/api/v1/orders/admin/all` | List all platform orders | `ADMIN` only |
+| `GET` | `/api/v1/addresses` | List saved addresses | Authenticated User |
+| `POST` | `/api/v1/addresses` | Add new saved address | Authenticated User |
+| `PUT` | `/api/v1/addresses/{id}` | Update address details | Owner / Admin |
+| `PUT` | `/api/v1/addresses/{id}/default` | Set address as primary default | Owner / Admin |
+| `DELETE` | `/api/v1/addresses/{id}` | Delete saved address | Owner / Admin |
+
+### Product Reviews & Ratings (`/api/v1/reviews` & `/api/v1/products/{id}/reviews`)
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| `GET` | `/api/v1/products/{id}/reviews` | Get reviews & 1-5 star statistical rating breakdown | Public |
+| `POST` | `/api/v1/products/{id}/reviews` | Submit product review (with verified buyer check) | `CUSTOMER` only |
+| `PUT` | `/api/v1/reviews/{id}` | Update existing review | Owner / Admin |
+| `DELETE` | `/api/v1/reviews/{id}` | Delete review | Owner / Admin |
 
 ---
 
@@ -248,10 +271,10 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```bash
 pytest -v
 ```
-*(All 86 unit and integration tests passing)*
+*(All 90 unit and integration tests passing)*
 
 ---
 
 ## 🔜 Next Step
 
-* **PHASE 8 — Customer Features & Wishlist** (Wishlist & WishlistItem models, Add/Remove products to wishlist, Customer Saved Addresses, Customer product reviews & ratings with verified purchase checks).
+* **PHASE 9 — Real-time Live Chat Subsystem** (WebSocket connection manager, `ChatMessage` entity, bidirectional live messaging between customers and store vendors, unread message badges, and conversation history).
