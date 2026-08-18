@@ -248,23 +248,35 @@ html.light #chat-window {
   justify-content: flex-end;
 }
 
-/* Theme Toggle Button Hover Glow */
+/* Theme Toggle Button */
 .theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.theme-toggle-btn:hover {
-  transform: rotate(15deg) scale(1.05);
+.theme-toggle-btn svg {
+  pointer-events: none;
 }
 
-html.dark .theme-toggle-btn:hover {
-  border-color: rgba(132, 204, 22, 0.4);
-  box-shadow: 0 0 15px rgba(132, 204, 22, 0.3);
-}
+@media (hover: hover) and (pointer: fine) {
+  .theme-toggle-btn:hover {
+    transform: rotate(15deg) scale(1.05);
+  }
 
-html.light .theme-toggle-btn:hover {
-  border-color: #84cc16;
-  box-shadow: 0 0 10px rgba(132, 204, 22, 0.2);
+  html.dark .theme-toggle-btn:hover {
+    border-color: rgba(132, 204, 22, 0.4);
+    box-shadow: 0 0 15px rgba(132, 204, 22, 0.3);
+  }
+
+  html.light .theme-toggle-btn:hover {
+    border-color: #84cc16;
+    box-shadow: 0 0 10px rgba(132, 204, 22, 0.2);
+  }
 }
 
 /* User Navbar Dropdown Menu Bridge & Click-Open Support */

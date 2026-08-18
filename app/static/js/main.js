@@ -136,7 +136,11 @@ window.Nexus = {
     this.updateThemeIcons(saved);
   },
 
-  toggleTheme: function () {
+  toggleTheme: function (e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     const isDark = document.documentElement.classList.contains("dark");
     const next = isDark ? "light" : "dark";
     if (next === "dark") {
@@ -153,12 +157,16 @@ window.Nexus = {
   updateThemeIcons: function (theme) {
     const sunIcons = document.querySelectorAll(".theme-icon-sun");
     const moonIcons = document.querySelectorAll(".theme-icon-moon");
+    const themeTextEls = document.querySelectorAll(".theme-text-indicator");
+
     if (theme === "dark") {
       sunIcons.forEach((el) => el.classList.remove("hidden"));
       moonIcons.forEach((el) => el.classList.add("hidden"));
+      themeTextEls.forEach((el) => (el.textContent = "Switch to Light"));
     } else {
       sunIcons.forEach((el) => el.classList.add("hidden"));
       moonIcons.forEach((el) => el.classList.remove("hidden"));
+      themeTextEls.forEach((el) => (el.textContent = "Switch to Dark"));
     }
   },
 
@@ -174,7 +182,11 @@ window.Nexus = {
   },
 
   // Mobile Navigation Drawer Toggle
-  toggleMobileDrawer: function () {
+  toggleMobileDrawer: function (e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     const drawer = document.getElementById("mobile-drawer");
     const backdrop = document.getElementById("mobile-drawer-backdrop");
     if (!drawer) return;
