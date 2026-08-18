@@ -29,19 +29,23 @@ class CartRepository:
                 joinedload(Cart.items).joinedload(CartItem.product).joinedload(Product.images),
             )
             .where(Cart.user_id == user_id)
+            .order_by(Cart.id.desc())
         )
-        return self.db.execute(stmt).unique().scalar_one_or_none()
+        return self.db.execute(stmt).unique().scalars().first()
 
     def get_by_session(self, session_token: str) -> Optional[Cart]:
         """Fetch guest cart by session token."""
+        if not session_token:
+            return None
         stmt = (
             select(Cart)
             .options(
                 joinedload(Cart.items).joinedload(CartItem.product).joinedload(Product.images),
             )
             .where(Cart.session_token == session_token)
+            .order_by(Cart.id.desc())
         )
-        return self.db.execute(stmt).unique().scalar_one_or_none()
+        return self.db.execute(stmt).unique().scalars().first()
 
     def get_or_create(self, user_id: Optional[int] = None, session_token: Optional[str] = None) -> Cart:
         """Fetch existing cart or create a new one."""

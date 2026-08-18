@@ -4,97 +4,670 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-    <div class="flex items-center justify-between">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-2xl font-black text-white">Platform Administration</h1>
-            <p class="text-xs text-slate-400 mt-1">Global platform metrics, SaaS subscriptions, and merchant store moderation</p>
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-semibold mb-2">
+                <span>⚡ Platform Superadmin Control</span>
+            </div>
+            <h1 class="text-3xl font-black text-white">Platform Administration</h1>
+            <p class="text-xs text-slate-400 mt-1">Manage vendor store approvals, SaaS subscription tiers, and platform promotional coupons</p>
         </div>
-        <a href="/docs" target="_blank" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold rounded-xl transition-colors">
-            📑 Open Swagger API Docs
-        </a>
+        <div class="flex items-center space-x-3">
+            <a href="/docs" target="_blank" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-indigo-300 text-xs font-semibold rounded-xl transition-colors">
+                📑 Swagger API Docs
+            </a>
+        </div>
     </div>
 
-    <!-- KPI Metric Cards -->
+    <!-- Platform KPI Analytics Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
             <span class="text-xs text-slate-400 font-semibold">Total Registered Users</span>
-            <div class="mt-2 text-2xl font-black text-white">{{ stats.total_users if stats else 0 }}</div>
+            <div class="mt-2 flex items-baseline justify-between">
+                <span class="text-3xl font-black text-white">{{ stats.total_users }}</span>
+                <span class="text-[11px] text-slate-400">{{ stats.total_customers }} buyers • {{ stats.total_vendors }} merchants</span>
+            </div>
         </div>
 
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-            <span class="text-xs text-slate-400 font-semibold">Active Store Vendors</span>
-            <div class="mt-2 text-2xl font-black text-indigo-400">{{ stats.total_vendors if stats else 0 }}</div>
+            <span class="text-xs text-slate-400 font-semibold">Active Vendor Stores</span>
+            <div class="mt-2 flex items-baseline justify-between">
+                <span class="text-3xl font-black text-indigo-400">{{ stats.total_vendors }}</span>
+                <span class="text-[11px] text-slate-400">{{ vendors|length }} total profiles</span>
+            </div>
         </div>
 
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-            <span class="text-xs text-slate-400 font-semibold">Total Listed Products</span>
-            <div class="mt-2 text-2xl font-black text-white">{{ stats.total_products if stats else 0 }}</div>
+            <span class="text-xs text-slate-400 font-semibold">SaaS Subscriptions</span>
+            <div class="mt-2 flex items-baseline justify-between">
+                <span class="text-3xl font-black text-emerald-400">{{ stats.active_subscriptions }}</span>
+                <span class="text-[11px] text-slate-400">{{ stats.total_plans }} available plans</span>
+            </div>
         </div>
 
         <div class="glass-panel p-5 rounded-2xl border border-slate-800">
-            <span class="text-xs text-slate-400 font-semibold">Active SaaS Subscriptions</span>
-            <div class="mt-2 text-2xl font-black text-emerald-400">{{ stats.active_subscriptions if stats else 0 }}</div>
+            <span class="text-xs text-slate-400 font-semibold">Platform Coupons</span>
+            <div class="mt-2 flex items-baseline justify-between">
+                <span class="text-3xl font-black text-pink-400">{{ coupons|length }}</span>
+                <span class="text-[11px] text-slate-400">Promotions active</span>
+            </div>
         </div>
     </div>
 
-    <!-- Vendor Stores Moderation Table -->
-    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
-        <h2 class="text-lg font-bold text-white">Vendor Stores Moderation</h2>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-                <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
-                    <tr>
-                        <th class="p-4">Merchant Name</th>
-                        <th class="p-4">Store Name</th>
-                        <th class="p-4">Verification Status</th>
-                        <th class="p-4">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-800/60 text-slate-300">
-                    {% for v in vendors %}
-                        <tr class="hover:bg-slate-800/30 transition-colors" id="vendor-row-{{ v.id }}">
-                            <td class="p-4 font-bold text-white">{{ v.user.full_name if v.user else 'Vendor #' ~ v.user_id }}</td>
-                            <td class="p-4 text-indigo-300 font-semibold">{{ v.store_name }}</td>
-                            <td class="p-4">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if v.status.value == 'APPROVED' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% elif v.status.value == 'PENDING' %}bg-amber-500/20 text-amber-300 border border-amber-500/30{% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
-                                    {{ v.status.value }}
-                                </span>
-                            </td>
-                            <td class="p-4 space-x-2">
-                                {% if v.status.value != 'APPROVED' %}
-                                    <button onclick="updateVendorStatus({{ v.id }}, 'APPROVED')" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold text-[11px] transition-colors">
-                                        Approve
-                                    </button>
-                                {% endif %}
-                                {% if v.status.value != 'SUSPENDED' %}
-                                    <button onclick="updateVendorStatus({{ v.id }}, 'SUSPENDED')" class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-semibold text-[11px] transition-colors">
-                                        Suspend
-                                    </button>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% else %}
+    <!-- Interactive Section Tabs Navigation -->
+    <div class="flex border-b border-slate-800 space-x-2 sm:space-x-4 overflow-x-auto pb-1">
+        <button onclick="switchTab('vendors')" id="tab-btn-vendors" class="admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl bg-indigo-600 text-white transition-all flex items-center space-x-2">
+            <span>🏪 Vendor Shops</span>
+            <span class="px-2 py-0.5 rounded-full bg-indigo-800 text-[10px]">{{ vendors|length }}</span>
+        </button>
+
+        <button onclick="switchTab('plans')" id="tab-btn-plans" class="admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center space-x-2">
+            <span>💳 SaaS Plans</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px]">{{ plans|length }}</span>
+        </button>
+
+        <button onclick="switchTab('coupons')" id="tab-btn-coupons" class="admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center space-x-2">
+            <span>🏷️ Coupons</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px]">{{ coupons|length }}</span>
+        </button>
+
+        <button onclick="switchTab('subscriptions')" id="tab-btn-subscriptions" class="admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center space-x-2">
+            <span>⚡ Vendor Subscriptions</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px]">{{ subscriptions|length }}</span>
+        </button>
+    </div>
+
+    <!-- =======================================================================
+         TAB 1: VENDOR SHOPS MODERATION
+         ======================================================================= -->
+    <div id="tab-content-vendors" class="space-y-4">
+        <div class="flex items-center justify-between">
+            <h2 class="text-lg font-bold text-white">Merchant Stores & Moderation</h2>
+            <span class="text-xs text-slate-400">Review vendor applications, approve storefronts, or suspend access</span>
+        </div>
+
+        <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
                         <tr>
-                            <td colspan="4" class="p-8 text-center text-slate-500">No merchant vendor profiles found.</td>
+                            <th class="p-4">Merchant & User ID</th>
+                            <th class="p-4">Store Name & Slug</th>
+                            <th class="p-4">Storefront Link</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">Actions</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                        {% for v in vendors %}
+                            <tr class="hover:bg-slate-800/30 transition-colors" id="vendor-row-{{ v.user_id }}">
+                                <td class="p-4">
+                                    <div class="font-bold text-white text-sm">{{ v.user.full_name if v.user else 'Vendor' }}</div>
+                                    <div class="text-[11px] text-slate-400">{{ v.user.email if v.user else '' }} (ID: {{ v.user_id }})</div>
+                                </td>
+                                <td class="p-4">
+                                    <div class="font-semibold text-indigo-300">{{ v.store_name }}</div>
+                                    <div class="text-[11px] text-slate-500">{{ v.slug }}</div>
+                                </td>
+                                <td class="p-4">
+                                    <a href="/stores/{{ v.slug }}" target="_blank" class="text-indigo-400 hover:text-indigo-300 underline font-medium">
+                                        /stores/{{ v.slug }} ↗
+                                    </a>
+                                </td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if v.status.value == 'APPROVED' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% elif v.status.value == 'PENDING' %}bg-amber-500/20 text-amber-300 border border-amber-500/30{% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
+                                        {{ v.status.value }}
+                                    </span>
+                                </td>
+                                <td class="p-4">
+                                    <div class="flex items-center space-x-2">
+                                        {% if v.status.value != 'APPROVED' %}
+                                            <button onclick="updateVendorStatus({{ v.user_id }}, 'APPROVED')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-[11px] transition-colors shadow-sm">
+                                                ✓ Approve
+                                            </button>
+                                        {% endif %}
+                                        {% if v.status.value != 'SUSPENDED' %}
+                                            <button onclick="updateVendorStatus({{ v.user_id }}, 'SUSPENDED')" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold text-[11px] transition-colors shadow-sm">
+                                                ✕ Suspend
+                                            </button>
+                                        {% endif %}
+                                        <button onclick="openAssignPlanModal({{ v.user_id }}, '{{ v.store_name }}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-300 rounded-xl font-semibold text-[11px] transition-colors">
+                                            Assign Plan
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-slate-500">No merchant vendor profiles registered yet.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================================
+         TAB 2: SAAS SUBSCRIPTION PLANS
+         ======================================================================= -->
+    <div id="tab-content-plans" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-white">SaaS Pricing Plans</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Configure vendor tiers, product listing limits, and platform commissions</p>
+            </div>
+            <button onclick="document.getElementById('create-plan-modal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                + Create New Plan
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {% for p in plans %}
+                <div class="glass-panel p-6 rounded-3xl border border-slate-800 flex flex-col justify-between space-y-4 {% if not p.is_active %}opacity-60{% endif %}" id="plan-card-{{ p.id }}">
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-black text-lg text-white">{{ p.name }}</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if p.is_active %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}bg-slate-800 text-slate-400{% endif %}">
+                                {% if p.is_active %}ACTIVE{% else %}DISABLED{% endif %}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1 line-clamp-2">{{ p.description or 'No description' }}</p>
+
+                        <div class="mt-4 flex items-baseline space-x-1">
+                            <span class="text-3xl font-extrabold text-white">${{ "%.2f"|format(p.price) }}</span>
+                            <span class="text-xs text-slate-400">/ month</span>
+                        </div>
+
+                        <ul class="mt-4 space-y-2 text-xs text-slate-300">
+                            <li class="flex items-center space-x-2">
+                                <span class="text-emerald-400 font-bold">✓</span>
+                                <span>Max <strong>{{ p.max_products }}</strong> Product Listings</span>
+                            </li>
+                            <li class="flex items-center space-x-2">
+                                <span class="text-emerald-400 font-bold">✓</span>
+                                <span>Platform Commission: <strong>{{ "%.1f"|format(p.commission_rate) }}%</strong></span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800 flex items-center justify-between">
+                        <button onclick="openEditPlanModal({{ p.id }}, '{{ p.name }}', {{ p.price }}, {{ p.max_products }}, {{ p.commission_rate }}, '{{ p.description or '' }}', {{ 'true' if p.is_active else 'false' }})" class="px-3 py-1.5 bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 rounded-xl text-xs font-semibold transition-colors">
+                            ✏️ Edit Plan
+                        </button>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full py-12 text-center text-slate-500 text-xs glass-panel rounded-3xl">
+                    No SaaS plans found. Click "+ Create New Plan" to add one.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- =======================================================================
+         TAB 3: PROMOTIONAL COUPONS
+         ======================================================================= -->
+    <div id="tab-content-coupons" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-white">Platform & Store Coupons</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Manage global discount codes and vendor promotions</p>
+            </div>
+            <button onclick="document.getElementById('create-admin-coupon-modal').classList.remove('hidden')" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                + Create Coupon
+            </button>
+        </div>
+
+        <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
+                        <tr>
+                            <th class="p-4">Coupon Code</th>
+                            <th class="p-4">Discount Value</th>
+                            <th class="p-4">Scope</th>
+                            <th class="p-4">Redemptions</th>
+                            <th class="p-4">Min Order</th>
+                            <th class="p-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                        {% for c in coupons %}
+                            <tr class="hover:bg-slate-800/30 transition-colors">
+                                <td class="p-4 font-mono font-bold text-indigo-300 text-sm">{{ c.code }}</td>
+                                <td class="p-4 font-bold text-white">
+                                    {% if c.discount_type.value == 'PERCENTAGE' %}
+                                        {{ "%.1f"|format(c.discount_value) }}% OFF
+                                    {% else %}
+                                        ${{ "%.2f"|format(c.discount_value) }} OFF
+                                    {% endif %}
+                                </td>
+                                <td class="p-4">
+                                    {% if c.vendor_id %}
+                                        <span class="text-slate-300">Vendor #{{ c.vendor_id }}</span>
+                                    {% else %}
+                                        <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold text-[10px]">PLATFORM-WIDE</span>
+                                    {% endif %}
+                                </td>
+                                <td class="p-4">{{ c.used_count }} / {{ c.usage_limit or '∞' }}</td>
+                                <td class="p-4">${{ "%.2f"|format(c.min_order_amount) if c.min_order_amount else '0.00' }}</td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if c.is_active %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
+                                        {% if c.is_active %}ACTIVE{% else %}DISABLED{% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-500">No coupons active on the platform.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- =======================================================================
+         TAB 4: VENDOR SUBSCRIPTIONS
+         ======================================================================= -->
+    <div id="tab-content-subscriptions" class="space-y-4 hidden">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-lg font-bold text-white">Live Vendor Subscriptions</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Active merchant plan subscriptions and plan assignments</p>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-3xl border border-slate-800 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-900/80 border-b border-slate-800 text-slate-400 font-semibold">
+                        <tr>
+                            <th class="p-4">Vendor ID</th>
+                            <th class="p-4">Subscribed Plan</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4">Started At</th>
+                            <th class="p-4">Expires At</th>
+                            <th class="p-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                        {% for s in subscriptions %}
+                            <tr class="hover:bg-slate-800/30 transition-colors">
+                                <td class="p-4 font-bold text-white">Vendor #{{ s.vendor_id }}</td>
+                                <td class="p-4">
+                                    <div class="font-bold text-indigo-300">{{ s.plan.name if s.plan else 'Plan #' ~ s.plan_id }}</div>
+                                    <div class="text-[11px] text-slate-400">${{ "%.2f"|format(s.plan.price) if s.plan else '0.00' }}/mo</div>
+                                </td>
+                                <td class="p-4">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if s.status.value == 'ACTIVE' %}bg-emerald-500/20 text-emerald-300 border border-emerald-500/30{% else %}bg-rose-500/20 text-rose-300 border border-rose-500/30{% endif %}">
+                                        {{ s.status.value }}
+                                    </span>
+                                </td>
+                                <td class="p-4 text-slate-400">{{ s.start_date.strftime('%b %d, %Y') if s.start_date else '-' }}</td>
+                                <td class="p-4 text-slate-400">{{ s.end_date.strftime('%b %d, %Y') if s.end_date else '-' }}</td>
+                                <td class="p-4">
+                                    <button onclick="openAssignPlanModal({{ s.vendor_id }}, 'Vendor #{{ s.vendor_id }}')" class="px-3 py-1.5 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 rounded-xl text-xs font-semibold transition-colors">
+                                        Change Plan
+                                    </button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="p-8 text-center text-slate-500">No active vendor subscriptions recorded.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- ===========================================================================
+     MODALS
+     =========================================================================== -->
+
+<!-- Modal 1: Create SaaS Plan -->
+<div id="create-plan-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="font-bold text-sm text-white">Create SaaS Plan</h3>
+            <button onclick="document.getElementById('create-plan-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <form id="create-plan-form" onsubmit="handleCreatePlan(event)" class="space-y-3 text-xs">
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Plan Name</label>
+                <input type="text" id="plan-create-name" required placeholder="e.g. Enterprise Tier" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Monthly Price ($)</label>
+                    <input type="number" step="0.01" id="plan-create-price" required placeholder="49.99" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Max Products Allowed</label>
+                    <input type="number" id="plan-create-max-prod" required placeholder="50" min="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Platform Commission Rate (%)</label>
+                <input type="number" step="0.1" id="plan-create-comm" required placeholder="10.0" min="0" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Description</label>
+                <textarea id="plan-create-desc" rows="2" placeholder="Plan features..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"></textarea>
+            </div>
+
+            <button type="submit" id="create-plan-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                Publish SaaS Plan
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Edit SaaS Plan -->
+<div id="edit-plan-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="font-bold text-sm text-white">Update SaaS Plan</h3>
+            <button onclick="document.getElementById('edit-plan-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <form id="edit-plan-form" onsubmit="handleUpdatePlan(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="plan-edit-id">
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Plan Name</label>
+                <input type="text" id="plan-edit-name" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Monthly Price ($)</label>
+                    <input type="number" step="0.01" id="plan-edit-price" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Max Products</label>
+                    <input type="number" id="plan-edit-max-prod" required min="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Commission Rate (%)</label>
+                <input type="number" step="0.1" id="plan-edit-comm" required min="0" max="100" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Description</label>
+                <textarea id="plan-edit-desc" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500"></textarea>
+            </div>
+
+            <div class="flex items-center space-x-2 pt-1">
+                <input type="checkbox" id="plan-edit-active" class="accent-indigo-600">
+                <label for="plan-edit-active" class="text-slate-300 font-semibold">Plan is Active for Subscriptions</label>
+            </div>
+
+            <button type="submit" id="edit-plan-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                Save Plan Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 3: Create Platform Coupon -->
+<div id="create-admin-coupon-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 class="font-bold text-sm text-white">Create Platform Coupon</h3>
+            <button onclick="document.getElementById('create-admin-coupon-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <form id="admin-coupon-form" onsubmit="handleCreateAdminCoupon(event)" class="space-y-3 text-xs">
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Coupon Promo Code</label>
+                <input type="text" id="admin-coup-code" required placeholder="e.g. FLASH50" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white uppercase placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Discount Type</label>
+                    <select id="admin-coup-type" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                        <option value="PERCENTAGE">PERCENTAGE (%)</option>
+                        <option value="FIXED">FIXED AMOUNT ($)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Discount Value</label>
+                    <input type="number" step="0.01" id="admin-coup-val" required placeholder="15.0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Min Order Amount ($)</label>
+                    <input type="number" step="0.01" id="admin-coup-min" value="0.0" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-300 mb-1">Total Usage Limit</label>
+                    <input type="number" id="admin-coup-limit" placeholder="500" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <button type="submit" id="create-admin-coup-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                Create Platform Coupon
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 4: Assign Plan to Vendor -->
+<div id="assign-plan-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div>
+                <h3 class="font-bold text-sm text-white">Assign / Change SaaS Plan</h3>
+                <p id="assign-vendor-name" class="text-xs text-indigo-400"></p>
+            </div>
+            <button onclick="document.getElementById('assign-plan-modal').classList.add('hidden')" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <form id="assign-plan-form" onsubmit="handleAssignPlanSubmit(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="assign-vendor-id">
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Select SaaS Plan</label>
+                <select id="assign-plan-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                    {% for p in plans %}
+                        <option value="{{ p.id }}">{{ p.name }} (${{ "%.2f"|format(p.price) }}/mo — {{ p.max_products }} products — {{ "%.1f"|format(p.commission_rate) }}% comm)</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Subscription Status</label>
+                <select id="assign-status-select" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+                    <option value="ACTIVE">ACTIVE</option>
+                    <option value="TRIAL">TRIAL</option>
+                    <option value="PAST_DUE">PAST_DUE</option>
+                    <option value="CANCELED">CANCELED</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-semibold text-slate-300 mb-1">Duration (Days)</label>
+                <input type="number" id="assign-duration-days" value="30" min="1" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-indigo-500">
+            </div>
+
+            <button type="submit" id="assign-plan-submit-btn" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                Confirm Plan Assignment
+            </button>
+        </form>
+    </div>
+</div>
+
 <script>
-async function updateVendorStatus(profileId, newStatus) {
+function switchTab(tabKey) {
+    const tabs = ['vendors', 'plans', 'coupons', 'subscriptions'];
+    tabs.forEach(t => {
+        const content = document.getElementById(`tab-content-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabKey) {
+            content.classList.remove('hidden');
+            btn.className = 'admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl bg-indigo-600 text-white transition-all flex items-center space-x-2';
+        } else {
+            content.classList.add('hidden');
+            btn.className = 'admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all flex items-center space-x-2';
+        }
+    });
+}
+
+// 1. Update Vendor Status (Approve / Suspend)
+async function updateVendorStatus(vendorUserId, newStatus) {
     try {
-        await window.Nexus.apiFetch(`/api/v1/vendors/${profileId}/status`, {
+        await window.Nexus.apiFetch(`/api/v1/vendors/${vendorUserId}/status`, {
             method: "PUT",
             body: JSON.stringify({ status: newStatus })
         });
-        window.Nexus.showToast(`Vendor store status updated to ${newStatus}`, "success");
+        window.Nexus.showToast(`Vendor store status changed to ${newStatus}`, "success");
         setTimeout(() => window.location.reload(), 600);
     } catch(err) {
         window.Nexus.showToast(err.message, "error");
+    }
+}
+
+// 2. Create SaaS Plan
+async function handleCreatePlan(e) {
+    e.preventDefault();
+    const btn = document.getElementById("create-plan-btn");
+    btn.disabled = true;
+
+    const payload = {
+        name: document.getElementById("plan-create-name").value.trim(),
+        price: parseFloat(document.getElementById("plan-create-price").value),
+        max_products: parseInt(document.getElementById("plan-create-max-prod").value),
+        commission_rate: parseFloat(document.getElementById("plan-create-comm").value),
+        description: document.getElementById("plan-create-desc").value.trim(),
+        is_active: true
+    };
+
+    try {
+        await window.Nexus.apiFetch("/api/v1/plans", {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("SaaS Plan created successfully!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to create plan", "error");
+        btn.disabled = false;
+    }
+}
+
+// 3. Edit SaaS Plan Modal & Submit
+function openEditPlanModal(id, name, price, maxProd, commRate, desc, isActive) {
+    document.getElementById("plan-edit-id").value = id;
+    document.getElementById("plan-edit-name").value = name;
+    document.getElementById("plan-edit-price").value = price;
+    document.getElementById("plan-edit-max-prod").value = maxProd;
+    document.getElementById("plan-edit-comm").value = commRate;
+    document.getElementById("plan-edit-desc").value = desc;
+    document.getElementById("plan-edit-active").checked = isActive;
+    document.getElementById("edit-plan-modal").classList.remove("hidden");
+}
+
+async function handleUpdatePlan(e) {
+    e.preventDefault();
+    const planId = document.getElementById("plan-edit-id").value;
+    const btn = document.getElementById("edit-plan-btn");
+    btn.disabled = true;
+
+    const payload = {
+        name: document.getElementById("plan-edit-name").value.trim(),
+        price: parseFloat(document.getElementById("plan-edit-price").value),
+        max_products: parseInt(document.getElementById("plan-edit-max-prod").value),
+        commission_rate: parseFloat(document.getElementById("plan-edit-comm").value),
+        description: document.getElementById("plan-edit-desc").value.trim(),
+        is_active: document.getElementById("plan-edit-active").checked
+    };
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/plans/${planId}`, {
+            method: "PUT",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("SaaS Plan updated successfully!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to update plan", "error");
+        btn.disabled = false;
+    }
+}
+
+// 4. Create Platform Coupon
+async function handleCreateAdminCoupon(e) {
+    e.preventDefault();
+    const btn = document.getElementById("create-admin-coup-btn");
+    btn.disabled = true;
+
+    const payload = {
+        code: document.getElementById("admin-coup-code").value.trim().toUpperCase(),
+        discount_type: document.getElementById("admin-coup-type").value,
+        discount_value: parseFloat(document.getElementById("admin-coup-val").value),
+        min_order_amount: parseFloat(document.getElementById("admin-coup-min").value) || 0.0,
+        usage_limit: parseInt(document.getElementById("admin-coup-limit").value) || null,
+        is_active: true
+    };
+
+    try {
+        await window.Nexus.apiFetch("/api/v1/coupons", {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("Platform Coupon created!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to create coupon", "error");
+        btn.disabled = false;
+    }
+}
+
+// 5. Assign / Upgrade Vendor Plan
+function openAssignPlanModal(vendorId, storeName) {
+    document.getElementById("assign-vendor-id").value = vendorId;
+    document.getElementById("assign-vendor-name").textContent = `Vendor Store: ${storeName} (ID: ${vendorId})`;
+    document.getElementById("assign-plan-modal").classList.remove("hidden");
+}
+
+async function handleAssignPlanSubmit(e) {
+    e.preventDefault();
+    const vendorId = document.getElementById("assign-vendor-id").value;
+    const btn = document.getElementById("assign-plan-submit-btn");
+    btn.disabled = true;
+
+    const payload = {
+        plan_id: parseInt(document.getElementById("assign-plan-select").value),
+        status: document.getElementById("assign-status-select").value,
+        duration_days: parseInt(document.getElementById("assign-duration-days").value) || 30
+    };
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/admin/vendors/${vendorId}/assign-plan`, {
+            method: "POST",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("Vendor plan assigned successfully!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to assign plan", "error");
+        btn.disabled = false;
     }
 }
 </script>

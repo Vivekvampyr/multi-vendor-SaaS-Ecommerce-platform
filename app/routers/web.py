@@ -446,11 +446,19 @@ async def admin_dashboard_page(
     if not current_user or current_user.role != UserRole.ADMIN:
         return RedirectResponse(url="/login")
 
+    from app.services.subscription import SubscriptionService
+
     admin_service = AdminService(db)
     vendor_service = VendorService(db)
+    plan_service = PlanService(db)
+    coupon_service = CouponService(db)
+    sub_service = SubscriptionService(db)
 
     stats = admin_service.get_dashboard_stats()
     vendors, _ = vendor_service.admin_list_vendors(skip=0, limit=100)
+    plans, _ = plan_service.list_plans(only_active=False, skip=0, limit=100)
+    coupons, _ = coupon_service.list_coupons(user=current_user, skip=0, limit=100)
+    subscriptions, _ = sub_service.list_subscriptions(skip=0, limit=100)
 
     return templates.TemplateResponse(
         request=request,
@@ -460,5 +468,8 @@ async def admin_dashboard_page(
             "current_user": current_user,
             "stats": stats,
             "vendors": vendors,
+            "plans": plans,
+            "coupons": coupons,
+            "subscriptions": subscriptions,
         },
     )
