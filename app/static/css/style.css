@@ -266,3 +266,13 @@ html.light .theme-toggle-btn:hover {
   border-color: #84cc16;
   box-shadow: 0 0 10px rgba(132, 204, 22, 0.2);
 }
+
+/* User Navbar Dropdown Menu Bridge & Click-Open Support */
+#user-dropdown-menu.dropdown-open {
+  display: block !important;
+}
+
+#user-dropdown-menu {
+  filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.3));
+}
+

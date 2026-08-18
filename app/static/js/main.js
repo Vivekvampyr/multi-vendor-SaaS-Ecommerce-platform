@@ -161,12 +161,38 @@ window.Nexus = {
       moonIcons.forEach((el) => el.classList.remove("hidden"));
     }
   },
+
+  // User Profile Dropdown Toggle
+  toggleUserDropdown: function (e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const menu = document.getElementById("user-dropdown-menu");
+    if (!menu) return;
+    menu.classList.toggle("dropdown-open");
+  },
+
+  closeUserDropdown: function () {
+    const menu = document.getElementById("user-dropdown-menu");
+    if (menu) {
+      menu.classList.remove("dropdown-open");
+    }
+  },
 };
 
 // Initialize Cart Badge & Dynamic Handlers on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
   window.Nexus.initTheme();
   window.Nexus.updateCartBadge();
+
+  // Close user profile dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    const container = document.getElementById("user-menu-container");
+    if (container && !container.contains(e.target)) {
+      window.Nexus.closeUserDropdown();
+    }
+  });
 
   // Global handler for Add to Cart buttons
   document.querySelectorAll("[data-add-to-cart]").forEach((btn) => {

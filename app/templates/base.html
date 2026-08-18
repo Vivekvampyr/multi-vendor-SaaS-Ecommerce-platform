@@ -121,8 +121,8 @@
 
                     <!-- User Account / Portal Links -->
                     {% if current_user %}
-                        <div class="relative group">
-                            <button class="flex items-center space-x-2 p-1.5 pl-3 pr-2 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-lime-500/40 text-xs font-bold text-slate-900 dark:text-white transition-all cursor-pointer">
+                        <div id="user-menu-container" class="relative group">
+                            <button id="user-menu-btn" onclick="window.Nexus.toggleUserDropdown(event)" class="flex items-center space-x-2 p-1.5 pl-3 pr-2 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 hover:border-lime-500/40 text-xs font-bold text-slate-900 dark:text-white transition-all cursor-pointer select-none">
                                 <span>{{ current_user.full_name }}</span>
                                 <span class="px-1.5 py-0.5 text-[9px] uppercase font-black tracking-wider rounded bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">
                                     {{ current_user.role.value }}
@@ -132,25 +132,27 @@
                                 </svg>
                             </button>
 
-                            <!-- Dropdown Menu -->
-                            <div class="absolute right-0 mt-2 w-52 rounded-2xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 shadow-2xl p-1.5 hidden group-hover:block transition-all z-50">
-                                {% if current_user.role.value == "CUSTOMER" %}
-                                    <a href="/customer/dashboard" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">👤 My Profile & Addresses</a>
-                                    <a href="/customer/orders" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">📦 My Orders</a>
-                                    <a href="/customer/wishlist" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">💖 Saved Wishlist</a>
-                                {% elif current_user.role.value == "VENDOR" %}
-                                    <a href="/vendor/dashboard" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">📊 Store Dashboard</a>
-                                    <a href="/vendor/products" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">🛍️ Products & Inventory</a>
-                                    <a href="/vendor/orders" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">🚚 Customer Orders</a>
-                                    <a href="/vendor/coupons" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">🏷️ Store Coupons</a>
-                                {% elif current_user.role.value == "ADMIN" %}
-                                    <a href="/admin/dashboard" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">⚡ Admin Control Panel</a>
-                                    <a href="/docs" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">📑 Swagger API Docs</a>
-                                {% endif %}
-                                <div class="border-t border-slate-200 dark:border-zinc-800 my-1"></div>
-                                <button onclick="window.Nexus.logout()" class="w-full text-left px-3 py-2 text-xs font-semibold text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer">
-                                    🚪 Logout
-                                </button>
+                            <!-- Dropdown Menu Wrapper (gapless with pt-1.5 invisible bridge) -->
+                            <div id="user-dropdown-menu" class="absolute right-0 top-full pt-1.5 w-56 hidden group-hover:block transition-all z-50">
+                                <div class="rounded-2xl bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 shadow-2xl p-1.5">
+                                    {% if current_user.role.value == "CUSTOMER" %}
+                                        <a href="/customer/dashboard" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">👤 My Profile & Addresses</a>
+                                        <a href="/customer/orders" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">📦 My Orders</a>
+                                        <a href="/customer/wishlist" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">💖 Saved Wishlist</a>
+                                    {% elif current_user.role.value == "VENDOR" %}
+                                        <a href="/vendor/dashboard" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">📊 Store Dashboard</a>
+                                        <a href="/vendor/products" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">🛍️ Products & Inventory</a>
+                                        <a href="/vendor/orders" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">🚚 Customer Orders</a>
+                                        <a href="/vendor/coupons" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">🏷️ Store Coupons</a>
+                                    {% elif current_user.role.value == "ADMIN" %}
+                                        <a href="/admin/dashboard" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">⚡ Admin Control Panel</a>
+                                        <a href="/docs" class="block px-3 py-2 text-xs font-semibold text-slate-700 dark:text-zinc-300 hover:text-lime-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">📑 Swagger API Docs</a>
+                                    {% endif %}
+                                    <div class="border-t border-slate-200 dark:border-zinc-800 my-1"></div>
+                                    <button onclick="window.Nexus.logout()" class="w-full text-left px-3 py-2 text-xs font-bold text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer">
+                                        🚪 Logout
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     {% else %}
