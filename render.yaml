@@ -1,0 +1,38 @@
+services:
+  # FastAPI Web Service
+  - type: web
+    name: nexus-saas-marketplace
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "chmod +x build.sh && ./build.sh"
+    startCommand: "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "120"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "7"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nexus-saas-db
+          property: connectionString
+      - key: BACKEND_CORS_ORIGINS
+        value: '["*"]'
+
+databases:
+  # Managed PostgreSQL Database Instance
+  - name: nexus-saas-db
+    region: oregon
+    plan: free
+    databaseName: ecommerce_saas
+    user: nexus_admin
