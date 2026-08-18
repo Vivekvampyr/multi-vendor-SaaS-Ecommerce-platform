@@ -11,9 +11,8 @@ alembic upgrade head
 
 echo "==> Seeding initial SaaS plans & categories..."
 python -c "
-from app.core.database import SessionLocal, engine, Base
-from app.models.plan import Plan
-from app.models.product import Category
+from app.core.database import SessionLocal, engine
+from app.models import Base, Plan, Category
 
 db = SessionLocal()
 try:
