@@ -617,6 +617,7 @@
                             <th class="p-4">Redemptions</th>
                             <th class="p-4">Min Order</th>
                             <th class="p-4">Status</th>
+                            <th class="p-4">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200 dark:divide-zinc-800/60 text-slate-700 dark:text-zinc-300">
@@ -644,10 +645,20 @@
                                         {% if c.is_active %}ACTIVE{% else %}DISABLED{% endif %}
                                     </span>
                                 </td>
+                                <td class="p-4">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="openEditAdminCouponModal({{ c.id }}, '{{ c.code }}', '{{ c.discount_type.value }}', {{ c.discount_value }}, {{ c.min_order_amount or 0.0 }}, {{ c.usage_limit or 'null' }}, {{ 'true' if c.is_active else 'false' }}, '{{ (c.description or '') | replace('\'', '\\\'') }}')" class="px-3 py-1.5 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                                            ✏️ Edit
+                                        </button>
+                                        <button onclick="handleDeleteAdminCoupon({{ c.id }}, '{{ c.code }}')" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl text-xs font-bold transition-colors cursor-pointer">
+                                            🗑️ Delete
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                         {% else %}
                             <tr>
-                                <td colspan="6" class="p-8 text-center text-slate-500">No coupons active on the platform.</td>
+                                <td colspan="7" class="p-8 text-center text-slate-500">No coupons active on the platform.</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -895,7 +906,7 @@
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Type</label>
                     <select id="admin-coup-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
                         <option value="PERCENTAGE">PERCENTAGE (%)</option>
-                        <option value="FIXED_AMOUNT">FIXED AMOUNT ($)</option>
+                        <option value="FIXED">FIXED AMOUNT ($)</option>
                     </select>
                 </div>
                 <div>
@@ -917,6 +928,64 @@
 
             <button type="submit" id="create-admin-coup-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
                 Issue Platform Coupon
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 3.5: Edit Platform Coupon -->
+<div id="edit-admin-coupon-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-md p-6 rounded-3xl shadow-2xl space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Edit Platform Coupon</h3>
+            <button onclick="document.getElementById('edit-admin-coupon-modal').classList.add('hidden')" class="text-slate-400 hover:text-black dark:hover:text-white cursor-pointer">✕</button>
+        </div>
+
+        <form id="edit-admin-coupon-form" onsubmit="handleUpdateAdminCoupon(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="admin-coup-edit-id">
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Coupon Code</label>
+                <input type="text" id="admin-coup-edit-code" readonly class="w-full bg-slate-200 dark:bg-zinc-800/60 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 uppercase font-mono text-slate-500 dark:text-zinc-400 cursor-not-allowed">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Type</label>
+                    <select id="admin-coup-edit-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                        <option value="PERCENTAGE">PERCENTAGE (%)</option>
+                        <option value="FIXED">FIXED AMOUNT ($)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Value</label>
+                    <input type="number" step="0.01" id="admin-coup-edit-val" required min="0.01" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Min Order Amount ($)</label>
+                    <input type="number" step="0.01" id="admin-coup-edit-min" min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Total Usage Limit</label>
+                    <input type="number" id="admin-coup-edit-limit" placeholder="Optional" min="1" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Description</label>
+                <input type="text" id="admin-coup-edit-desc" placeholder="Promotion summary" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+            </div>
+
+            <div class="flex items-center space-x-2 pt-1">
+                <input type="checkbox" id="admin-coup-edit-active" class="rounded border-slate-300 text-lime-500 focus:ring-lime-400">
+                <label for="admin-coup-edit-active" class="font-bold text-slate-700 dark:text-zinc-300">Active & Enabled for Checkout</label>
+            </div>
+
+            <button type="submit" id="edit-admin-coup-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                Save Coupon Changes
             </button>
         </form>
     </div>
@@ -1167,6 +1236,60 @@ async function handleCreateAdminCoupon(e) {
     } catch(err) {
         window.Nexus.showToast(err.message || "Failed to create coupon", "error");
         btn.disabled = false;
+    }
+}
+
+// 7.5. Edit & Delete Platform Coupon
+function openEditAdminCouponModal(id, code, type, value, minOrder, usageLimit, isActive, description) {
+    document.getElementById("admin-coup-edit-id").value = id;
+    document.getElementById("admin-coup-edit-code").value = code;
+    document.getElementById("admin-coup-edit-type").value = type;
+    document.getElementById("admin-coup-edit-val").value = value;
+    document.getElementById("admin-coup-edit-min").value = (minOrder !== null && minOrder !== undefined) ? minOrder : 0.0;
+    document.getElementById("admin-coup-edit-limit").value = (usageLimit !== null && usageLimit !== undefined) ? usageLimit : "";
+    document.getElementById("admin-coup-edit-desc").value = description || "";
+    document.getElementById("admin-coup-edit-active").checked = isActive;
+    document.getElementById("edit-admin-coupon-modal").classList.remove("hidden");
+}
+
+async function handleUpdateAdminCoupon(e) {
+    e.preventDefault();
+    const couponId = document.getElementById("admin-coup-edit-id").value;
+    const btn = document.getElementById("edit-admin-coup-btn");
+    btn.disabled = true;
+
+    const payload = {
+        discount_type: document.getElementById("admin-coup-edit-type").value,
+        discount_value: parseFloat(document.getElementById("admin-coup-edit-val").value),
+        min_order_amount: parseFloat(document.getElementById("admin-coup-edit-min").value) || 0.0,
+        usage_limit: parseInt(document.getElementById("admin-coup-edit-limit").value) || null,
+        description: document.getElementById("admin-coup-edit-desc").value.trim() || null,
+        is_active: document.getElementById("admin-coup-edit-active").checked
+    };
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/coupons/${couponId}`, {
+            method: "PUT",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("Coupon updated successfully!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to update coupon", "error");
+        btn.disabled = false;
+    }
+}
+
+async function handleDeleteAdminCoupon(couponId, couponCode) {
+    if (!confirm(`Are you sure you want to delete coupon code "${couponCode}"?`)) return;
+    try {
+        await window.Nexus.apiFetch(`/api/v1/coupons/${couponId}`, {
+            method: "DELETE"
+        });
+        window.Nexus.showToast(`Coupon "${couponCode}" deleted successfully!`, "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to delete coupon", "error");
     }
 }
 

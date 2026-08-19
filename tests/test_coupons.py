@@ -190,3 +190,45 @@ def test_validate_per_user_limit_enforced(client, db_session, test_customer, cus
     data = response.json()["data"]
     assert data["valid"] is False
     assert "already redeemed" in data["message"]
+
+
+def test_admin_update_and_delete_coupon(client, admin_headers, test_platform_coupon):
+    # Admin updates platform coupon
+    update_payload = {
+        "discount_value": 35.00,
+        "description": "Updated to 35% discount",
+        "min_order_amount": 100.00,
+        "is_active": True,
+    }
+    update_resp = client.put(f"/api/v1/coupons/{test_platform_coupon.id}", json=update_payload, headers=admin_headers)
+    assert update_resp.status_code == 200
+    assert update_resp.json()["data"]["discount_value"] == 35.00
+    assert update_resp.json()["data"]["description"] == "Updated to 35% discount"
+
+    # Admin deletes platform coupon
+    del_resp = client.delete(f"/api/v1/coupons/{test_platform_coupon.id}", headers=admin_headers)
+    assert del_resp.status_code == 200
+    assert del_resp.json()["success"] is True
+
+    # Confirm it's gone
+    get_resp = client.get(f"/api/v1/coupons/{test_platform_coupon.id}", headers=admin_headers)
+    assert get_resp.status_code == 404
+
+
+def test_vendor_update_and_delete_coupon(client, vendor_headers, test_vendor_coupon):
+    # Vendor updates own coupon
+    update_payload = {
+        "discount_value": 18.50,
+        "description": "Updated vendor discount",
+        "is_active": False,
+    }
+    update_resp = client.put(f"/api/v1/coupons/{test_vendor_coupon.id}", json=update_payload, headers=vendor_headers)
+    assert update_resp.status_code == 200
+    assert update_resp.json()["data"]["discount_value"] == 18.50
+    assert update_resp.json()["data"]["is_active"] is False
+
+    # Vendor deletes own coupon
+    del_resp = client.delete(f"/api/v1/coupons/{test_vendor_coupon.id}", headers=vendor_headers)
+    assert del_resp.status_code == 200
+    assert del_resp.json()["success"] is True
+
