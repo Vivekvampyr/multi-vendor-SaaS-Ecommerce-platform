@@ -60,11 +60,21 @@ def test_public_pages_render_html(client, db_session, test_vendor):
     assert resp_catalog.status_code == 200
     assert "Ultra Smart Watch" in resp_catalog.text
 
+    prod.description = "### Product Overview\nElevate your setup with **Ultra Smart Watch**.\n\n### Key Features\n- **Battery**: 7 days\n- **Waterproof**: 5ATM"
+    db_session.commit()
+
     # 4. Product Details
     resp_detail = client.get("/products/ultra-smart-watch")
     assert resp_detail.status_code == 200
     assert "Ultra Smart Watch" in resp_detail.text
     assert "WATCH-001" in resp_detail.text
+    # Verify markdown rendered into styled HTML
+    assert "<h4" in resp_detail.text
+    assert "Product Overview" in resp_detail.text
+    assert "<strong" in resp_detail.text
+    assert "<ul" in resp_detail.text
+    assert "<li" in resp_detail.text
+    assert "###" not in resp_detail.text
 
     # 5. Public Storefront
     resp_store = client.get(f"/stores/tech-gadgets-store")

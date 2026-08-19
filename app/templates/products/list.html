@@ -82,7 +82,7 @@
                                     <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white mt-0.5 hover:text-lime-600 dark:hover:text-lime-400 transition-colors line-clamp-1">
                                         <a href="/products/{{ prod.slug }}">{{ prod.name }}</a>
                                     </h3>
-                                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2 hidden sm:block">{{ prod.description or prod.short_description or '' }}</p>
+                                    <p class="text-[11px] text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2 hidden sm:block">{{ (prod.short_description or prod.description or '') | strip_markdown }}</p>
                                 </div>
                                 <div class="mt-3 sm:mt-4 pt-2 sm:pt-3 border-t border-slate-200 dark:border-zinc-800 flex items-center justify-between">
                                     <div>

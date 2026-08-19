@@ -67,9 +67,11 @@
             </div>
 
             <!-- Description -->
-            <div>
+            <div class="space-y-2">
                 <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 mb-1.5 sm:mb-2">Product Description</h3>
-                <p class="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">{{ product.description or 'No description provided.' }}</p>
+                <div class="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed space-y-1">
+                    {{ product.description | markdown }}
+                </div>
             </div>
 
             <!-- Quantity & Actions -->

@@ -22,11 +22,118 @@ from app.services.review import ReviewService
 from app.services.vendor import VendorService
 from app.services.wishlist import WishlistService
 
+import html
+import re
+from markupsafe import Markup
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = BASE_DIR.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 ASSETS_CATEGORY_DIR = PROJECT_ROOT / "assets" / "category"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+
+def render_markdown_filter(text: Optional[str]) -> Markup:
+    """
+    Renders structured Markdown text into safe, beautifully styled HTML with headings,
+    bullet lists, bold highlights, and clean paragraph breaks.
+    """
+    if not text or not str(text).strip():
+        return Markup('<p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">No description provided.</p>')
+
+    escaped = html.escape(str(text).strip())
+
+    # Bold **text** -> <strong>
+    escaped = re.sub(
+        r"\*\*(.+?)\*\*",
+        r'<strong class="font-bold text-slate-900 dark:text-white">\1</strong>',
+        escaped,
+    )
+    # Italic *text* -> <em>
+    escaped = re.sub(
+        r"\*(.+?)\*",
+        r'<em class="italic text-slate-700 dark:text-zinc-300">\1</em>',
+        escaped,
+    )
+
+    lines = escaped.splitlines()
+    html_blocks = []
+    in_list = False
+
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line:
+            if in_list:
+                html_blocks.append("</ul>")
+                in_list = False
+            continue
+
+        if line.startswith("### "):
+            if in_list:
+                html_blocks.append("</ul>")
+                in_list = False
+            title = line[4:].strip()
+            html_blocks.append(
+                f'<h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span>{title}</h4>'
+            )
+        elif line.startswith("## "):
+            if in_list:
+                html_blocks.append("</ul>")
+                in_list = False
+            title = line[3:].strip()
+            html_blocks.append(
+                f'<h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-lime-500"></span>{title}</h3>'
+            )
+        elif line.startswith("# "):
+            if in_list:
+                html_blocks.append("</ul>")
+                in_list = False
+            title = line[2:].strip()
+            html_blocks.append(
+                f'<h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-5 mb-2">{title}</h2>'
+            )
+        elif line.startswith("- ") or line.startswith("* "):
+            if not in_list:
+                html_blocks.append(
+                    '<ul class="space-y-1.5 my-2 text-xs sm:text-sm text-slate-700 dark:text-zinc-300">'
+                )
+                in_list = True
+            content = line[2:].strip()
+            html_blocks.append(
+                f'<li class="flex items-start space-x-2"><span class="text-lime-600 dark:text-lime-400 font-black flex-shrink-0 mt-0.5">•</span><span class="flex-1 leading-relaxed">{content}</span></li>'
+            )
+        else:
+            if in_list:
+                html_blocks.append("</ul>")
+                in_list = False
+            html_blocks.append(
+                f'<p class="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed mb-2">{line}</p>'
+            )
+
+    if in_list:
+        html_blocks.append("</ul>")
+
+    return Markup("\n".join(html_blocks))
+
+
+def strip_markdown_filter(text: Optional[str]) -> str:
+    """
+    Strips raw markdown syntax characters for plain-text card previews.
+    """
+    if not text:
+        return ""
+    cleaned = str(text)
+    cleaned = re.sub(r"#+\s*", "", cleaned)
+    cleaned = re.sub(r"\*\*(.+?)\*\*", r"\1", cleaned)
+    cleaned = re.sub(r"\*(.+?)\*", r"\1", cleaned)
+    cleaned = re.sub(r"-\s*", "", cleaned)
+    return " ".join(cleaned.split())
+
+
+# Register Jinja2 filters
+templates.env.filters["markdown"] = render_markdown_filter
+templates.env.filters["strip_markdown"] = strip_markdown_filter
+
 
 
 def get_category_icon_info(category) -> dict:
