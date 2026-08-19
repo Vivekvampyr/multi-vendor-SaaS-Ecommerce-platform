@@ -81,13 +81,34 @@ class CartService:
         if not prod or prod.status != ProductStatus.PUBLISHED or not prod.is_approved:
             raise NotFoundException(message=f"Product with ID {item_in.product_id} is not available for purchase")
 
-        if prod.stock_quantity < item_in.quantity:
+        if prod.stock_quantity <= 0:
             raise BadRequestException(
-                message=f"Requested quantity ({item_in.quantity}) exceeds available stock ({prod.stock_quantity})",
-                details={"available_stock": prod.stock_quantity, "requested": item_in.quantity},
+                message=f"Product '{prod.name}' is currently out of stock.",
+                details={"available_stock": 0, "requested": item_in.quantity},
             )
 
         cart = self._get_cart(user, session_token)
+
+        # Check existing quantity of this product already in cart
+        existing_item = next((item for item in cart.items if item.product_id == prod.id), None)
+        current_cart_qty = existing_item.quantity if existing_item else 0
+        total_requested_qty = current_cart_qty + item_in.quantity
+
+        if total_requested_qty > prod.stock_quantity:
+            if current_cart_qty > 0:
+                raise BadRequestException(
+                    message=(
+                        f"Cannot add {item_in.quantity} more unit(s) of '{prod.name}'. "
+                        f"You already have {current_cart_qty} in your cart (maximum available: {prod.stock_quantity})."
+                    ),
+                    details={"available_stock": prod.stock_quantity, "in_cart": current_cart_qty, "requested": item_in.quantity},
+                )
+            else:
+                raise BadRequestException(
+                    message=f"Requested quantity ({item_in.quantity}) exceeds available stock ({prod.stock_quantity})",
+                    details={"available_stock": prod.stock_quantity, "requested": item_in.quantity},
+                )
+
         self.cart_repo.add_or_update_item(
             cart_id=cart.id,
             product_id=prod.id,
@@ -95,6 +116,7 @@ class CartService:
             price=float(prod.price),
             quantity=item_in.quantity,
         )
+        self.db.expire_all()
         # Reload cart
         cart = self.cart_repo.get_by_id(cart.id)
         return self._build_cart_out(cart)
@@ -120,8 +142,42 @@ class CartService:
             )
 
         self.cart_repo.update_item_quantity(item, update_in.quantity)
+        self.db.expire_all()
         cart = self.cart_repo.get_by_id(cart.id)
         return self._build_cart_out(cart)
+
+    def merge_guest_cart(self, user: User, session_token: Optional[str]) -> Optional[Cart]:
+        """Transfers guest cart items into the authenticated customer's cart upon login."""
+        if not session_token:
+            return None
+
+        guest_cart = self.cart_repo.get_by_session(session_token)
+        if not guest_cart or not guest_cart.items:
+            return None
+
+        user_cart = self.cart_repo.get_or_create(user_id=user.id)
+
+        for g_item in guest_cart.items:
+            prod = self.prod_repo.get_by_id(g_item.product_id)
+            if prod and prod.status == ProductStatus.PUBLISHED and prod.is_approved:
+                existing = next((i for i in user_cart.items if i.product_id == prod.id), None)
+                if existing:
+                    existing.quantity = min(existing.quantity + g_item.quantity, prod.stock_quantity)
+                else:
+                    qty = min(g_item.quantity, prod.stock_quantity)
+                    if qty > 0:
+                        self.cart_repo.add_or_update_item(
+                            cart_id=user_cart.id,
+                            product_id=prod.id,
+                            vendor_id=prod.vendor_id,
+                            price=float(prod.price),
+                            quantity=qty,
+                        )
+
+        self.cart_repo.clear_cart(guest_cart)
+        self.db.commit()
+        self.db.expire_all()
+        return user_cart
 
     def remove_item(
         self,
@@ -136,14 +192,14 @@ class CartService:
             raise NotFoundException(message=f"Cart item {item_id} not found in current cart")
 
         self.cart_repo.remove_item(item)
-        self.db.expire(cart)
+        self.db.expire_all()
         cart = self.cart_repo.get_by_id(cart.id)
         return self._build_cart_out(cart)
 
     def clear_cart(self, user: Optional[User], session_token: Optional[str]) -> CartOut:
-        """Empty shopping cart."""
+        """Clear entire shopping cart."""
         cart = self._get_cart(user, session_token)
         self.cart_repo.clear_cart(cart)
-        self.db.expire(cart)
+        self.db.expire_all()
         cart = self.cart_repo.get_by_id(cart.id)
         return self._build_cart_out(cart)

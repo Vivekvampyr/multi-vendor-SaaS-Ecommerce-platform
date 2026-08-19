@@ -53,6 +53,21 @@ def test_guest_cart_with_session_token(client, test_product):
     assert add_resp.json()["data"]["total_items"] == 1
 
 
+def test_guest_cart_with_cookie_session(client, test_product):
+    client.cookies.set("guest_session_token", "cookie-session-999")
+    add_resp = client.post(
+        "/api/v1/cart/items",
+        json={"product_id": test_product.id, "quantity": 2},
+    )
+    assert add_resp.status_code == 200
+    assert add_resp.json()["data"]["total_items"] == 2
+
+    # View cart web page with cookie
+    page_resp = client.get("/cart")
+    assert page_resp.status_code == 200
+    assert test_product.name in page_resp.text
+
+
 def test_add_to_cart_exceeding_stock_fails(client, customer_headers, test_product):
     add_resp = client.post(
         "/api/v1/cart/items",
@@ -61,6 +76,38 @@ def test_add_to_cart_exceeding_stock_fails(client, customer_headers, test_produc
     )
     assert add_resp.status_code == 400
     assert "exceeds available stock" in add_resp.json()["error"]["message"]
+
+
+def test_cumulative_add_to_cart_cannot_exceed_stock(client, db_session, test_product):
+    # Set a product with limited stock of 3
+    test_product.stock_quantity = 3
+    db_session.commit()
+    session_headers = {"X-Session-Token": "limited-stock-session"}
+
+    # Add 2 items
+    resp1 = client.post(
+        "/api/v1/cart/items",
+        json={"product_id": test_product.id, "quantity": 2},
+        headers=session_headers,
+    )
+    assert resp1.status_code == 200
+
+    # Add 1 item (now at max 3)
+    resp2 = client.post(
+        "/api/v1/cart/items",
+        json={"product_id": test_product.id, "quantity": 1},
+        headers=session_headers,
+    )
+    assert resp2.status_code == 200
+
+    # Attempt to add 1 more (exceeds stock of 3)
+    resp3 = client.post(
+        "/api/v1/cart/items",
+        json={"product_id": test_product.id, "quantity": 1},
+        headers=session_headers,
+    )
+    assert resp3.status_code == 400
+    assert "maximum available: 3" in resp3.json()["error"]["message"]
 
 
 def test_checkout_multi_vendor_and_commission_splits(

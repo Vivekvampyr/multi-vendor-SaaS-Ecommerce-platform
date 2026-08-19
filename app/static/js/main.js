@@ -26,8 +26,17 @@ window.Nexus = {
   getSessionToken: function () {
     let token = localStorage.getItem("guest_session_token");
     if (!token) {
-      token = "gst_" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const match = document.cookie.match(new RegExp("(^| )guest_session_token=([^;]+)"));
+      if (match) {
+        token = match[2];
+      } else {
+        token = "gst_" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      }
       localStorage.setItem("guest_session_token", token);
+    }
+    // Ensure cookie is always synchronized for server-rendered requests (e.g. /cart)
+    if (!document.cookie.includes(`guest_session_token=${token}`)) {
+      document.cookie = `guest_session_token=${token}; path=/; max-age=2592000; SameSite=Lax`;
     }
     return token;
   },
@@ -220,6 +229,7 @@ window.Nexus = {
 
 // Initialize Cart Badge & Dynamic Handlers on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
+  window.Nexus.getSessionToken();
   window.Nexus.initTheme();
   window.Nexus.updateCartBadge();
 

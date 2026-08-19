@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, Header, Query, status
+from fastapi import APIRouter, Cookie, Depends, Header, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -12,6 +12,13 @@ from app.services.cart import CartService
 router = APIRouter(prefix="/cart", tags=["Shopping Cart"])
 
 
+def resolve_session_token(
+    x_session_token: Optional[str] = Header(default=None, alias="X-Session-Token"),
+    cookie_session_token: Optional[str] = Cookie(default=None, alias="guest_session_token"),
+) -> Optional[str]:
+    return x_session_token or cookie_session_token
+
+
 @router.get(
     "",
     response_model=APIResponse[CartOut],
@@ -19,7 +26,7 @@ router = APIRouter(prefix="/cart", tags=["Shopping Cart"])
     summary="Get shopping cart (Customer or Guest)",
 )
 def get_cart(
-    session_token: Optional[str] = Header(default=None, alias="X-Session-Token"),
+    session_token: Optional[str] = Depends(resolve_session_token),
     current_user: Optional[User] = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> APIResponse[CartOut]:
@@ -40,7 +47,7 @@ def get_cart(
 )
 def add_item_to_cart(
     item_in: CartItemAdd,
-    session_token: Optional[str] = Header(default=None, alias="X-Session-Token"),
+    session_token: Optional[str] = Depends(resolve_session_token),
     current_user: Optional[User] = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> APIResponse[CartOut]:
@@ -62,7 +69,7 @@ def add_item_to_cart(
 def update_cart_item(
     item_id: int,
     update_in: CartItemUpdate,
-    session_token: Optional[str] = Header(default=None, alias="X-Session-Token"),
+    session_token: Optional[str] = Depends(resolve_session_token),
     current_user: Optional[User] = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> APIResponse[CartOut]:
@@ -88,7 +95,7 @@ def update_cart_item(
 )
 def remove_cart_item(
     item_id: int,
-    session_token: Optional[str] = Header(default=None, alias="X-Session-Token"),
+    session_token: Optional[str] = Depends(resolve_session_token),
     current_user: Optional[User] = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> APIResponse[CartOut]:
@@ -112,7 +119,7 @@ def remove_cart_item(
     summary="Clear all items from shopping cart",
 )
 def clear_cart(
-    session_token: Optional[str] = Header(default=None, alias="X-Session-Token"),
+    session_token: Optional[str] = Depends(resolve_session_token),
     current_user: Optional[User] = Depends(get_optional_user),
     db: Session = Depends(get_db),
 ) -> APIResponse[CartOut]:
@@ -123,3 +130,4 @@ def clear_cart(
         message="Cart cleared successfully",
         data=empty_cart,
     )
+
