@@ -66,7 +66,7 @@ class Settings(BaseSettings):
 
     # Google Gemini AI Configuration
     GEMINI_API_KEY: str = ""
-    GEMINI_MODEL: str = "gemini-2.5-flash-lite"
+    GEMINI_MODEL: str = "gemini-2.5-flash"
 
     @property
     def is_development(self) -> bool:

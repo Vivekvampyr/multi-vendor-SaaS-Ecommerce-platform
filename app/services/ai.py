@@ -17,7 +17,7 @@ class AIService:
 
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         self.api_key = api_key or settings.GEMINI_API_KEY
-        self.model = model or settings.GEMINI_MODEL or "gemini-2.5-flash-lite"
+        self.model = model or settings.GEMINI_MODEL or "gemini-2.5-flash"
         self.endpoint_url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
         )
@@ -27,17 +27,12 @@ class AIService:
     ) -> AIDescriptionGenerateResponse:
         """
         Generates structured short description, detailed copy, and SEO tags for a product.
+        Calls live Google Gemini API if configured, otherwise provides an offline preview.
         """
-        # If Gemini API Key is configured, attempt live call to Gemini API
-        if settings.is_gemini_configured:
-            try:
-                return await self._call_gemini_api(req)
-            except Exception as exc:
-                logger.warning(
-                    "Gemini API request failed (%s). Using fallback generator.", exc
-                )
+        if settings.is_gemini_configured or self.api_key:
+            return await self._call_gemini_api(req)
 
-        # Resilient offline/mock generator for development and testing environments
+        # Resilient offline/mock generator for development and testing
         return self._generate_fallback_description(req)
 
     async def _call_gemini_api(
@@ -47,16 +42,21 @@ class AIService:
         Invokes Google Gemini generateContent REST endpoint with structured JSON output.
         """
         system_prompt = (
-            "You are an expert e-commerce copywriter and SEO marketing specialist. "
-            "Write high-converting, professional, engaging product copy tailored for an online marketplace. "
-            "Your output must strictly follow the JSON schema provided."
+            "You are a world-class senior hardware engineer, tech specialist, and high-converting e-commerce copywriter. "
+            "Your task is to write accurate, highly detailed, professional product marketing copy for an e-commerce platform. "
+            "IMPORTANT ACCURACY GUIDELINES:\n"
+            "- If the product is a known real-world hardware item, GPU, CPU, smartphone, electronics, appliance, or brand name (such as AMD Radeon, NVIDIA GeForce, Intel, Apple, Sony, ASRock, Asus, Samsung, etc.), "
+            "you MUST utilize your accurate real-world technical knowledge regarding its real architecture, VRAM, memory bus, cooling system, compute units, clock speeds, and target gaming/workstation performance.\n"
+            "- Do not output generic placeholder text if real specifications are known.\n"
+            "- If any key specs or keywords are provided by the merchant, highlight them prominently.\n"
+            "- Respond strictly in valid JSON adhering to the specified schema."
         )
 
         tone_instructions = {
-            "professional": "Clear, trustworthy, informative, and polished.",
-            "exciting": "Energetic, dynamic, persuasive, highlighting excitement and modern lifestyle.",
+            "professional": "Clear, trustworthy, informative, polished, and factual.",
+            "exciting": "Energetic, dynamic, persuasive, highlighting high performance, immersion, and excitement.",
             "minimalist": "Clean, concise, elegant, straightforward, focusing on pure essentials.",
-            "technical": "Precise, feature-packed, detailing specifications, performance, and engineering.",
+            "technical": "Precise, spec-heavy, detailing architecture, silicon, bandwidth, thermal solutions, and performance metrics.",
         }
         chosen_tone = tone_instructions.get(
             (req.tone or "").lower(), tone_instructions["professional"]
@@ -64,18 +64,28 @@ class AIService:
 
         user_content = (
             f"Product Name: {req.title}\n"
-            f"Category: {req.category_name or 'General'}\n"
-            f"Tone of Voice: {chosen_tone}\n"
-            f"Key Specs / Keywords: {req.keywords or 'N/A'}\n\n"
+            f"Category: {req.category_name or 'Electronics / Hardware'}\n"
+            f"Tone: {chosen_tone}\n"
+            f"Vendor Notes / Keywords: {req.keywords or 'N/A'}\n\n"
             "Please generate:\n"
-            "1. 'short_description': A catchy 1-2 sentence summary tagline (under 200 characters).\n"
-            "2. 'description': A well-structured, formatted description with:\n"
-            "   - Engaging product overview paragraph\n"
-            "   - 'Key Features & Benefits' (3-5 bullet points)\n"
-            "   - 'Technical Specifications' (bullet points)\n"
-            "   - 'What's In The Box' summary\n"
-            "3. 'seo_tags': A list of 4-6 relevant SEO search keywords.\n\n"
-            "Respond strictly in valid JSON with keys 'short_description', 'description', and 'seo_tags'."
+            "1. 'short_description': A catchy, punchy 1-2 sentence summary tagline (under 200 characters).\n"
+            "2. 'description': A well-structured Markdown copy formatted with:\n"
+            "   ### Product Overview\n"
+            "   (Engaging product overview highlighting its real-world capabilities and build)\n\n"
+            "   ### Key Features\n"
+            "   - **Feature 1**: Details\n"
+            "   - **Feature 2**: Details\n"
+            "   - **Feature 3**: Details\n"
+            "   - **Feature 4**: Details\n\n"
+            "   ### Technical Specifications\n"
+            "   - **Architecture / GPU**: Accurate details\n"
+            "   - **Memory / VRAM**: Accurate details\n"
+            "   - **Connectivity & Cooling**: Accurate details\n\n"
+            "   ### What's In The Box\n"
+            "   - 1x Item\n"
+            "   - Included accessories and documentation\n\n"
+            "3. 'seo_tags': A list of 4-6 highly relevant search keywords for this exact product.\n\n"
+            "Return strictly valid JSON with keys 'short_description', 'description', and 'seo_tags'."
         )
 
         payload = {
@@ -89,12 +99,12 @@ class AIService:
                 "parts": [{"text": system_prompt}],
             },
             "generationConfig": {
-                "temperature": 0.7,
+                "temperature": 0.5,
                 "responseMimeType": "application/json",
             },
         }
 
-        async with httpx.AsyncClient(timeout=25.0) as client:
+        async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(
                 f"{self.endpoint_url}?key={self.api_key}",
                 json=payload,
@@ -102,13 +112,15 @@ class AIService:
             )
 
         if resp.status_code != 200:
-            logger.error("Gemini API returned %d: %s", resp.status_code, resp.text)
-            raise RuntimeError(f"Gemini API error ({resp.status_code})")
+            error_data = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
+            error_msg = error_data.get("error", {}).get("message", resp.text)
+            logger.error("Gemini API returned %d: %s", resp.status_code, error_msg)
+            raise RuntimeError(f"Gemini API Error ({resp.status_code}): {error_msg}")
 
         data = resp.json()
         candidates = data.get("candidates", [])
         if not candidates:
-            raise RuntimeError("No generation candidates returned by Gemini")
+            raise RuntimeError("No generation response returned by Gemini model.")
 
         raw_json_text = candidates[0]["content"]["parts"][0]["text"]
         parsed = json.loads(raw_json_text)
