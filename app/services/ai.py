@@ -107,12 +107,21 @@ class AIService:
             },
         }
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            resp = await client.post(
-                f"{self.endpoint_url}?key={self.api_key}",
-                json=payload,
-                headers={"Content-Type": "application/json"},
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                resp = await client.post(
+                    f"{self.endpoint_url}?key={self.api_key}",
+                    json=payload,
+                    headers={"Content-Type": "application/json"},
+                )
+        except httpx.TimeoutException:
+            logger.error("Gemini API request timed out after 15s")
+            raise RuntimeError(
+                "Gemini AI request timed out. Please check your internet connection and ensure your GEMINI_API_KEY in .env is a valid Google AI Studio key (starts with AIzaSy...)."
             )
+        except httpx.RequestError as exc:
+            logger.error("Gemini API network connection error: %s", exc)
+            raise RuntimeError(f"Failed to connect to Google Gemini API: {str(exc)}")
 
         if resp.status_code != 200:
             error_data = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}

@@ -29,7 +29,8 @@ async def generate_product_description(
     ai_service = AIService()
     try:
         result = await ai_service.generate_product_description(req)
-    except (ValueError, RuntimeError) as err:
+    except Exception as err:
+        logger.warning("AI generation failed: %s", err)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(err),
