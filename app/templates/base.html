@@ -92,20 +92,8 @@
                         Catalog
                     </a>
 
-                    <!-- Theme Toggle Button (Light/Dark) with dedicated isolated click handling -->
-                    <button type="button" onclick="window.Nexus.toggleTheme(event)" class="theme-toggle-btn w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-lime-400 hover:bg-slate-200 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors cursor-pointer select-none flex-shrink-0" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
-                        <!-- Sun Icon (shown in Dark mode to switch to light) -->
-                        <svg class="theme-icon-sun w-4.5 h-4.5 sm:w-5 sm:h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                        </svg>
-                        <!-- Moon Icon (shown in Light mode to switch to dark) -->
-                        <svg class="theme-icon-moon w-4.5 h-4.5 sm:w-5 sm:h-5 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                        </svg>
-                    </button>
-
-                    <!-- Wishlist Icon (Desktop & Tablet) -->
-                    <a href="/customer/wishlist" class="hidden sm:flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-lime-600 dark:hover:text-lime-400 items-center justify-center transition-colors relative flex-shrink-0" title="My Wishlist">
+                    <!-- Wishlist Icon (Mobile + Desktop) -->
+                    <a href="/customer/wishlist" class="flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors relative flex-shrink-0 cursor-pointer" title="My Wishlist" aria-label="My Wishlist">
                         <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>

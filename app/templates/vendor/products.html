@@ -37,15 +37,15 @@
 
             <div class="glass-panel rounded-3xl overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
+                    <table class="w-full text-left text-xs min-w-[680px]">
                         <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
                             <tr>
-                                <th class="p-4">Product Name & SKU</th>
-                                <th class="p-4">Price</th>
-                                <th class="p-4">Stock</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4">Category</th>
-                                <th class="p-4">Actions</th>
+                                <th class="p-4 whitespace-nowrap">Product Name & SKU</th>
+                                <th class="p-4 whitespace-nowrap">Price</th>
+                                <th class="p-4 whitespace-nowrap">Stock</th>
+                                <th class="p-4 whitespace-nowrap">Status</th>
+                                <th class="p-4 whitespace-nowrap">Category</th>
+                                <th class="p-4 whitespace-nowrap text-right min-w-[210px]">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 dark:divide-zinc-800/60 text-slate-700 dark:text-zinc-300">
@@ -58,7 +58,7 @@
                                             <div class="text-[11px] text-slate-500 dark:text-zinc-400 line-clamp-1 mt-0.5 max-w-xs">{{ p.short_description }}</div>
                                         {% endif %}
                                     </td>
-                                    <td class="p-4">
+                                    <td class="p-4 whitespace-nowrap">
                                         <div class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(p.price) }}</div>
                                         {% if p.compare_at_price and p.compare_at_price > p.price %}
                                             <div class="text-[10px] text-slate-400 dark:text-zinc-500 line-through">
@@ -66,29 +66,29 @@
                                             </div>
                                         {% endif %}
                                     </td>
-                                    <td class="p-4">
+                                    <td class="p-4 whitespace-nowrap">
                                         <span class="{% if p.stock_quantity > 0 %}text-lime-600 dark:text-lime-400{% else %}text-rose-500{% endif %} font-bold">
                                             {{ p.stock_quantity }}
                                         </span>
                                     </td>
-                                    <td class="p-4">
+                                    <td class="p-4 whitespace-nowrap">
                                         <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if p.status.value == 'PUBLISHED' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400{% endif %}">
                                             {{ p.status.value }}
                                         </span>
                                     </td>
-                                    <td class="p-4 text-slate-500 dark:text-zinc-400">{{ p.category.name if p.category else 'General' }}</td>
-                                    <td class="p-4">
-                                        <div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
-                                            <a href="/products/{{ p.slug }}" target="_blank" class="px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-lg text-[11px] font-bold transition-colors">
+                                    <td class="p-4 whitespace-nowrap text-slate-500 dark:text-zinc-400">{{ p.category.name if p.category else 'General' }}</td>
+                                    <td class="p-4 whitespace-nowrap text-right">
+                                        <div class="inline-flex items-center justify-end space-x-1.5 whitespace-nowrap">
+                                            <a href="/products/{{ p.slug }}" target="_blank" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-lg text-[11px] font-bold transition-colors">
                                                 View ↗
                                             </a>
-                                            <button onclick="openEditProductModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}', '{{ p.sku|replace("'", "\\'") }}', {{ p.category_id }}, {{ p.price }}, {{ p.compare_at_price or 'null' }}, {{ p.stock_quantity }}, '{{ p.status.value }}', '{{ (p.short_description or '')|replace("'", "\\'")|replace("\n", " ") }}', '{{ (p.description or '')|replace("'", "\\'")|replace("\n", " ") }}')" class="px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-white rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
+                                            <button onclick="openEditProductModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}', '{{ p.sku|replace("'", "\\'") }}', {{ p.category_id }}, {{ p.price }}, {{ p.compare_at_price or 'null' }}, {{ p.stock_quantity }}, '{{ p.status.value }}', '{{ (p.short_description or '')|replace("'", "\\'")|replace("\n", " ") }}', '{{ (p.description or '')|replace("'", "\\'")|replace("\n", " ") }}')" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-white rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
                                                 ✏️ Edit
                                             </button>
-                                            <button onclick="openUploadImageModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}')" class="px-2.5 py-1 bg-lime-500/15 hover:bg-lime-500/25 text-lime-600 dark:text-lime-400 border border-lime-500/30 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
+                                            <button onclick="openUploadImageModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}')" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-lime-500/15 hover:bg-lime-500/25 text-lime-600 dark:text-lime-400 border border-lime-500/30 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
                                                 📷 Photos
                                             </button>
-                                            <button onclick="handleDeleteProduct({{ p.id }})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
+                                            <button onclick="handleDeleteProduct({{ p.id }})" class="whitespace-nowrap inline-flex items-center justify-center w-7 h-6.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-[11px] font-bold transition-colors cursor-pointer" title="Delete Product">
                                                 ✕
                                             </button>
                                         </div>
