@@ -21,8 +21,44 @@ from app.services.vendor import VendorService
 from app.services.wishlist import WishlistService
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
+ASSETS_CATEGORY_DIR = PROJECT_ROOT / "assets" / "category"
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+
+def get_category_icon_info(category) -> dict:
+    """
+    Returns the appropriate icon image path and fallback emoji for a given category.
+    Gracefully falls back to suitable emojis if the icon image is absent or fails to load.
+    """
+    if not category:
+        return {"icon_url": None, "fallback_emoji": "📦"}
+
+    # If category has custom image_url explicitly saved
+    custom_img = getattr(category, "image_url", None)
+    if custom_img and str(custom_img).strip():
+        return {"icon_url": str(custom_img).strip(), "fallback_emoji": "📦"}
+
+    name = str(getattr(category, "name", "") or "").lower().strip()
+    slug = str(getattr(category, "slug", "") or "").lower().strip().replace("-", "_")
+
+    # Match against available category icons in assets/category/
+    if "electronic" in slug or "electronic" in name or "tech" in slug or "gadget" in slug or "phone" in slug:
+        return {"icon_url": "/assets/category/electronics.png", "fallback_emoji": "⚡"}
+    elif "fashion" in slug or "apparel" in slug or "cloth" in name or "wear" in slug or "fashion" in name or "apparel" in name:
+        return {"icon_url": "/assets/category/fashion_and_apparel.png", "fallback_emoji": "👗"}
+    elif "home" in slug or "living" in slug or "furniture" in slug or "decor" in name or "home" in name:
+        return {"icon_url": "/assets/category/home_and_living.png", "fallback_emoji": "🛋️"}
+
+    # Check for direct file match in assets/category/<slug>.png
+    if (ASSETS_CATEGORY_DIR / f"{slug}.png").exists():
+        return {"icon_url": f"/assets/category/{slug}.png", "fallback_emoji": "📦"}
+
+    return {"icon_url": None, "fallback_emoji": "📦"}
+
+
+templates.env.globals["get_category_icon"] = get_category_icon_info
 
 web_router = APIRouter(include_in_schema=False)
 

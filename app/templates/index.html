@@ -48,13 +48,19 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {% for cat in categories %}
+            {% set cat_icon = get_category_icon(cat) %}
             <a href="/products?category={{ cat.id }}" class="glass-panel p-3.5 sm:p-5 rounded-2xl glass-panel-hover flex items-center space-x-3 sm:space-x-4 group">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center text-lg sm:text-xl group-hover:scale-110 transition-transform flex-shrink-0">
-                    📦
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center p-2 group-hover:scale-110 transition-transform flex-shrink-0 overflow-hidden">
+                    {% if cat_icon.icon_url %}
+                        <img src="{{ cat_icon.icon_url }}" alt="{{ cat.name }}" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <span class="text-lg sm:text-xl hidden items-center justify-center">{{ cat_icon.fallback_emoji }}</span>
+                    {% else %}
+                        <span class="text-lg sm:text-xl flex items-center justify-center">{{ cat_icon.fallback_emoji }}</span>
+                    {% endif %}
                 </div>
                 <div class="min-w-0">
                     <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors truncate">{{ cat.name }}</h3>
-                    <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-500 mt-0.5">Explore items</p>
+                    <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-500 mt-0.5 truncate">{{ cat.description or 'Explore collection' }}</p>
                 </div>
             </a>
         {% else %}

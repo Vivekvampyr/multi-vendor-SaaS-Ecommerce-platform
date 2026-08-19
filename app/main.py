@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent
 STATIC_DIR = BASE_DIR / "static"
 TEMPLATES_DIR = BASE_DIR / "templates"
+ASSETS_DIR = PROJECT_ROOT / "assets"
+ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+(ASSETS_DIR / "category").mkdir(parents=True, exist_ok=True)
 UPLOADS_DIR = PROJECT_ROOT / "uploads"
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 (UPLOADS_DIR / "products").mkdir(parents=True, exist_ok=True)
@@ -65,6 +68,10 @@ register_exception_handlers(app)
 # Mount Static Files
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+# Mount Assets Directory (Category icons & brand graphics)
+if ASSETS_DIR.exists():
+    app.mount("/assets", StaticFiles(directory=str(ASSETS_DIR)), name="assets")
 
 # Mount Uploads
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")

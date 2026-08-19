@@ -12,14 +12,22 @@
                     <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white mb-2 sm:mb-3">Categories</h3>
                     <ul class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1.5 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
                         <li class="flex-shrink-0">
-                            <a href="/products" class="whitespace-nowrap block px-3 py-2 rounded-xl {% if not selected_category %}bg-lime-500 text-black font-black shadow-sm{% else %}text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900{% endif %} transition-colors">
-                                All Categories
+                            <a href="/products" class="whitespace-nowrap flex items-center space-x-2 px-3 py-2 rounded-xl {% if not selected_category %}bg-lime-500 text-black font-black shadow-sm{% else %}text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900{% endif %} transition-colors">
+                                <span class="text-xs">🏷️</span>
+                                <span>All Categories</span>
                             </a>
                         </li>
                         {% for cat in categories %}
+                            {% set cat_icon = get_category_icon(cat) %}
                             <li class="flex-shrink-0">
-                                <a href="/products?category={{ cat.id }}" class="whitespace-nowrap block px-3 py-2 rounded-xl {% if selected_category == cat.id %}bg-lime-500 text-black font-black shadow-sm{% else %}text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900{% endif %} transition-colors">
-                                    {{ cat.name }}
+                                <a href="/products?category={{ cat.id }}" class="whitespace-nowrap flex items-center space-x-2 px-3 py-2 rounded-xl {% if selected_category == cat.id %}bg-lime-500 text-black font-black shadow-sm{% else %}text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900{% endif %} transition-colors">
+                                    {% if cat_icon.icon_url %}
+                                        <img src="{{ cat_icon.icon_url }}" alt="{{ cat.name }}" class="w-4 h-4 object-contain inline-block flex-shrink-0" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                                        <span class="text-xs hidden">{{ cat_icon.fallback_emoji }}</span>
+                                    {% else %}
+                                        <span class="text-xs inline-block">{{ cat_icon.fallback_emoji }}</span>
+                                    {% endif %}
+                                    <span>{{ cat.name }}</span>
                                 </a>
                             </li>
                         {% endfor %}

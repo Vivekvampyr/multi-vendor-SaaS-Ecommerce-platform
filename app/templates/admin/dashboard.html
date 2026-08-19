@@ -496,14 +496,16 @@
                         {% for cat in categories %}
                             <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors" id="category-row-{{ cat.id }}">
                                 <td class="p-4">
+                                    {% set cat_icon = get_category_icon(cat) %}
                                     <div class="flex items-center space-x-3">
-                                        {% if cat.image_url %}
-                                            <img src="{{ cat.image_url }}" alt="{{ cat.name }}" class="w-8 h-8 rounded-lg object-cover border border-slate-300 dark:border-zinc-700">
-                                        {% else %}
-                                            <div class="w-8 h-8 rounded-lg bg-lime-500/10 border border-lime-500/20 flex items-center justify-center font-bold text-lime-600 dark:text-lime-400 text-xs">
-                                                📦
-                                            </div>
-                                        {% endif %}
+                                        <div class="w-8 h-8 rounded-lg bg-lime-500/10 border border-lime-500/20 flex items-center justify-center p-1 overflow-hidden flex-shrink-0">
+                                            {% if cat_icon.icon_url %}
+                                                <img src="{{ cat_icon.icon_url }}" alt="{{ cat.name }}" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                                <span class="text-xs hidden items-center justify-center">{{ cat_icon.fallback_emoji }}</span>
+                                            {% else %}
+                                                <span class="text-xs flex items-center justify-center">{{ cat_icon.fallback_emoji }}</span>
+                                            {% endif %}
+                                        </div>
                                         <span class="font-mono text-slate-400">#{{ cat.id }}</span>
                                     </div>
                                 </td>
