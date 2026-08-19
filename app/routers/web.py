@@ -7,8 +7,10 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import get_optional_user_for_web
+from app.models.subscription import SubscriptionStatus
 from app.models.user import User, UserRole
 from app.repositories.category import CategoryRepository
+from app.repositories.subscription import SubscriptionRepository
 from app.services.address import AddressService
 from app.services.admin import AdminService
 from app.services.cart import CartService
@@ -81,6 +83,13 @@ async def home_page(
     categories = cat_repo.list(only_active=True, skip=0, limit=8)
     products, _ = prod_service.list_products(skip=0, limit=8)
 
+    active_plan_id = None
+    if current_user and current_user.role == UserRole.VENDOR:
+        sub_repo = SubscriptionRepository(db)
+        active_sub = sub_repo.get_by_vendor_id(current_user.id)
+        if active_sub and active_sub.status == SubscriptionStatus.ACTIVE and active_sub.plan_id:
+            active_plan_id = active_sub.plan_id
+
     return templates.TemplateResponse(
         request=request,
         name="index.html",
@@ -90,6 +99,7 @@ async def home_page(
             "plans": plans,
             "categories": categories,
             "products": products,
+            "active_plan_id": active_plan_id,
         },
     )
 
