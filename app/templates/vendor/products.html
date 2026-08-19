@@ -161,6 +161,29 @@
                 </div>
             </div>
 
+            <!-- Gemini AI Generator Panel -->
+            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-lime-500/10 via-emerald-500/10 to-teal-500/10 border border-lime-500/30 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-base">✨</span>
+                        <span class="font-black text-xs text-slate-900 dark:text-white">Gemini Flash Lite Copywriter</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">AI</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <select id="prod-ai-tone" class="bg-white/80 dark:bg-zinc-900/90 border border-lime-500/30 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-800 dark:text-zinc-200 focus:outline-none">
+                            <option value="professional">💼 Professional</option>
+                            <option value="exciting">🔥 Exciting & Trendy</option>
+                            <option value="minimalist">⚡ Minimalist</option>
+                            <option value="technical">🔬 Technical & Specs</option>
+                        </select>
+                        <button type="button" onclick="generateProductAIDescription('create')" id="prod-ai-gen-btn" class="px-3 py-1 bg-lime-500 hover:bg-lime-400 text-black text-[11px] font-black rounded-lg shadow-sm transition-all cursor-pointer flex items-center space-x-1">
+                            <span>✨ Auto-Write</span>
+                        </button>
+                    </div>
+                </div>
+                <input type="text" id="prod-ai-keywords" placeholder="Optional key specs or focus (e.g. 16GB GDDR7, noise cancellation, 2yr warranty)" class="w-full bg-white/70 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+            </div>
+
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Short Description / Tagline</label>
                 <input type="text" id="prod-short-desc" maxlength="500" placeholder="Brief 1-line summary displayed on product cards..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
@@ -233,6 +256,29 @@
                         <option value="ARCHIVED">ARCHIVED</option>
                     </select>
                 </div>
+            </div>
+
+            <!-- Gemini AI Generator Panel for Edit -->
+            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-lime-500/10 via-emerald-500/10 to-teal-500/10 border border-lime-500/30 space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-base">✨</span>
+                        <span class="font-black text-xs text-slate-900 dark:text-white">Gemini Flash Lite Copywriter</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">AI</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <select id="edit-prod-ai-tone" class="bg-white/80 dark:bg-zinc-900/90 border border-lime-500/30 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-800 dark:text-zinc-200 focus:outline-none">
+                            <option value="professional">💼 Professional</option>
+                            <option value="exciting">🔥 Exciting & Trendy</option>
+                            <option value="minimalist">⚡ Minimalist</option>
+                            <option value="technical">🔬 Technical & Specs</option>
+                        </select>
+                        <button type="button" onclick="generateProductAIDescription('edit')" id="edit-prod-ai-gen-btn" class="px-3 py-1 bg-lime-500 hover:bg-lime-400 text-black text-[11px] font-black rounded-lg shadow-sm transition-all cursor-pointer flex items-center space-x-1">
+                            <span>✨ Auto-Write</span>
+                        </button>
+                    </div>
+                </div>
+                <input type="text" id="edit-prod-ai-keywords" placeholder="Optional key specs or focus (e.g. 16GB GDDR7, noise cancellation, 2yr warranty)" class="w-full bg-white/70 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
             </div>
 
             <div>
@@ -422,6 +468,69 @@ async function handleUploadProductImage(e) {
         window.Nexus.showToast(err.message || "Failed to upload image", "error");
         btn.disabled = false;
         btn.textContent = "Upload Image";
+    }
+}
+
+// 4. Gemini Flash Lite AI Description Generator
+async function generateProductAIDescription(mode) {
+    const isEdit = mode === 'edit';
+    const titleInput = document.getElementById(isEdit ? 'edit-prod-name' : 'prod-name');
+    const catSelect = document.getElementById(isEdit ? 'edit-prod-cat' : 'prod-cat');
+    const toneSelect = document.getElementById(isEdit ? 'edit-prod-ai-tone' : 'prod-ai-tone');
+    const keywordsInput = document.getElementById(isEdit ? 'edit-prod-ai-keywords' : 'prod-ai-keywords');
+    const genBtn = document.getElementById(isEdit ? 'edit-prod-ai-gen-btn' : 'prod-ai-gen-btn');
+    const shortDescInput = document.getElementById(isEdit ? 'edit-prod-short-desc' : 'prod-short-desc');
+    const descTextarea = document.getElementById(isEdit ? 'edit-prod-desc' : 'prod-desc');
+
+    const title = (titleInput.value || '').trim();
+    if (!title) {
+        window.Nexus.showToast("Please enter a Product Title first so Gemini can write copy!", "warning");
+        titleInput.focus();
+        return;
+    }
+
+    const catName = catSelect.options[catSelect.selectedIndex] ? catSelect.options[catSelect.selectedIndex].text : '';
+    const tone = toneSelect ? toneSelect.value : 'professional';
+    const keywords = (keywordsInput.value || '').trim();
+
+    const originalBtnContent = genBtn.innerHTML;
+    genBtn.disabled = true;
+    genBtn.innerHTML = `
+        <svg class="animate-spin -ml-0.5 mr-1 h-3 w-3 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Writing...</span>
+    `;
+
+    try {
+        const resp = await window.Nexus.apiFetch("/api/v1/ai/generate-description", {
+            method: "POST",
+            body: JSON.stringify({
+                title: title,
+                category_name: catName,
+                tone: tone,
+                keywords: keywords || null
+            })
+        });
+
+        if (resp.data) {
+            shortDescInput.value = resp.data.short_description || "";
+            descTextarea.value = resp.data.description || "";
+
+            // Visual feedback pulse
+            [shortDescInput, descTextarea].forEach(el => {
+                el.classList.add("ring-2", "ring-lime-500", "bg-lime-500/10");
+                setTimeout(() => el.classList.remove("ring-2", "ring-lime-500", "bg-lime-500/10"), 1200);
+            });
+
+            window.Nexus.showToast("✨ AI copy generated with Gemini Flash Lite!", "success");
+        }
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to generate AI description", "error");
+    } finally {
+        genBtn.disabled = false;
+        genBtn.innerHTML = originalBtnContent;
     }
 }
 </script>

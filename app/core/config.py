@@ -64,6 +64,10 @@ class Settings(BaseSettings):
     STRIPE_WEBHOOK_SECRET: str = ""
     STRIPE_CURRENCY: str = "usd"
 
+    # Google Gemini AI Configuration
+    GEMINI_API_KEY: str = ""
+    GEMINI_MODEL: str = "gemini-2.5-flash-lite"
+
     @property
     def is_development(self) -> bool:
         return self.ENVIRONMENT.lower() == "development"
@@ -79,6 +83,10 @@ class Settings(BaseSettings):
     @property
     def is_stripe_configured(self) -> bool:
         return bool(self.STRIPE_SECRET_KEY and self.STRIPE_SECRET_KEY.startswith("sk_"))
+
+    @property
+    def is_gemini_configured(self) -> bool:
+        return bool(self.GEMINI_API_KEY and len(self.GEMINI_API_KEY.strip()) > 5)
 
     model_config = SettingsConfigDict(
         env_file=".env",

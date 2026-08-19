@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from app.routers import (
     addresses,
     admin,
+    ai,
     auth,
     cart,
     categories,
@@ -38,4 +39,6 @@ api_v1_router.include_router(wishlist.router)
 api_v1_router.include_router(addresses.router)
 api_v1_router.include_router(reviews.router)
 api_v1_router.include_router(chat.router)
+api_v1_router.include_router(ai.router)
 api_v1_router.include_router(admin.router)
+
