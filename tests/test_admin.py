@@ -12,6 +12,11 @@ def test_admin_dashboard_metrics(client, admin_headers, test_customer, test_vend
     assert stats["total_customers"] >= 1
     assert stats["total_plans"] >= 1
     assert stats["total_active_subscriptions"] >= 1
+    assert stats["subscription_revenue"] >= float(test_plan_silver.price)
+    assert "commission_revenue" in stats
+    assert "total_revenue" in stats
+    assert "total_gmv" in stats
+    assert "total_vendor_payouts" in stats
 
 
 def test_admin_dashboard_forbidden_for_non_admin(client, vendor_headers, customer_headers):

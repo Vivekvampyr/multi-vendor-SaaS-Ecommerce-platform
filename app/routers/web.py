@@ -483,6 +483,7 @@ async def admin_dashboard_page(
     coupons, _ = coupon_service.list_coupons(user=current_user, skip=0, limit=100)
     subscriptions, _ = sub_service.list_subscriptions(skip=0, limit=100)
     categories = cat_repo.list(only_active=False, skip=0, limit=200)
+    commission_transactions = admin_service.get_recent_commission_transactions(limit=50)
 
     return templates.TemplateResponse(
         request=request,
@@ -496,5 +497,6 @@ async def admin_dashboard_page(
             "coupons": coupons,
             "subscriptions": subscriptions,
             "categories": categories,
+            "commission_transactions": commission_transactions,
         },
     )

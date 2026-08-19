@@ -22,44 +22,74 @@
 
     <!-- Platform KPI Analytics Cards -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Registered Users</span>
-            <div class="mt-1 sm:mt-2 flex flex-col sm:flex-row sm:items-baseline justify-between">
-                <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">{{ stats.total_users }}</span>
-                <span class="text-[10px] sm:text-[11px] text-slate-500">{{ stats.total_customers }} buyers • {{ stats.total_vendors }} merchants</span>
+        <!-- Card 1: Combined Platform Revenue -->
+        <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden">
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Total Platform Revenue</span>
+                <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black">Gross</span>
+            </div>
+            <div class="mt-1 sm:mt-2">
+                <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(stats.total_revenue) }}</span>
+                <div class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-400 mt-1 flex flex-wrap gap-x-2">
+                    <span>💳 Sub: ${{ "%.2f"|format(stats.subscription_revenue) }}</span>
+                    <span>🛒 Comm: ${{ "%.2f"|format(stats.commission_revenue) }}</span>
+                </div>
             </div>
         </div>
 
+        <!-- Card 2: SaaS Subscription Recurring Revenue -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Vendor Stores</span>
-            <div class="mt-1 sm:mt-2 flex flex-col sm:flex-row sm:items-baseline justify-between">
-                <span class="text-2xl sm:text-3xl font-black text-lime-600 dark:text-lime-400">{{ stats.total_vendors }}</span>
-                <span class="text-[10px] sm:text-[11px] text-slate-500">{{ vendors|length }} total stores</span>
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Subscription Revenue</span>
+                <span class="px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 dark:text-blue-400 text-[10px] font-bold">MRR</span>
+            </div>
+            <div class="mt-1 sm:mt-2">
+                <span class="text-2xl sm:text-3xl font-black text-lime-600 dark:text-lime-400">${{ "%.2f"|format(stats.subscription_revenue) }}</span>
+                <div class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-400 mt-1">
+                    {{ stats.total_active_subscriptions }} active subscribers • {{ stats.total_plans }} plans
+                </div>
             </div>
         </div>
 
+        <!-- Card 3: Product Sales Commission -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Categories</span>
-            <div class="mt-1 sm:mt-2 flex flex-col sm:flex-row sm:items-baseline justify-between">
-                <span class="text-2xl sm:text-3xl font-black text-lime-600 dark:text-lime-400">{{ categories|length }}</span>
-                <span class="text-[10px] sm:text-[11px] text-slate-500">Taxonomy</span>
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Product Commission</span>
+                <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 text-[10px] font-bold">Sales</span>
+            </div>
+            <div class="mt-1 sm:mt-2">
+                <span class="text-2xl sm:text-3xl font-black text-lime-600 dark:text-lime-400">${{ "%.2f"|format(stats.commission_revenue) }}</span>
+                <div class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-400 mt-1">
+                    {{ stats.total_paid_orders }} paid orders • {{ stats.total_products_sold }} items sold
+                </div>
             </div>
         </div>
 
+        <!-- Card 4: Marketplace GMV & Payouts -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Subscriptions</span>
-            <div class="mt-1 sm:mt-2 flex flex-col sm:flex-row sm:items-baseline justify-between">
-                <span class="text-2xl sm:text-3xl font-black text-lime-600 dark:text-lime-400">{{ stats.active_subscriptions }}</span>
-                <span class="text-[10px] sm:text-[11px] text-slate-500">{{ stats.total_plans }} SaaS plans</span>
+            <div class="flex items-center justify-between">
+                <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Marketplace GMV</span>
+                <span class="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-500 dark:text-purple-400 text-[10px] font-bold">Gross</span>
+            </div>
+            <div class="mt-1 sm:mt-2">
+                <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(stats.total_gmv) }}</span>
+                <div class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-400 mt-1">
+                    Merchant payouts: ${{ "%.2f"|format(stats.total_vendor_payouts) }}
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Interactive Section Tabs Navigation -->
     <div class="flex border-b border-slate-200 dark:border-zinc-800 space-x-2 sm:space-x-4 overflow-x-auto pb-1 scrollbar-none">
-        <button onclick="switchTab('vendors')" id="tab-btn-vendors" class="admin-tab-btn flex-shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-black rounded-xl bg-lime-500 text-black transition-all flex items-center space-x-2 cursor-pointer shadow-sm">
+        <button onclick="switchTab('financials')" id="tab-btn-financials" class="admin-tab-btn flex-shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-black rounded-xl bg-lime-500 text-black transition-all flex items-center space-x-2 cursor-pointer shadow-sm">
+            <span>💰 Revenue & Financials</span>
+            <span class="px-2 py-0.5 rounded-full bg-black/20 text-black text-[10px] font-black">${{ "%.0f"|format(stats.total_revenue) }}</span>
+        </button>
+
+        <button onclick="switchTab('vendors')" id="tab-btn-vendors" class="admin-tab-btn flex-shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all flex items-center space-x-2 cursor-pointer">
             <span>🏪 Vendor Shops</span>
-            <span class="px-2 py-0.5 rounded-full bg-black/20 text-black text-[10px] font-black">{{ vendors|length }}</span>
+            <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-[10px]">{{ vendors|length }}</span>
         </button>
 
         <button onclick="switchTab('categories')" id="tab-btn-categories" class="admin-tab-btn flex-shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all flex items-center space-x-2 cursor-pointer">
@@ -83,8 +113,293 @@
         </button>
     </div>
 
+    <!-- TAB 0: FINANCIALS & REVENUE BREAKDOWN -->
+    <div id="tab-content-financials" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+                <h2 class="text-lg font-black text-slate-900 dark:text-white">Platform Revenue & Financial Accounting</h2>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Real-time accounting of vendor SaaS subscriptions and marketplace product transaction commissions</p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="px-3 py-1 rounded-xl bg-lime-500/10 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-xs font-black">
+                    ● Total Revenue: ${{ "%.2f"|format(stats.total_revenue) }}
+                </span>
+            </div>
+        </div>
+
+        <!-- 3 Feature Stream Cards Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- 1. SaaS Subscriptions Stream -->
+            <div class="glass-panel p-6 rounded-3xl space-y-4 border-l-4 border-l-lime-500">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-2xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center text-xl">
+                        💳
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black uppercase">
+                        SaaS Recurring
+                    </span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xs text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Subscription Revenue (MRR)</h3>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white mt-1">
+                        ${{ "%.2f"|format(stats.subscription_revenue) }}
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-200 dark:border-zinc-800/80 space-y-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Active Vendor Subscribers</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ stats.total_active_subscriptions }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Configured Plans</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ stats.total_plans }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Platform Share</span>
+                        <span class="font-bold text-lime-600 dark:text-lime-400">100% Direct Retained</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Marketplace Product Sales Commission -->
+            <div class="glass-panel p-6 rounded-3xl space-y-4 border-l-4 border-l-emerald-500">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-xl">
+                        🛒
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-black uppercase">
+                        Product Take
+                    </span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xs text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Marketplace Commission</h3>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white mt-1">
+                        ${{ "%.2f"|format(stats.commission_revenue) }}
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-200 dark:border-zinc-800/80 space-y-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Gross Merchandise Value (GMV)</span>
+                        <span class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(stats.total_gmv) }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Effective Take-Rate</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">
+                            {% if stats.total_gmv > 0 %}
+                                {{ "%.1f"|format(stats.commission_revenue / stats.total_gmv * 100) }}%
+                            {% else %}
+                                Tiered (10% - 25%)
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Paid Transactions</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ stats.total_paid_orders }} orders</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Merchant Sales & Volume -->
+            <div class="glass-panel p-6 rounded-3xl space-y-4 border-l-4 border-l-blue-500">
+                <div class="flex items-center justify-between">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-xl">
+                        📈
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase">
+                        Disbursements
+                    </span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-xs text-slate-500 dark:text-zinc-400 uppercase tracking-wider">Merchant Net Earnings</h3>
+                    <div class="text-3xl font-black text-slate-900 dark:text-white mt-1">
+                        ${{ "%.2f"|format(stats.total_vendor_payouts) }}
+                    </div>
+                </div>
+                <div class="pt-3 border-t border-slate-200 dark:border-zinc-800/80 space-y-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Units Sold</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ stats.total_products_sold }} items</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Total Stores</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ vendors|length }} merchants</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500 dark:text-zinc-400">Registered Buyers</span>
+                        <span class="font-bold text-slate-900 dark:text-white">{{ stats.total_customers }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Purchase Commission Audit Table -->
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="font-black text-sm text-slate-900 dark:text-white flex items-center space-x-2">
+                    <span>🛒 Product Purchase Commission Ledger</span>
+                    <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black">{{ commission_transactions|length }} recent items</span>
+                </h3>
+                <span class="text-xs text-slate-500 dark:text-zinc-400">Platform automatic commission split on every customer order</span>
+            </div>
+
+            <div class="glass-panel rounded-3xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
+                            <tr>
+                                <th class="p-4">Order # & Customer</th>
+                                <th class="p-4">Product & SKU</th>
+                                <th class="p-4">Merchant Store</th>
+                                <th class="p-4 text-right">Qty & Price</th>
+                                <th class="p-4 text-right">Item Total</th>
+                                <th class="p-4 text-right">Commission Rate</th>
+                                <th class="p-4 text-right font-black text-lime-600 dark:text-lime-400">Platform Revenue</th>
+                                <th class="p-4 text-right">Vendor Payout</th>
+                                <th class="p-4 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-zinc-800/60 text-slate-700 dark:text-zinc-300">
+                            {% for item in commission_transactions %}
+                                <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors">
+                                    <td class="p-4">
+                                        <div class="font-black text-slate-900 dark:text-white">{{ item.order.order_number if item.order else ('#ORD-' ~ item.order_id) }}</div>
+                                        <div class="text-[11px] text-slate-500 dark:text-zinc-400">
+                                            {{ item.order.customer.full_name if item.order and item.order.customer else 'Customer' }}
+                                        </div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="font-bold text-slate-900 dark:text-white line-clamp-1 max-w-[180px]">{{ item.product_name }}</div>
+                                        <div class="text-[10px] text-slate-400 font-mono">SKU: {{ item.product_sku }}</div>
+                                    </td>
+                                    <td class="p-4">
+                                        <div class="font-semibold text-slate-900 dark:text-white">
+                                            {{ item.vendor.vendor_profile.store_name if item.vendor and item.vendor.vendor_profile else (item.vendor.full_name if item.vendor else 'Vendor ID ' ~ item.vendor_id) }}
+                                        </div>
+                                        <div class="text-[10px] text-slate-500">{{ item.vendor.email if item.vendor else '' }}</div>
+                                    </td>
+                                    <td class="p-4 text-right">
+                                        <span class="font-bold">{{ item.quantity }}x</span>
+                                        <span class="text-slate-500 text-[11px]">${{ "%.2f"|format(item.unit_price) }}</span>
+                                    </td>
+                                    <td class="p-4 text-right font-bold text-slate-900 dark:text-white">
+                                        ${{ "%.2f"|format(item.subtotal) }}
+                                    </td>
+                                    <td class="p-4 text-right font-semibold">
+                                        <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[11px]">
+                                            {{ "%.1f"|format(item.commission_rate) }}%
+                                        </span>
+                                    </td>
+                                    <td class="p-4 text-right font-black text-lime-600 dark:text-lime-400">
+                                        +${{ "%.2f"|format(item.commission_amount) }}
+                                    </td>
+                                    <td class="p-4 text-right font-semibold text-slate-800 dark:text-zinc-200">
+                                        ${{ "%.2f"|format(item.vendor_earnings) }}
+                                    </td>
+                                    <td class="p-4 text-center">
+                                        {% if item.order and item.order.payment_status.value == 'SUCCESS' %}
+                                            <span class="px-2.5 py-1 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black">
+                                                PAID
+                                            </span>
+                                        {% else %}
+                                            <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold">
+                                                {{ item.status.value }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="9" class="p-8 text-center text-slate-500 dark:text-zinc-500 text-xs">
+                                        No product sales commission recorded yet. Once customers purchase products from vendor stores, live fee splits will appear here.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SaaS Subscription Billings Table -->
+        <div class="space-y-3 pt-2">
+            <div class="flex items-center justify-between">
+                <h3 class="font-black text-sm text-slate-900 dark:text-white flex items-center space-x-2">
+                    <span>⚡ Vendor SaaS Subscription Billings</span>
+                    <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black">{{ subscriptions|length }} active tiers</span>
+                </h3>
+                <span class="text-xs text-slate-500 dark:text-zinc-400">Recurring software subscription revenue from merchant storefronts</span>
+            </div>
+
+            <div class="glass-panel rounded-3xl overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
+                            <tr>
+                                <th class="p-4">Vendor & Store</th>
+                                <th class="p-4">Subscribed SaaS Plan</th>
+                                <th class="p-4 text-right">Plan Monthly Fee</th>
+                                <th class="p-4 text-center">Product Limit</th>
+                                <th class="p-4 text-right">Take-Rate Tier</th>
+                                <th class="p-4">Subscribed On</th>
+                                <th class="p-4">Auto-Renew</th>
+                                <th class="p-4 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 dark:divide-zinc-800/60 text-slate-700 dark:text-zinc-300">
+                            {% for sub in subscriptions %}
+                                <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors">
+                                    <td class="p-4">
+                                        <div class="font-bold text-slate-900 dark:text-white">
+                                            {{ sub.vendor.vendor_profile.store_name if sub.vendor and sub.vendor.vendor_profile else (sub.vendor.full_name if sub.vendor else 'Vendor ID ' ~ sub.vendor_id) }}
+                                        </div>
+                                        <div class="text-[11px] text-slate-500 dark:text-zinc-400">{{ sub.vendor.email if sub.vendor else '' }}</div>
+                                    </td>
+                                    <td class="p-4">
+                                        <span class="px-2.5 py-1 rounded-xl bg-lime-500/20 text-lime-600 dark:text-lime-400 font-black text-xs">
+                                            {{ sub.plan.name if sub.plan else 'Unknown Plan' }}
+                                        </span>
+                                    </td>
+                                    <td class="p-4 text-right font-black text-slate-900 dark:text-white text-sm">
+                                        ${{ "%.2f"|format(sub.plan.price) if sub.plan else '0.00' }}/mo
+                                    </td>
+                                    <td class="p-4 text-center font-bold">
+                                        {{ sub.plan.max_products if sub.plan else '10' }} items
+                                    </td>
+                                    <td class="p-4 text-right font-bold text-lime-600 dark:text-lime-400">
+                                        {{ "%.1f"|format(sub.plan.commission_rate) if sub.plan else '20.0' }}% comm
+                                    </td>
+                                    <td class="p-4 text-slate-500 dark:text-zinc-400">
+                                        {{ sub.start_date.strftime('%b %d, %Y') if sub.start_date else 'Active' }}
+                                    </td>
+                                    <td class="p-4">
+                                        {% if sub.auto_renew %}
+                                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓ Enabled</span>
+                                        {% else %}
+                                            <span class="text-slate-400 font-normal">Disabled</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="p-4 text-center">
+                                        <span class="px-2.5 py-1 rounded-full {% if sub.status.value == 'ACTIVE' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 font-black{% else %}bg-slate-200 dark:bg-zinc-800 text-slate-500 font-bold{% endif %} text-[10px]">
+                                            {{ sub.status.value }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="8" class="p-8 text-center text-slate-500 dark:text-zinc-500 text-xs">
+                                        No active vendor subscriptions found.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- TAB 1: VENDOR SHOPS MODERATION -->
-    <div id="tab-content-vendors" class="space-y-4">
+    <div id="tab-content-vendors" class="space-y-4 hidden">
         <div class="flex items-center justify-between">
             <h2 class="text-lg font-black text-slate-900 dark:text-white">Merchant Stores & Moderation</h2>
             <span class="text-xs text-slate-500 dark:text-zinc-400">Review vendor applications, approve storefronts, or suspend access</span>
@@ -651,17 +966,17 @@
 
 <script>
 function switchTab(tabKey) {
-    const tabs = ['vendors', 'categories', 'plans', 'coupons', 'subscriptions'];
+    const tabs = ['financials', 'vendors', 'categories', 'plans', 'coupons', 'subscriptions'];
     tabs.forEach(t => {
         const content = document.getElementById(`tab-content-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
         if (content && btn) {
             if (t === tabKey) {
                 content.classList.remove('hidden');
-                btn.className = 'admin-tab-btn px-4 py-2.5 text-xs font-black rounded-xl bg-lime-500 text-black transition-all flex items-center space-x-2 cursor-pointer shadow-sm';
+                btn.className = 'admin-tab-btn flex-shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-black rounded-xl bg-lime-500 text-black transition-all flex items-center space-x-2 cursor-pointer shadow-sm';
             } else {
                 content.classList.add('hidden');
-                btn.className = 'admin-tab-btn px-4 py-2.5 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all flex items-center space-x-2 cursor-pointer';
+                btn.className = 'admin-tab-btn flex-shrink-0 whitespace-nowrap px-4 py-2.5 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-all flex items-center space-x-2 cursor-pointer';
             }
         }
     });
