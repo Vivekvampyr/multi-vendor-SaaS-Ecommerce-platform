@@ -61,13 +61,26 @@
                                         ${{ "%.2f"|format(item.vendor_earnings) }}
                                     </td>
                                     <td class="p-4">
-                                        <select onchange="updateFulfillmentStatus({{ item.id }}, this.value)" class="bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-2.5 py-1 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-bold">
-                                            <option value="PENDING" {% if item.status.value == 'PENDING' %}selected{% endif %}>PENDING</option>
-                                            <option value="PROCESSING" {% if item.status.value == 'PROCESSING' %}selected{% endif %}>PROCESSING</option>
-                                            <option value="SHIPPED" {% if item.status.value == 'SHIPPED' %}selected{% endif %}>SHIPPED</option>
-                                            <option value="DELIVERED" {% if item.status.value == 'DELIVERED' %}selected{% endif %}>DELIVERED</option>
-                                            <option value="CANCELLED" {% if item.status.value == 'CANCELLED' %}selected{% endif %}>CANCELLED</option>
-                                        </select>
+                                        {% if item.status.value == 'CANCELLED' %}
+                                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-500 text-[10px] font-black">
+                                                ✕ CANCELLED
+                                            </span>
+                                        {% elif item.order and item.order.payment_method != 'COD' and item.order.payment_status.value != 'SUCCESS' %}
+                                            <div class="space-y-1">
+                                                <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold inline-block">
+                                                    ⚠️ Awaiting Online Payment
+                                                </span>
+                                                <p class="text-[10px] text-slate-400 dark:text-zinc-500">Fulfillment locked until customer pays</p>
+                                            </div>
+                                        {% else %}
+                                            <select onchange="updateFulfillmentStatus({{ item.id }}, this.value)" class="bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-2.5 py-1 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-bold cursor-pointer">
+                                                <option value="PENDING" {% if item.status.value == 'PENDING' %}selected{% endif %}>PENDING</option>
+                                                <option value="PROCESSING" {% if item.status.value == 'PROCESSING' %}selected{% endif %}>PROCESSING</option>
+                                                <option value="SHIPPED" {% if item.status.value == 'SHIPPED' %}selected{% endif %}>SHIPPED</option>
+                                                <option value="DELIVERED" {% if item.status.value == 'DELIVERED' %}selected{% endif %}>DELIVERED</option>
+                                                <option value="CANCELLED" {% if item.status.value == 'CANCELLED' %}selected{% endif %}>CANCELLED</option>
+                                            </select>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% else %}

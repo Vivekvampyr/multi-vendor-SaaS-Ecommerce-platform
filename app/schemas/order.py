@@ -40,6 +40,10 @@ class OrderItemStatusUpdate(BaseModel):
     status: OrderStatus = Field(description="Updated status (PROCESSING, SHIPPED, DELIVERED, CANCELLED)")
 
 
+class OrderCancelRequest(BaseModel):
+    reason: Optional[str] = Field(default=None, description="Optional cancellation reason")
+
+
 class OrderOut(BaseModel):
     id: int
     order_number: str

@@ -65,13 +65,18 @@
             </div>
         {% endif %}
 
-        <div class="flex justify-center space-x-4 pt-4">
-            <a href="/customer/orders" class="px-6 py-2.5 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-xs font-bold text-slate-900 dark:text-zinc-200 rounded-xl transition-colors">
+        <div class="flex justify-center space-x-3 pt-4 flex-wrap gap-y-2">
+            <a href="/customer/orders" class="px-5 py-2.5 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-xs font-bold text-slate-900 dark:text-zinc-200 rounded-xl transition-colors">
                 View My Orders
             </a>
-            <a href="/products" class="px-6 py-2.5 bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-xs font-bold text-slate-700 dark:text-zinc-300 rounded-xl transition-colors">
+            <a href="/products" class="px-5 py-2.5 bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-xs font-bold text-slate-700 dark:text-zinc-300 rounded-xl transition-colors">
                 Continue Shopping
             </a>
+            {% if order.status.value not in ['SHIPPED', 'DELIVERED', 'CANCELLED'] %}
+                <button onclick="cancelCurrentOrder()" class="px-5 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer">
+                    ✕ Cancel Order
+                </button>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -116,6 +121,23 @@ async function simulateOrderPayment() {
         window.Nexus.showToast(err.message, "error");
         btn.disabled = false;
         btn.textContent = "Instant Test Simulation";
+    }
+}
+
+async function cancelCurrentOrder() {
+    if (!confirm("Are you sure you want to cancel this order? This will release reserved inventory.")) {
+        return;
+    }
+
+    try {
+        await window.Nexus.apiFetch("/api/v1/orders/{{ order.id }}/cancel", {
+            method: "POST",
+            body: JSON.stringify({ reason: "Customer requested cancellation from receipt" })
+        });
+        window.Nexus.showToast("Order cancelled successfully", "info");
+        setTimeout(() => window.location.reload(), 700);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to cancel order", "error");
     }
 }
 </script>

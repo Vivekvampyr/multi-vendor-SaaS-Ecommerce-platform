@@ -94,12 +94,22 @@
                                     {% endif %}
                                 </div>
 
-                                <div class="flex items-center space-x-3 w-full sm:w-auto">
+                                <div class="flex items-center space-x-2.5 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-end gap-y-2">
                                     <a href="/orders/{{ ord.id }}/success" class="flex-1 sm:flex-initial text-center px-4 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-bold rounded-xl border border-slate-300 dark:border-zinc-800 transition-colors">
                                         View Receipt
                                     </a>
 
-                                    {% if ord.payment_status.value != 'SUCCESS' %}
+                                    {% if ord.status.value not in ['SHIPPED', 'DELIVERED', 'CANCELLED'] %}
+                                        <button onclick="cancelCustomerOrder({{ ord.id }}, '{{ ord.order_number }}')" class="flex-1 sm:flex-initial px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer">
+                                            ✕ Cancel Order
+                                        </button>
+                                    {% endif %}
+
+                                    {% if ord.status.value == 'CANCELLED' %}
+                                        <span class="inline-flex items-center space-x-1 px-3 py-1.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-bold rounded-xl">
+                                            <span>✕ Cancelled</span>
+                                        </span>
+                                    {% elif ord.payment_status.value != 'SUCCESS' %}
                                         <button onclick="openPaymentModal({{ ord.id }}, '{{ ord.order_number }}', {{ ord.total_amount }})" class="flex-1 sm:flex-initial px-5 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer flex items-center justify-center space-x-1.5">
                                             <span>💳 Pay Now (${{ "%.2f"|format(ord.total_amount) }})</span>
                                         </button>
@@ -235,6 +245,23 @@ async function executePayment() {
         window.Nexus.showToast(err.message || "Payment failed to process", "error");
         btn.disabled = false;
         btn.textContent = "Pay Now";
+    }
+}
+
+async function cancelCustomerOrder(orderId, orderNumber) {
+    if (!confirm(`Are you sure you want to cancel Order #${orderNumber}? This will cancel all line items and restore product stock.`)) {
+        return;
+    }
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/orders/${orderId}/cancel`, {
+            method: "POST",
+            body: JSON.stringify({ reason: "Customer requested cancellation" })
+        });
+        window.Nexus.showToast(`Order #${orderNumber} has been cancelled.`, "info");
+        setTimeout(() => window.location.reload(), 700);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to cancel order", "error");
     }
 }
 </script>

@@ -225,3 +225,101 @@ def test_payment_simulation_and_vendor_fulfillment(
     )
     assert status_resp.status_code == 200
     assert status_resp.json()["data"]["status"] == "SHIPPED"
+
+
+def test_vendor_cannot_fulfill_unpaid_online_order(
+    client,
+    customer_headers,
+    vendor_headers,
+    test_product,
+):
+    # Customer checks out with STRIPE online payment (unpaid)
+    client.post("/api/v1/cart/items", json={"product_id": test_product.id, "quantity": 1}, headers=customer_headers)
+    checkout_resp = client.post(
+        "/api/v1/orders/checkout",
+        json={"shipping_address": "888 Online Way, Austin, TX", "payment_method": "STRIPE"},
+        headers=customer_headers,
+    )
+    order_id = checkout_resp.json()["data"]["id"]
+
+    # Vendor tries to ship without payment
+    vendor_orders = client.get("/api/v1/orders/vendor/my-orders", headers=vendor_headers).json()["data"]
+    item_id = next(i["id"] for i in vendor_orders if i["order_id"] == order_id)
+
+    status_resp = client.put(
+        f"/api/v1/orders/items/{item_id}/status",
+        json={"status": "SHIPPED"},
+        headers=vendor_headers,
+    )
+    assert status_resp.status_code == 400
+    assert "Cannot ship or deliver an unpaid online order" in status_resp.json()["error"]["message"]
+
+
+def test_vendor_can_fulfill_cod_order(
+    client,
+    customer_headers,
+    vendor_headers,
+    test_product,
+):
+    # Customer checks out with COD
+    client.post("/api/v1/cart/items", json={"product_id": test_product.id, "quantity": 1}, headers=customer_headers)
+    checkout_resp = client.post(
+        "/api/v1/orders/checkout",
+        json={"shipping_address": "999 Cash Road, Miami, FL", "payment_method": "COD"},
+        headers=customer_headers,
+    )
+    order_id = checkout_resp.json()["data"]["id"]
+
+    vendor_orders = client.get("/api/v1/orders/vendor/my-orders", headers=vendor_headers).json()["data"]
+    item_id = next(i["id"] for i in vendor_orders if i["order_id"] == order_id)
+
+    # Vendor can ship COD order
+    ship_resp = client.put(
+        f"/api/v1/orders/items/{item_id}/status",
+        json={"status": "SHIPPED"},
+        headers=vendor_headers,
+    )
+    assert ship_resp.status_code == 200
+
+    # Vendor delivers COD order -> confirms payment collection
+    deliv_resp = client.put(
+        f"/api/v1/orders/items/{item_id}/status",
+        json={"status": "DELIVERED"},
+        headers=vendor_headers,
+    )
+    assert deliv_resp.status_code == 200
+
+    order_resp = client.get(f"/api/v1/orders/{order_id}", headers=customer_headers)
+    assert order_resp.json()["data"]["payment_status"] == "SUCCESS"
+
+
+def test_customer_cancel_order_restores_inventory(
+    client,
+    customer_headers,
+    test_product,
+    db_session,
+):
+    initial_stock = test_product.stock_quantity
+    client.post("/api/v1/cart/items", json={"product_id": test_product.id, "quantity": 2}, headers=customer_headers)
+    checkout_resp = client.post(
+        "/api/v1/orders/checkout",
+        json={"shipping_address": "111 Cancel Ave, Denver, CO"},
+        headers=customer_headers,
+    )
+    order_id = checkout_resp.json()["data"]["id"]
+
+    db_session.refresh(test_product)
+    assert test_product.stock_quantity == initial_stock - 2
+
+    # Customer cancels order
+    cancel_resp = client.post(
+        f"/api/v1/orders/{order_id}/cancel",
+        json={"reason": "Ordered by mistake"},
+        headers=customer_headers,
+    )
+    assert cancel_resp.status_code == 200
+    assert cancel_resp.json()["data"]["status"] == "CANCELLED"
+
+    # Inventory must be restored
+    db_session.refresh(test_product)
+    assert test_product.stock_quantity == initial_stock

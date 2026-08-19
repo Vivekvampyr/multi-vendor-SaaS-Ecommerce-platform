@@ -239,7 +239,80 @@ class OrderService:
         if user.role != UserRole.ADMIN and item.vendor_id != user.id:
             raise ForbiddenException("You do not have permission to update this order item")
 
-        return self.order_repo.update_item_status(item, update_in.status)
+        if item.status == OrderStatus.CANCELLED and update_in.status != OrderStatus.CANCELLED:
+            raise BadRequestException("Cannot modify the status of a cancelled order item")
+
+        # Business Rule: Online orders must be paid before vendor can ship/deliver
+        if update_in.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED]:
+            if item.order and item.order.payment_method != "COD" and item.order.payment_status != PaymentStatus.SUCCESS:
+                raise BadRequestException(
+                    "Cannot ship or deliver an unpaid online order. The customer must complete online payment first."
+                )
+
+        updated = self.order_repo.update_item_status(item, update_in.status)
+
+        # Check if all items in parent order are delivered
+        if item.order and update_in.status == OrderStatus.DELIVERED:
+            all_delivered = all(
+                i.status in [OrderStatus.DELIVERED, OrderStatus.CANCELLED]
+                for i in item.order.items
+            )
+            if all_delivered:
+                item.order.status = OrderStatus.DELIVERED
+                # For COD orders, delivery confirms payment collection
+                if item.order.payment_method == "COD":
+                    item.order.payment_status = PaymentStatus.SUCCESS
+                self.db.commit()
+
+        return updated
+
+    def cancel_order(
+        self,
+        user: User,
+        order_id: int,
+        reason: Optional[str] = None,
+    ) -> Order:
+        """
+        Allows customer or admin to cancel an order and automatically restores product inventory stock.
+        """
+        order = self.order_repo.get_by_id(order_id)
+        if not order:
+            raise NotFoundException(message=f"Order with ID {order_id} not found")
+
+        if user.role != UserRole.ADMIN and order.customer_id != user.id:
+            raise ForbiddenException("You do not have permission to cancel this order")
+
+        if order.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED]:
+            raise BadRequestException(
+                f"Cannot cancel order #{order.order_number} because it has already been {order.status.value.lower()}"
+            )
+
+        if order.status == OrderStatus.CANCELLED:
+            raise BadRequestException(f"Order #{order.order_number} is already cancelled")
+
+        # 1. Update Master Order Status
+        order.status = OrderStatus.CANCELLED
+        if order.payment_status == PaymentStatus.SUCCESS:
+            order.payment_status = PaymentStatus.REFUNDED
+
+        # 2. Update line items and restore product inventory
+        for item in order.items:
+            item.status = OrderStatus.CANCELLED
+            prod = self.prod_repo.get_by_id(item.product_id)
+            if prod:
+                prod.stock_quantity += item.quantity
+                if prod.status == ProductStatus.OUT_OF_STOCK and prod.stock_quantity > 0:
+                    prod.status = ProductStatus.PUBLISHED
+
+        self.db.commit()
+        self.db.refresh(order)
+        logger.info(
+            "Order %s successfully cancelled by User ID %d (Reason: %s). Inventory restored.",
+            order.order_number,
+            user.id,
+            reason or "Customer request",
+        )
+        return order
 
     def admin_list_orders(
         self,

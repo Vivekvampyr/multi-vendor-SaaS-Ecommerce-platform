@@ -13,6 +13,7 @@ from app.models.order import OrderStatus
 from app.models.user import User
 from app.schemas.common import APIResponse
 from app.schemas.order import (
+    OrderCancelRequest,
     OrderCheckoutRequest,
     OrderItemOut,
     OrderItemStatusUpdate,
@@ -71,6 +72,28 @@ def pay_order(
         success=True,
         message=f"Order payment status: {paid_order.payment_status.value}",
         data=OrderOut.model_validate(paid_order),
+    )
+
+
+@router.post(
+    "/{order_id}/cancel",
+    response_model=APIResponse[OrderOut],
+    status_code=status.HTTP_200_OK,
+    summary="Cancel order and restore stock (Customer / Admin)",
+)
+def cancel_order(
+    order_id: int,
+    cancel_in: Optional[OrderCancelRequest] = None,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> APIResponse[OrderOut]:
+    order_service = OrderService(db)
+    reason = cancel_in.reason if cancel_in else None
+    cancelled_order = order_service.cancel_order(user=current_user, order_id=order_id, reason=reason)
+    return APIResponse(
+        success=True,
+        message=f"Order {cancelled_order.order_number} has been cancelled successfully",
+        data=OrderOut.model_validate(cancelled_order),
     )
 
 
