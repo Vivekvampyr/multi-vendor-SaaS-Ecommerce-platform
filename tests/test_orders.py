@@ -400,3 +400,36 @@ def test_customer_cannot_cancel_delivered_order(
     )
     assert cancel_resp.status_code == 400
     assert "already DELIVERED" in cancel_resp.json()["error"]["message"] or "already" in cancel_resp.json()["error"]["message"]
+
+
+def test_vendor_cannot_modify_delivered_order_status(
+    client,
+    customer_headers,
+    vendor_headers,
+    test_product,
+):
+    client.post("/api/v1/cart/items", json={"product_id": test_product.id, "quantity": 1}, headers=customer_headers)
+    checkout_resp = client.post(
+        "/api/v1/orders/checkout",
+        json={"shipping_address": "888 Completed St, Chicago, IL", "payment_method": "COD"},
+        headers=customer_headers,
+    )
+    order_id = checkout_resp.json()["data"]["id"]
+
+    vendor_orders = client.get("/api/v1/orders/vendor/my-orders", headers=vendor_headers).json()["data"]
+    item_id = next(i["id"] for i in vendor_orders if i["order_id"] == order_id)
+
+    # Vendor marks item as DELIVERED
+    resp = client.put(f"/api/v1/orders/items/{item_id}/status", json={"status": "DELIVERED"}, headers=vendor_headers)
+    assert resp.status_code == 200
+    assert resp.json()["data"]["status"] == "DELIVERED"
+
+    # Vendor attempts to change delivered status back to CANCELLED or PENDING -> must fail with 400
+    cancel_attempt = client.put(f"/api/v1/orders/items/{item_id}/status", json={"status": "CANCELLED"}, headers=vendor_headers)
+    assert cancel_attempt.status_code == 400
+    assert "already been delivered" in cancel_attempt.json()["error"]["message"]
+
+    pending_attempt = client.put(f"/api/v1/orders/items/{item_id}/status", json={"status": "PENDING"}, headers=vendor_headers)
+    assert pending_attempt.status_code == 400
+    assert "already been delivered" in pending_attempt.json()["error"]["message"]
+

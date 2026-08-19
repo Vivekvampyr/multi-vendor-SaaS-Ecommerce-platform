@@ -70,12 +70,16 @@
                                     </td>
                                     <td class="p-4">
                                         {% if item.status.value == 'CANCELLED' %}
-                                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-500 text-[10px] font-black">
-                                                ✕ CANCELLED
+                                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-500 border border-rose-500/30 text-[10px] font-black inline-flex items-center space-x-1">
+                                                <span>✕ CANCELLED</span>
+                                            </span>
+                                        {% elif item.status.value == 'DELIVERED' %}
+                                            <span class="px-2.5 py-1 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30 text-[10px] font-black inline-flex items-center space-x-1">
+                                                <span>✓ DELIVERED</span>
                                             </span>
                                         {% elif item.order and item.order.payment_method != 'COD' and item.order.payment_status.value != 'SUCCESS' %}
                                             <div class="space-y-1">
-                                                <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] font-bold inline-block">
+                                                <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-bold inline-block">
                                                     ⚠️ Awaiting Online Payment
                                                 </span>
                                                 <p class="text-[10px] text-slate-400 dark:text-zinc-500">Fulfillment locked until customer pays</p>
@@ -86,7 +90,6 @@
                                                 <option value="PROCESSING" {% if item.status.value == 'PROCESSING' %}selected{% endif %}>PROCESSING</option>
                                                 <option value="SHIPPED" {% if item.status.value == 'SHIPPED' %}selected{% endif %}>SHIPPED</option>
                                                 <option value="DELIVERED" {% if item.status.value == 'DELIVERED' %}selected{% endif %}>DELIVERED</option>
-                                                <option value="CANCELLED" {% if item.status.value == 'CANCELLED' %}selected{% endif %}>CANCELLED</option>
                                             </select>
                                         {% endif %}
                                     </td>

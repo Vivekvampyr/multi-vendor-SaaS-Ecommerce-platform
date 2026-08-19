@@ -246,6 +246,9 @@ class OrderService:
         if item.status == OrderStatus.CANCELLED and update_in.status != OrderStatus.CANCELLED:
             raise BadRequestException("Cannot modify the status of a cancelled order item")
 
+        if item.status == OrderStatus.DELIVERED and update_in.status != OrderStatus.DELIVERED:
+            raise BadRequestException("Cannot modify the status of an order item that has already been delivered")
+
         # Business Rule: Online orders must be paid before vendor can ship/deliver
         if update_in.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED]:
             if item.order and item.order.payment_method != "COD" and item.order.payment_status != PaymentStatus.SUCCESS:

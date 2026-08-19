@@ -5,37 +5,54 @@
 {% block content %}
 <div class="max-w-3xl mx-auto px-4 py-16 text-center">
     <div class="glass-panel p-8 sm:p-12 rounded-3xl space-y-6">
-        <div class="w-16 h-16 rounded-2xl bg-lime-500/20 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-3xl flex items-center justify-center mx-auto font-black">
-            ✓
-        </div>
+        {% if order.status.value == 'CANCELLED' %}
+            <div class="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-500 text-3xl flex items-center justify-center mx-auto font-black">
+                ✕
+            </div>
 
-        <div>
-            <h1 class="text-3xl font-black text-slate-900 dark:text-white">Thank You for Your Order!</h1>
-            <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-lime-600 dark:text-lime-400 font-mono">{{ order.order_number }}</strong></p>
-        </div>
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white">Order Cancelled</h1>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-lime-600 dark:text-lime-400 font-mono">{{ order.order_number }}</strong></p>
+                <p class="text-xs text-rose-500 font-semibold mt-1">This order has been cancelled. Any reserved items have been restored to catalog inventory.</p>
+            </div>
+        {% else %}
+            <div class="w-16 h-16 rounded-2xl bg-lime-500/20 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-3xl flex items-center justify-center mx-auto font-black">
+                ✓
+            </div>
+
+            <div>
+                <h1 class="text-3xl font-black text-slate-900 dark:text-white">Thank You for Your Order!</h1>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-lime-600 dark:text-lime-400 font-mono">{{ order.order_number }}</strong></p>
+            </div>
+        {% endif %}
 
         <!-- Order Summary Breakdown -->
         <div class="p-6 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900 text-left space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
                 <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Status</span>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-black {% if order.status.value == 'PAID' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-black {% if order.status.value == 'CANCELLED' %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% elif order.status.value in ['PAID', 'DELIVERED'] %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
                     {{ order.status.value }}
                 </span>
             </div>
 
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
                 <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Payment Status</span>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-black {% if order.payment_status.value == 'SUCCESS' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% endif %}">
-                    {{ order.payment_status.value }}
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-black {% if order.status.value == 'CANCELLED' %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% elif order.payment_status.value == 'SUCCESS' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
+                    {% if order.status.value == 'CANCELLED' and order.payment_status.value != 'SUCCESS' %}CANCELLED{% else %}{{ order.payment_status.value }}{% endif %}
                 </span>
             </div>
 
             <div class="space-y-2">
                 <h4 class="text-xs font-bold text-slate-700 dark:text-zinc-300">Items Ordered</h4>
                 {% for item in order.items %}
-                    <div class="flex justify-between text-xs text-slate-600 dark:text-zinc-300">
-                        <span>{{ item.quantity }}x {{ item.product_name }}</span>
-                        <span class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(item.subtotal) }}</span>
+                    <div class="flex justify-between items-center text-xs text-slate-600 dark:text-zinc-300 py-1">
+                        <div class="flex items-center space-x-2">
+                            <span>{{ item.quantity }}x {{ item.product_name }}</span>
+                            {% if item.status.value == 'CANCELLED' %}
+                                <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 text-[10px] font-black">CANCELLED</span>
+                            {% endif %}
+                        </div>
+                        <span class="font-bold text-slate-900 dark:text-white {% if item.status.value == 'CANCELLED' %}line-through text-slate-400 dark:text-zinc-600{% endif %}">${{ "%.2f"|format(item.subtotal) }}</span>
                     </div>
                 {% endfor %}
             </div>
@@ -46,8 +63,8 @@
             </div>
         </div>
 
-        <!-- Payment Actions -->
-        {% if order.payment_status.value != 'SUCCESS' %}
+        <!-- Payment Actions (Only for active, non-cancelled orders awaiting payment) -->
+        {% if order.payment_status.value != 'SUCCESS' and order.status.value != 'CANCELLED' %}
             <div class="p-6 rounded-2xl bg-lime-500/10 border border-lime-500/30 text-left space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="font-black text-sm text-slate-900 dark:text-white">💳 Complete Payment</h3>
