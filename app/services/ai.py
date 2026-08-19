@@ -16,8 +16,11 @@ class AIService:
     """
 
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
-        self.api_key = api_key or settings.GEMINI_API_KEY
-        self.model = model or settings.GEMINI_MODEL or "gemini-2.5-flash"
+        self.api_key = (api_key or settings.GEMINI_API_KEY or "").strip()
+        raw_model = (model or settings.GEMINI_MODEL or "gemini-3.6-flash").strip()
+        if raw_model.startswith("models/"):
+            raw_model = raw_model[7:]
+        self.model = raw_model
         self.endpoint_url = (
             f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
         )

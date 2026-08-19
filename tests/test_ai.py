@@ -2,20 +2,28 @@ import json
 from unittest.mock import AsyncMock, patch
 import pytest
 
-from app.schemas.ai import AIDescriptionGenerateRequest
+from app.schemas.ai import AIDescriptionGenerateRequest, AIDescriptionGenerateResponse
 from app.services.ai import AIService
 
 
 def test_vendor_generate_ai_description_success(client, vendor_headers):
-    payload = {
-        "title": "Sony WH-1000XM5 Wireless Headphones",
-        "category_name": "Audio & Electronics",
-        "tone": "exciting",
-        "keywords": "ANC, 30hr battery, LDAC, Multipoint Bluetooth",
-    }
-    response = client.post(
-        "/api/v1/ai/generate-description", json=payload, headers=vendor_headers
+    mock_res = AIDescriptionGenerateResponse(
+        short_description="Experience industry-leading noise cancellation with Sony WH-1000XM5.",
+        description="### Product Overview\nPremium wireless headphones featuring 30hr battery and LDAC codec.",
+        seo_tags=["sony", "headphones", "anc", "bluetooth"],
+        model_used="gemini-3.6-flash",
     )
+    with patch.object(AIService, "generate_product_description", new_callable=AsyncMock) as mock_gen:
+        mock_gen.return_value = mock_res
+        payload = {
+            "title": "Sony WH-1000XM5 Wireless Headphones",
+            "category_name": "Audio & Electronics",
+            "tone": "exciting",
+            "keywords": "ANC, 30hr battery, LDAC, Multipoint Bluetooth",
+        }
+        response = client.post(
+            "/api/v1/ai/generate-description", json=payload, headers=vendor_headers
+        )
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
@@ -25,19 +33,27 @@ def test_vendor_generate_ai_description_success(client, vendor_headers):
     assert "description" in data["data"]
     assert "seo_tags" in data["data"]
     assert len(data["data"]["seo_tags"]) >= 1
-    assert "model_used" in data["data"]
+    assert data["data"]["model_used"] == "gemini-3.6-flash"
 
 
 def test_admin_generate_ai_description_success(client, admin_headers):
-    payload = {
-        "title": "Ergonomic Mechanical Keyboard",
-        "category_name": "Computer Accessories",
-        "tone": "technical",
-        "keywords": "Hot-swappable switches, RGB backlight, PBT keycaps",
-    }
-    response = client.post(
-        "/api/v1/ai/generate-description", json=payload, headers=admin_headers
+    mock_res = AIDescriptionGenerateResponse(
+        short_description="High performance mechanical keyboard for typing and gaming.",
+        description="### Product Overview\nErgonomic Mechanical Keyboard built with PBT keycaps.",
+        seo_tags=["keyboard", "mechanical", "rgb"],
+        model_used="gemini-3.6-flash",
     )
+    with patch.object(AIService, "generate_product_description", new_callable=AsyncMock) as mock_gen:
+        mock_gen.return_value = mock_res
+        payload = {
+            "title": "Ergonomic Mechanical Keyboard",
+            "category_name": "Computer Accessories",
+            "tone": "technical",
+            "keywords": "Hot-swappable switches, RGB backlight, PBT keycaps",
+        }
+        response = client.post(
+            "/api/v1/ai/generate-description", json=payload, headers=admin_headers
+        )
     assert response.status_code == 200
     data = response.json()
     assert data["success"] is True
