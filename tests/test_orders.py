@@ -323,3 +323,33 @@ def test_customer_cancel_order_restores_inventory(
     # Inventory must be restored
     db_session.refresh(test_product)
     assert test_product.stock_quantity == initial_stock
+
+
+def test_customer_cannot_cancel_delivered_order(
+    client,
+    customer_headers,
+    vendor_headers,
+    test_product,
+):
+    client.post("/api/v1/cart/items", json={"product_id": test_product.id, "quantity": 1}, headers=customer_headers)
+    checkout_resp = client.post(
+        "/api/v1/orders/checkout",
+        json={"shipping_address": "777 Delivered Blvd, Chicago, IL", "payment_method": "COD"},
+        headers=customer_headers,
+    )
+    order_id = checkout_resp.json()["data"]["id"]
+
+    # Vendor marks item as DELIVERED
+    vendor_orders = client.get("/api/v1/orders/vendor/my-orders", headers=vendor_headers).json()["data"]
+    item_id = next(i["id"] for i in vendor_orders if i["order_id"] == order_id)
+
+    client.put(f"/api/v1/orders/items/{item_id}/status", json={"status": "DELIVERED"}, headers=vendor_headers)
+
+    # Customer attempts to cancel delivered order -> must fail with 400
+    cancel_resp = client.post(
+        f"/api/v1/orders/{order_id}/cancel",
+        json={"reason": "Trying to cancel delivered item"},
+        headers=customer_headers,
+    )
+    assert cancel_resp.status_code == 400
+    assert "already DELIVERED" in cancel_resp.json()["error"]["message"] or "already" in cancel_resp.json()["error"]["message"]

@@ -251,18 +251,28 @@ class OrderService:
 
         updated = self.order_repo.update_item_status(item, update_in.status)
 
-        # Check if all items in parent order are delivered
-        if item.order and update_in.status == OrderStatus.DELIVERED:
-            all_delivered = all(
-                i.status in [OrderStatus.DELIVERED, OrderStatus.CANCELLED]
-                for i in item.order.items
-            )
-            if all_delivered:
+        # Synchronize master Order status based on all constituent line items
+        if item.order:
+            item_statuses = [i.status for i in item.order.items]
+            has_delivered = any(s == OrderStatus.DELIVERED for s in item_statuses)
+            has_shipped = any(s == OrderStatus.SHIPPED for s in item_statuses)
+            has_processing = any(s == OrderStatus.PROCESSING for s in item_statuses)
+            all_delivered_or_cancelled = all(s in [OrderStatus.DELIVERED, OrderStatus.CANCELLED] for s in item_statuses)
+            all_cancelled = all(s == OrderStatus.CANCELLED for s in item_statuses)
+
+            if all_cancelled:
+                item.order.status = OrderStatus.CANCELLED
+            elif all_delivered_or_cancelled and has_delivered:
                 item.order.status = OrderStatus.DELIVERED
-                # For COD orders, delivery confirms payment collection
+                # For COD orders, delivery confirms cash collection
                 if item.order.payment_method == "COD":
                     item.order.payment_status = PaymentStatus.SUCCESS
-                self.db.commit()
+            elif has_delivered or has_shipped:
+                item.order.status = OrderStatus.SHIPPED
+            elif has_processing:
+                item.order.status = OrderStatus.PROCESSING
+
+            self.db.commit()
 
         return updated
 
@@ -274,6 +284,7 @@ class OrderService:
     ) -> Order:
         """
         Allows customer or admin to cancel an order and automatically restores product inventory stock.
+        Rejects cancellation if the order or any constituent item has already been SHIPPED or DELIVERED.
         """
         order = self.order_repo.get_by_id(order_id)
         if not order:
@@ -282,9 +293,15 @@ class OrderService:
         if user.role != UserRole.ADMIN and order.customer_id != user.id:
             raise ForbiddenException("You do not have permission to cancel this order")
 
-        if order.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED]:
+        # Strict check: Cannot cancel if order or ANY line item is SHIPPED or DELIVERED
+        has_shipped_or_delivered_item = any(
+            item.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED]
+            for item in order.items
+        )
+        if order.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED] or has_shipped_or_delivered_item:
+            current_state = order.status.value if order.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED] else "shipped/delivered"
             raise BadRequestException(
-                f"Cannot cancel order #{order.order_number} because it has already been {order.status.value.lower()}"
+                f"Cannot cancel order #{order.order_number} because it is already {current_state}"
             )
 
         if order.status == OrderStatus.CANCELLED:
