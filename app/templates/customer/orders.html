@@ -28,77 +28,109 @@
 
         <!-- Orders Stream -->
         <div class="flex-1 space-y-6">
-            <div class="flex items-center justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Order History</h1>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Order History</h1>
                     <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Review placed orders, track fulfillment status, and complete pending payments</p>
                 </div>
-                <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs font-bold text-slate-700 dark:text-zinc-300">
+                <span class="self-start sm:self-auto px-3 py-1 rounded-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs font-bold text-slate-700 dark:text-zinc-300">
                     {{ orders|length }} Total Orders
                 </span>
             </div>
 
             {% if orders and orders|length > 0 %}
-                <div class="space-y-5">
+                <div class="space-y-4 sm:space-y-5">
                     {% for ord in orders %}
-                        <div class="glass-panel p-6 rounded-3xl space-y-4 border border-slate-200 dark:border-zinc-800 hover:border-lime-500/40 transition-all shadow-sm" id="order-card-{{ ord.id }}">
+                        <div class="glass-panel p-4 sm:p-6 rounded-2xl sm:rounded-3xl space-y-4 border border-slate-200 dark:border-zinc-800 hover:border-lime-500/40 transition-all shadow-sm" id="order-card-{{ ord.id }}">
                             <!-- Order Header -->
-                            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-zinc-800 text-xs">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-slate-500 dark:text-zinc-400">Order:</span>
-                                    <a href="/orders/{{ ord.id }}/success" class="text-lime-600 dark:text-lime-400 font-mono font-bold hover:underline" title="View receipt & details">
-                                        {{ ord.order_number }} ↗
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3.5 border-b border-slate-200 dark:border-zinc-800 text-xs">
+                                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                                    <span class="text-slate-500 dark:text-zinc-400 font-medium">Order:</span>
+                                    <a href="/orders/{{ ord.id }}/success" class="text-lime-600 dark:text-lime-400 font-mono font-bold hover:underline bg-lime-500/10 px-2 py-0.5 rounded-lg border border-lime-500/20 inline-flex items-center gap-1" title="View receipt & details">
+                                        {{ ord.order_number }}
+                                        <span class="text-[10px]">↗</span>
                                     </a>
-                                    <span class="text-slate-400 dark:text-zinc-500 ml-2">● {{ ord.created_at.strftime('%b %d, %Y %I:%M %p') }}</span>
+                                    <span class="text-slate-400 dark:text-zinc-500 text-[11px]">● {{ ord.created_at.strftime('%b %d, %Y, %I:%M %p') }}</span>
                                 </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if ord.status.value == 'PAID' or ord.status.value == 'DELIVERED' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% elif ord.status.value == 'SHIPPED' %}bg-sky-500/20 text-sky-500 border border-sky-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
-                                        STATUS: {{ ord.status.value }}
-                                    </span>
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if ord.payment_status.value == 'SUCCESS' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30 animate-pulse{% endif %}">
-                                        PAYMENT: {{ ord.payment_status.value }}
-                                    </span>
+
+                                <div class="flex items-center space-x-2 flex-wrap gap-y-1">
+                                    {% if ord.status.value == 'DELIVERED' %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> DELIVERED
+                                        </span>
+                                    {% elif ord.status.value == 'SHIPPED' %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-sky-500/15 text-sky-600 dark:text-sky-400 border border-sky-500/30 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> SHIPPED
+                                        </span>
+                                    {% elif ord.status.value == 'CANCELLED' %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> CANCELLED
+                                        </span>
+                                    {% elif ord.status.value in ['PAID', 'CONFIRMED'] %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-lime-500/15 text-lime-600 dark:text-lime-400 border border-lime-500/30 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span> {{ ord.status.value }}
+                                        </span>
+                                    {% else %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> {{ ord.status.value }}
+                                        </span>
+                                    {% endif %}
+
+                                    {% if ord.payment_status.value == 'SUCCESS' %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-lime-500/15 text-lime-600 dark:text-lime-400 border border-lime-500/30">
+                                            ✓ PAID
+                                        </span>
+                                    {% else %}
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 animate-pulse">
+                                            ● UNPAID
+                                        </span>
+                                    {% endif %}
                                 </div>
                             </div>
 
                             <!-- Order Items List -->
-                            <div class="space-y-2.5">
+                            <div class="space-y-3 py-1">
                                 {% for item in ord.items %}
-                                    <div class="flex items-center justify-between text-xs text-slate-700 dark:text-zinc-300 py-1">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-center font-bold text-[10px] text-slate-700 dark:text-zinc-300">
+                                    <div class="flex items-start sm:items-center justify-between gap-3 text-xs text-slate-700 dark:text-zinc-300">
+                                        <div class="flex items-start sm:items-center space-x-3 min-w-0 flex-1">
+                                            <span class="w-6 h-6 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-center font-black text-[10px] text-slate-700 dark:text-zinc-300 flex-shrink-0 mt-0.5 sm:mt-0">
                                                 {{ item.quantity }}x
                                             </span>
-                                            <div>
-                                                <span class="font-bold text-slate-900 dark:text-white">{{ item.product_name }}</span>
-                                                <span class="text-[11px] text-slate-400 dark:text-zinc-500 ml-1">(${{ "%.2f"|format(item.unit_price) }} each)</span>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="font-bold text-slate-900 dark:text-white truncate" title="{{ item.product_name }}">
+                                                    {{ item.product_name }}
+                                                </div>
+                                                <div class="flex items-center gap-2 mt-0.5 text-[11px] text-slate-400 dark:text-zinc-500 flex-wrap">
+                                                    <span>${{ "%.2f"|format(item.unit_price) }} each</span>
+                                                    <span>•</span>
+                                                    <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold {% if item.status.value == 'CANCELLED' %}bg-rose-500/10 text-rose-500{% elif item.status.value == 'DELIVERED' %}bg-emerald-500/10 text-emerald-500{% else %}bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400{% endif %}">
+                                                        {{ item.status.value }}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="flex items-center space-x-3">
-                                            <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-[10px] text-slate-500 dark:text-zinc-400 font-bold">
-                                                {{ item.status.value }}
+                                        <div class="text-right flex-shrink-0">
+                                            <span class="font-black text-slate-900 dark:text-white text-xs sm:text-sm {% if item.status.value == 'CANCELLED' %}line-through opacity-50{% endif %}">
+                                                ${{ "%.2f"|format(item.subtotal) }}
                                             </span>
-                                            <span class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(item.subtotal) }}</span>
                                         </div>
                                     </div>
                                 {% endfor %}
                             </div>
 
                             <!-- Order Actions & Total Amount -->
-                            <div class="pt-4 border-t border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div class="pt-3.5 border-t border-slate-200 dark:border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-xs text-slate-500 dark:text-zinc-400">Total Order Amount:</span>
+                                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-medium">Total:</span>
                                     <span class="text-base font-black text-lime-600 dark:text-lime-400">${{ "%.2f"|format(ord.total_amount) }}</span>
                                     {% if ord.payment_method %}
-                                        <span class="text-[10px] text-slate-400 dark:text-zinc-500">({{ ord.payment_method }})</span>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400 px-2 py-0.5 bg-slate-100 dark:bg-zinc-900 rounded-md border border-slate-200 dark:border-zinc-800">
+                                            {{ ord.payment_method }}
+                                        </span>
                                     {% endif %}
                                 </div>
 
-                                <div class="flex items-center space-x-2.5 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-end gap-y-2">
-                                    <a href="/orders/{{ ord.id }}/success" class="flex-1 sm:flex-initial text-center px-4 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-bold rounded-xl border border-slate-300 dark:border-zinc-800 transition-colors">
-                                        View Receipt
-                                    </a>
-
+                                <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
                                     {# Check if order or any item is already shipped/delivered/cancelled #}
                                     {% set is_fulfill_locked = (ord.status.value in ['SHIPPED', 'DELIVERED', 'CANCELLED']) %}
                                     {% if not is_fulfill_locked %}
@@ -110,32 +142,20 @@
                                     {% endif %}
 
                                     {% if not is_fulfill_locked %}
-                                        <button onclick="cancelCustomerOrder({{ ord.id }}, '{{ ord.order_number }}')" class="flex-1 sm:flex-initial px-4 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer">
+                                        <button onclick="cancelCustomerOrder({{ ord.id }}, '{{ ord.order_number }}')" class="flex-1 sm:flex-initial px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-xs font-bold rounded-xl transition-all cursor-pointer text-center whitespace-nowrap">
                                             ✕ Cancel Order
                                         </button>
                                     {% endif %}
 
-                                    {% if ord.status.value == 'CANCELLED' %}
-                                        <span class="inline-flex items-center space-x-1 px-3 py-1.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs font-bold rounded-xl">
-                                            <span>✕ Cancelled</span>
-                                        </span>
-                                    {% elif ord.status.value == 'DELIVERED' %}
-                                        <span class="inline-flex items-center space-x-1 px-3 py-1.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-xl">
-                                            <span>✓ Delivered</span>
-                                        </span>
-                                    {% elif ord.status.value == 'SHIPPED' %}
-                                        <span class="inline-flex items-center space-x-1 px-3 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 text-xs font-bold rounded-xl">
-                                            <span>🚚 Shipped</span>
-                                        </span>
-                                    {% elif ord.payment_status.value != 'SUCCESS' %}
-                                        <button onclick="openPaymentModal({{ ord.id }}, '{{ ord.order_number }}', {{ ord.total_amount }})" class="flex-1 sm:flex-initial px-5 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer flex items-center justify-center space-x-1.5">
+                                    {% if ord.payment_status.value != 'SUCCESS' and ord.status.value != 'CANCELLED' %}
+                                        <button onclick="openPaymentModal({{ ord.id }}, '{{ ord.order_number }}', {{ ord.total_amount }})" class="flex-1 sm:flex-initial px-4 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer flex items-center justify-center space-x-1.5 whitespace-nowrap">
                                             <span>💳 Pay Now (${{ "%.2f"|format(ord.total_amount) }})</span>
                                         </button>
-                                    {% else %}
-                                        <span class="inline-flex items-center space-x-1 px-3 py-1.5 bg-lime-500/10 text-lime-600 dark:text-lime-400 border border-lime-500/20 text-xs font-bold rounded-xl">
-                                            <span>✓ Paid</span>
-                                        </span>
                                     {% endif %}
+
+                                    <a href="/orders/{{ ord.id }}/success" class="flex-1 sm:flex-initial text-center px-4 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-xs font-bold rounded-xl border border-slate-300 dark:border-zinc-800 transition-colors whitespace-nowrap">
+                                        View Receipt
+                                    </a>
                                 </div>
                             </div>
                         </div>
