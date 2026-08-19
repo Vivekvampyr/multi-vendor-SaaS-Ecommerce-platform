@@ -110,3 +110,45 @@ def test_admin_approve_and_suspend_vendor(client, admin_headers, test_vendor, te
     )
     assert approve_resp.status_code == 200
     assert approve_resp.json()["data"]["status"] == "APPROVED"
+
+
+def test_vendor_revenue_excludes_cancelled_orders(
+    client,
+    db_session,
+    customer_headers,
+    vendor_headers,
+    test_vendor,
+    test_vendor_profile,
+    active_vendor_subscription,
+    test_product,
+):
+    # Customer orders 3 units of test_product
+    client.post(
+        "/api/v1/cart/items",
+        json={"product_id": test_product.id, "quantity": 3},
+        headers=customer_headers,
+    )
+
+    checkout_payload = {
+        "shipping_address": "123 Main St, Springfield",
+        "payment_method": "COD",
+    }
+    order_resp = client.post("/api/v1/orders/checkout", json=checkout_payload, headers=customer_headers)
+    assert order_resp.status_code == 201
+    order_id = order_resp.json()["data"]["id"]
+
+    # Vendor checks initial revenue (3 units)
+    from app.services.order import OrderService
+    order_service = OrderService(db_session)
+    sold_units, net_rev = order_service.get_vendor_sales_stats(vendor_id=test_vendor.id)
+    assert sold_units == 3
+    assert net_rev > 0
+
+    # Customer cancels the order
+    cancel_resp = client.post(f"/api/v1/orders/{order_id}/cancel", headers=customer_headers)
+    assert cancel_resp.status_code == 200
+
+    # Vendor revenue recalculates to 0 after cancellation
+    sold_units_after, net_rev_after = order_service.get_vendor_sales_stats(vendor_id=test_vendor.id)
+    assert sold_units_after == 0
+    assert net_rev_after == 0.0

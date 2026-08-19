@@ -225,6 +225,10 @@ class OrderService:
         total = self.order_repo.count_items_by_vendor(vendor_id=vendor_id)
         return items, total
 
+    def get_vendor_sales_stats(self, vendor_id: int) -> Tuple[int, float]:
+        """Get total valid sold units count and net vendor earnings."""
+        return self.order_repo.get_vendor_sales_stats(vendor_id=vendor_id)
+
     def update_order_item_status(
         self,
         user: User,

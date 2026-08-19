@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
@@ -103,6 +103,49 @@ class OrderRepository:
         """Count order line items for a vendor."""
         stmt = select(func.count(OrderItem.id)).where(OrderItem.vendor_id == vendor_id)
         return self.db.execute(stmt).scalar() or 0
+
+    def get_vendor_sales_stats(self, vendor_id: int) -> Tuple[int, float]:
+        """
+        Calculate total valid sold items count and net vendor earnings.
+        Excludes cancelled items, cancelled orders, and unpaid online orders.
+        """
+        # Net revenue from valid paid items
+        rev_stmt = (
+            select(func.coalesce(func.sum(OrderItem.vendor_earnings), 0.0))
+            .select_from(OrderItem)
+            .join(Order, OrderItem.order_id == Order.id)
+            .where(
+                OrderItem.vendor_id == vendor_id,
+                OrderItem.status != OrderStatus.CANCELLED,
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
+            )
+        )
+        total_revenue = float(self.db.execute(rev_stmt).scalar() or 0.0)
+
+        # Total sold items count (non-cancelled, paid/valid)
+        items_count_stmt = (
+            select(func.coalesce(func.sum(OrderItem.quantity), 0))
+            .select_from(OrderItem)
+            .join(Order, OrderItem.order_id == Order.id)
+            .where(
+                OrderItem.vendor_id == vendor_id,
+                OrderItem.status != OrderStatus.CANCELLED,
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
+            )
+        )
+        total_items_sold = int(self.db.execute(items_count_stmt).scalar() or 0)
+
+        return total_items_sold, round(total_revenue, 2)
 
     def get_item_by_id(self, item_id: int) -> Optional[OrderItem]:
         """Fetch single order item."""

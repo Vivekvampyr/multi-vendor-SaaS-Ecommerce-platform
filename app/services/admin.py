@@ -41,14 +41,19 @@ class AdminService:
         )
         subscription_revenue = float(self.db.execute(sub_rev_stmt).scalar() or 0.0)
 
-        # 2. Marketplace Product Sales Commission (from paid orders / order items)
+        # 2. Marketplace Product Sales Commission (from paid, non-cancelled order items)
         comm_rev_stmt = (
             select(func.coalesce(func.sum(OrderItem.commission_amount), 0.0))
             .select_from(OrderItem)
             .join(Order, OrderItem.order_id == Order.id)
             .where(
-                (Order.payment_status == PaymentStatus.SUCCESS)
-                | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                OrderItem.status != OrderStatus.CANCELLED,
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
             )
         )
         commission_revenue = float(self.db.execute(comm_rev_stmt).scalar() or 0.0)
@@ -56,46 +61,64 @@ class AdminService:
         # 3. Total Combined Admin Revenue
         total_revenue = round(subscription_revenue + commission_revenue, 2)
 
-        # 4. Gross Merchandise Value (GMV) of all paid sales
+        # 4. Gross Merchandise Value (GMV) of all paid, non-cancelled sales
         gmv_stmt = (
             select(func.coalesce(func.sum(Order.total_amount), 0.0))
             .where(
-                (Order.payment_status == PaymentStatus.SUCCESS)
-                | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
             )
         )
         total_gmv = float(self.db.execute(gmv_stmt).scalar() or 0.0)
 
-        # 5. Vendor Net Payouts (after platform commission)
+        # 5. Vendor Net Payouts (after platform commission, excluding cancelled items)
         payout_stmt = (
             select(func.coalesce(func.sum(OrderItem.vendor_earnings), 0.0))
             .select_from(OrderItem)
             .join(Order, OrderItem.order_id == Order.id)
             .where(
-                (Order.payment_status == PaymentStatus.SUCCESS)
-                | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                OrderItem.status != OrderStatus.CANCELLED,
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
             )
         )
         total_vendor_payouts = float(self.db.execute(payout_stmt).scalar() or 0.0)
 
-        # 6. Paid Orders Count
+        # 6. Paid Orders Count (excluding cancelled)
         paid_orders_stmt = (
             select(func.count(Order.id))
             .where(
-                (Order.payment_status == PaymentStatus.SUCCESS)
-                | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
             )
         )
         total_paid_orders = int(self.db.execute(paid_orders_stmt).scalar() or 0)
 
-        # 7. Products Sold Quantity
+        # 7. Products Sold Quantity (excluding cancelled items)
         items_sold_stmt = (
             select(func.coalesce(func.sum(OrderItem.quantity), 0))
             .select_from(OrderItem)
             .join(Order, OrderItem.order_id == Order.id)
             .where(
-                (Order.payment_status == PaymentStatus.SUCCESS)
-                | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                OrderItem.status != OrderStatus.CANCELLED,
+                Order.status != OrderStatus.CANCELLED,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (Order.payment_method == "COD")
+                    | (Order.status.in_([OrderStatus.PAID, OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED]))
+                ),
             )
         )
         total_products_sold = int(self.db.execute(items_sold_stmt).scalar() or 0)

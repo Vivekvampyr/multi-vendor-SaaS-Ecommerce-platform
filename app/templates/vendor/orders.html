@@ -57,8 +57,16 @@
                                         <div class="text-slate-500 dark:text-zinc-400">{{ "%.1f"|format(item.commission_rate) }}% commission</div>
                                         <div class="text-[11px] text-rose-500 font-bold">-${{ "%.2f"|format(item.commission_amount) }}</div>
                                     </td>
-                                    <td class="p-4 font-black text-lime-600 dark:text-lime-400 text-sm">
-                                        ${{ "%.2f"|format(item.vendor_earnings) }}
+                                    <td class="p-4 font-black text-sm whitespace-nowrap">
+                                        {% if item.status.value == 'CANCELLED' %}
+                                            <span class="text-slate-400 dark:text-zinc-600 line-through">${{ "%.2f"|format(item.vendor_earnings) }}</span>
+                                            <div class="text-[10px] text-rose-500 font-normal">Cancelled</div>
+                                        {% elif item.order and item.order.payment_method != 'COD' and item.order.payment_status.value != 'SUCCESS' %}
+                                            <span class="text-amber-500">${{ "%.2f"|format(item.vendor_earnings) }}</span>
+                                            <div class="text-[10px] text-slate-400 dark:text-zinc-500 font-normal">Pending Payment</div>
+                                        {% else %}
+                                            <span class="text-lime-600 dark:text-lime-400">${{ "%.2f"|format(item.vendor_earnings) }}</span>
+                                        {% endif %}
                                     </td>
                                     <td class="p-4">
                                         {% if item.status.value == 'CANCELLED' %}

@@ -422,8 +422,7 @@ async def vendor_dashboard_page(
 
     vendor_dash = vendor_service.get_vendor_dashboard(vendor_user=current_user)
     _, total_products = prod_service.list_my_products(vendor_id=current_user.id)
-    items, total_items = order_service.list_vendor_order_items(vendor_id=current_user.id)
-    total_revenue = sum(float(i.vendor_earnings) for i in items)
+    total_sold_units, total_net_revenue = order_service.get_vendor_sales_stats(vendor_id=current_user.id)
     available_plans, _ = plan_service.list_plans(only_active=True)
 
     overview = {
@@ -443,8 +442,8 @@ async def vendor_dashboard_page(
         "active_plan_id": vendor_dash.plan_limits.plan_id if vendor_dash.plan_limits else None,
         "total_products": total_products,
         "max_products_allowed": vendor_dash.plan_limits.max_products if vendor_dash.plan_limits else 0,
-        "total_orders": total_items,
-        "total_revenue": total_revenue,
+        "total_orders": total_sold_units,
+        "total_revenue": total_net_revenue,
         "commission_rate": vendor_dash.plan_limits.commission_rate if vendor_dash.plan_limits else 0.0,
         "status": vendor_dash.status,
         "can_list_products": vendor_dash.can_list_products,
