@@ -232,6 +232,7 @@ async def checkout_page(
 async def order_success_page(
     request: Request,
     order_id: int,
+    session_id: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_optional_user_for_web),
 ):
@@ -240,6 +241,22 @@ async def order_success_page(
 
     order_service = OrderService(db)
     order = order_service.get_order_by_id(user=current_user, order_id=order_id)
+
+    # Direct Stripe session verification on redirect (works even without webhook secret)
+    if session_id and settings.is_stripe_configured and order.payment_status != PaymentStatus.SUCCESS:
+        try:
+            import stripe
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            sess = stripe.checkout.Session.retrieve(session_id)
+            if sess.payment_status in ["paid", "complete"]:
+                order_service.order_repo.update_order_status(
+                    order=order,
+                    status=OrderStatus.PAID,
+                    payment_status=PaymentStatus.SUCCESS,
+                    payment_reference=sess.payment_intent or sess.id,
+                )
+        except Exception:
+            pass
 
     return templates.TemplateResponse(
         request=request,
@@ -339,6 +356,28 @@ async def vendor_dashboard_page(
 ):
     if not current_user or current_user.role != UserRole.VENDOR:
         return RedirectResponse(url="/login")
+
+    # Direct Stripe subscription verification on redirect (works without webhook secret)
+    session_id = request.query_params.get("session_id")
+    if session_id and settings.is_stripe_configured:
+        try:
+            import stripe
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            sess = stripe.checkout.Session.retrieve(session_id)
+            if sess.status == "complete" or sess.payment_status in ["paid", "no_payment_required"]:
+                plan_id_meta = sess.metadata.get("plan_id")
+                if plan_id_meta:
+                    sub_service = SubscriptionService(db)
+                    sub = sub_service.assign_plan(
+                        vendor_id=current_user.id,
+                        plan_id=int(plan_id_meta),
+                        status=SubscriptionStatus.ACTIVE,
+                    )
+                    sub.stripe_subscription_id = sess.subscription
+                    sub.stripe_customer_id = sess.customer
+                    db.commit()
+        except Exception:
+            pass
 
     vendor_service = VendorService(db)
     prod_service = ProductService(db)
