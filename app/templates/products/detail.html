@@ -50,6 +50,9 @@
                         {% if product.stock_quantity > 0 %}● In Stock ({{ product.stock_quantity }} units){% else %}○ Out of Stock{% endif %}
                     </span>
                 </div>
+                {% if product.short_description %}
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-zinc-300 mt-3 font-medium leading-relaxed bg-slate-100/60 dark:bg-zinc-900/60 p-3 rounded-xl border border-slate-200/60 dark:border-zinc-800/60">{{ product.short_description }}</p>
+                {% endif %}
             </div>
 
             <!-- Price Card -->

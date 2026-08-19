@@ -54,8 +54,18 @@
                                     <td class="p-4">
                                         <div class="font-bold text-slate-900 dark:text-white text-sm">{{ p.name }}</div>
                                         <div class="text-[11px] text-lime-600 dark:text-lime-400 font-mono font-bold">SKU: {{ p.sku }}</div>
+                                        {% if p.short_description %}
+                                            <div class="text-[11px] text-slate-500 dark:text-zinc-400 line-clamp-1 mt-0.5 max-w-xs">{{ p.short_description }}</div>
+                                        {% endif %}
                                     </td>
-                                    <td class="p-4 font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(p.price) }}</td>
+                                    <td class="p-4">
+                                        <div class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(p.price) }}</div>
+                                        {% if p.compare_at_price and p.compare_at_price > p.price %}
+                                            <div class="text-[10px] text-slate-400 dark:text-zinc-500 line-through">
+                                                MSRP: ${{ "%.2f"|format(p.compare_at_price) }}
+                                            </div>
+                                        {% endif %}
+                                    </td>
                                     <td class="p-4">
                                         <span class="{% if p.stock_quantity > 0 %}text-lime-600 dark:text-lime-400{% else %}text-rose-500{% endif %} font-bold">
                                             {{ p.stock_quantity }}
@@ -68,11 +78,14 @@
                                     </td>
                                     <td class="p-4 text-slate-500 dark:text-zinc-400">{{ p.category.name if p.category else 'General' }}</td>
                                     <td class="p-4">
-                                        <div class="flex items-center space-x-2">
+                                        <div class="flex items-center space-x-1.5 flex-wrap gap-y-1">
                                             <a href="/products/{{ p.slug }}" target="_blank" class="px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-lg text-[11px] font-bold transition-colors">
                                                 View ↗
                                             </a>
-                                            <button onclick="openUploadImageModal({{ p.id }}, '{{ p.name }}')" class="px-2.5 py-1 bg-lime-500/15 hover:bg-lime-500/25 text-lime-600 dark:text-lime-400 border border-lime-500/30 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
+                                            <button onclick="openEditProductModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}', '{{ p.sku|replace("'", "\\'") }}', {{ p.category_id }}, {{ p.price }}, {{ p.compare_at_price or 'null' }}, {{ p.stock_quantity }}, '{{ p.status.value }}', '{{ (p.short_description or '')|replace("'", "\\'")|replace("\n", " ") }}', '{{ (p.description or '')|replace("'", "\\'")|replace("\n", " ") }}')" class="px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-white rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
+                                                ✏️ Edit
+                                            </button>
+                                            <button onclick="openUploadImageModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}')" class="px-2.5 py-1 bg-lime-500/15 hover:bg-lime-500/25 text-lime-600 dark:text-lime-400 border border-lime-500/30 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
                                                 📷 Photos
                                             </button>
                                             <button onclick="handleDeleteProduct({{ p.id }})" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
@@ -104,17 +117,17 @@
 
         <form id="create-product-form" onsubmit="handleCreateProduct(event)" class="space-y-3 text-xs">
             <div>
-                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Product Title</label>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Product Title *</label>
                 <input type="text" id="prod-name" required placeholder="e.g. Wireless Noise-Cancelling Headphones" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">SKU Code</label>
-                    <input type="text" id="prod-sku" required placeholder="e.g. WN-HEAD-001" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">SKU Code *</label>
+                    <input type="text" id="prod-sku" required placeholder="e.g. WN-HEAD-001" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 uppercase">
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Category</label>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Category *</label>
                     <select id="prod-cat" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
                         {% for cat in categories %}
                             <option value="{{ cat.id }}">{{ cat.name }}</option>
@@ -125,18 +138,37 @@
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Price ($)</label>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Selling Price ($) *</label>
                     <input type="number" step="0.01" id="prod-price" required placeholder="99.99" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
                 </div>
                 <div>
-                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Initial Stock Units</label>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Compare-at / MSRP Price ($)</label>
+                    <input type="number" step="0.01" id="prod-compare-price" placeholder="129.99 (Optional reference)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Initial Stock Units *</label>
                     <input type="number" id="prod-stock" required value="10" min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Catalog Status</label>
+                    <select id="prod-status" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                        <option value="PUBLISHED" selected>PUBLISHED</option>
+                        <option value="DRAFT">DRAFT</option>
+                    </select>
                 </div>
             </div>
 
             <div>
-                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Description</label>
-                <textarea id="prod-desc" rows="3" placeholder="Describe the specifications and features..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500"></textarea>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Short Description / Tagline</label>
+                <input type="text" id="prod-short-desc" maxlength="500" placeholder="Brief 1-line summary displayed on product cards..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Full Detailed Description</label>
+                <textarea id="prod-desc" rows="3" placeholder="Describe the specifications, materials, features, and warranty..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500"></textarea>
             </div>
 
             <button type="submit" id="create-prod-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
@@ -146,7 +178,81 @@
     </div>
 </div>
 
-<!-- Modal 2: Product Image Upload -->
+<!-- Modal 2: Edit Product Modal -->
+<div id="edit-product-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Edit Product Listing</h3>
+            <button onclick="document.getElementById('edit-product-modal').classList.add('hidden')" class="text-slate-400 hover:text-black dark:hover:text-white cursor-pointer">✕</button>
+        </div>
+
+        <form id="edit-product-form" onsubmit="handleUpdateProduct(event)" class="space-y-3 text-xs">
+            <input type="hidden" id="edit-prod-id">
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Product Title *</label>
+                <input type="text" id="edit-prod-name" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">SKU Code *</label>
+                    <input type="text" id="edit-prod-sku" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 uppercase">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Category *</label>
+                    <select id="edit-prod-cat" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Selling Price ($) *</label>
+                    <input type="number" step="0.01" id="edit-prod-price" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Compare-at / MSRP Price ($)</label>
+                    <input type="number" step="0.01" id="edit-prod-compare-price" placeholder="Optional MSRP" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Stock Units *</label>
+                    <input type="number" id="edit-prod-stock" required min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Status</label>
+                    <select id="edit-prod-status" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                        <option value="PUBLISHED">PUBLISHED</option>
+                        <option value="DRAFT">DRAFT</option>
+                        <option value="ARCHIVED">ARCHIVED</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Short Description / Tagline</label>
+                <input type="text" id="edit-prod-short-desc" maxlength="500" placeholder="Brief 1-line summary..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Full Detailed Description</label>
+                <textarea id="edit-prod-desc" rows="3" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500"></textarea>
+            </div>
+
+            <button type="submit" id="edit-prod-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                Save Product Changes
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 3: Product Image Upload -->
 <div id="upload-image-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-md p-6 rounded-3xl shadow-2xl space-y-4">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
@@ -184,14 +290,19 @@ async function handleCreateProduct(e) {
     btn.disabled = true;
     btn.textContent = "Publishing...";
 
+    const comparePriceVal = document.getElementById("prod-compare-price").value;
+    const shortDescVal = document.getElementById("prod-short-desc").value.trim();
+
     const payload = {
         name: document.getElementById("prod-name").value.trim(),
-        sku: document.getElementById("prod-sku").value.trim(),
+        sku: document.getElementById("prod-sku").value.trim().toUpperCase(),
         category_id: parseInt(document.getElementById("prod-cat").value),
         price: parseFloat(document.getElementById("prod-price").value),
+        compare_at_price: comparePriceVal ? parseFloat(comparePriceVal) : null,
         stock_quantity: parseInt(document.getElementById("prod-stock").value),
-        description: document.getElementById("prod-desc").value.trim(),
-        status: "PUBLISHED"
+        short_description: shortDescVal || null,
+        description: document.getElementById("prod-desc").value.trim() || null,
+        status: document.getElementById("prod-status").value || "PUBLISHED"
     };
 
     try {
@@ -205,6 +316,56 @@ async function handleCreateProduct(e) {
         window.Nexus.showToast(err.message || "Failed to publish product", "error");
         btn.disabled = false;
         btn.textContent = "Publish Product";
+    }
+}
+
+function openEditProductModal(id, name, sku, categoryId, price, compareAtPrice, stock, status, shortDesc, desc) {
+    document.getElementById("edit-prod-id").value = id;
+    document.getElementById("edit-prod-name").value = name;
+    document.getElementById("edit-prod-sku").value = sku;
+    document.getElementById("edit-prod-cat").value = categoryId;
+    document.getElementById("edit-prod-price").value = price;
+    document.getElementById("edit-prod-compare-price").value = compareAtPrice !== null ? compareAtPrice : "";
+    document.getElementById("edit-prod-stock").value = stock;
+    document.getElementById("edit-prod-status").value = status;
+    document.getElementById("edit-prod-short-desc").value = shortDesc;
+    document.getElementById("edit-prod-desc").value = desc;
+    document.getElementById("edit-product-modal").classList.remove("hidden");
+}
+
+async function handleUpdateProduct(e) {
+    e.preventDefault();
+    const btn = document.getElementById("edit-prod-btn");
+    btn.disabled = true;
+    btn.textContent = "Saving...";
+
+    const productId = document.getElementById("edit-prod-id").value;
+    const comparePriceVal = document.getElementById("edit-prod-compare-price").value;
+    const shortDescVal = document.getElementById("edit-prod-short-desc").value.trim();
+
+    const payload = {
+        name: document.getElementById("edit-prod-name").value.trim(),
+        sku: document.getElementById("edit-prod-sku").value.trim().toUpperCase(),
+        category_id: parseInt(document.getElementById("edit-prod-cat").value),
+        price: parseFloat(document.getElementById("edit-prod-price").value),
+        compare_at_price: comparePriceVal ? parseFloat(comparePriceVal) : null,
+        stock_quantity: parseInt(document.getElementById("edit-prod-stock").value),
+        short_description: shortDescVal || null,
+        description: document.getElementById("edit-prod-desc").value.trim() || null,
+        status: document.getElementById("edit-prod-status").value
+    };
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/products/${productId}`, {
+            method: "PUT",
+            body: JSON.stringify(payload)
+        });
+        window.Nexus.showToast("Product updated successfully!", "success");
+        setTimeout(() => window.location.reload(), 600);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to update product", "error");
+        btn.disabled = false;
+        btn.textContent = "Save Product Changes";
     }
 }
 

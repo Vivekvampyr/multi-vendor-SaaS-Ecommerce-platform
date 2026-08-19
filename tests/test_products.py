@@ -48,6 +48,8 @@ def test_vendor_create_product_success(
     assert data["data"]["sku"] == "MON-4K-001"
     assert data["data"]["slug"] == "ultra-slim-4k-smart-monitor"
     assert data["data"]["price"] == 349.99
+    assert data["data"]["compare_at_price"] == 399.99
+    assert data["data"]["short_description"] == "Crystal clear 4K monitor."
     assert data["data"]["stock_quantity"] == 25
 
 
