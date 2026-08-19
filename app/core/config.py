@@ -58,6 +58,12 @@ class Settings(BaseSettings):
             return [str(item) for item in v]
         return ["http://localhost:8000", "http://127.0.0.1:8000"]
 
+    # Stripe Payment Gateway Configuration
+    STRIPE_SECRET_KEY: str = ""
+    STRIPE_PUBLISHABLE_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+    STRIPE_CURRENCY: str = "usd"
+
     @property
     def is_development(self) -> bool:
         return self.ENVIRONMENT.lower() == "development"
@@ -69,6 +75,10 @@ class Settings(BaseSettings):
     @property
     def is_testing(self) -> bool:
         return self.ENVIRONMENT.lower() == "testing"
+
+    @property
+    def is_stripe_configured(self) -> bool:
+        return bool(self.STRIPE_SECRET_KEY and self.STRIPE_SECRET_KEY.startswith("sk_"))
 
     model_config = SettingsConfigDict(
         env_file=".env",

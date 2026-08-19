@@ -150,17 +150,28 @@
             </div>
 
             <div>
-                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1.5">Payment Method</label>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1.5">Choose Payment Gateway</label>
                 <div class="space-y-2">
                     <label class="flex items-center justify-between p-3 rounded-xl border border-lime-500/50 bg-lime-500/10 cursor-pointer">
                         <div class="flex items-center space-x-3">
-                            <input type="radio" name="modal_payment_method" value="MOCK_GATEWAY" checked class="accent-lime-500">
+                            <input type="radio" name="modal_payment_method" value="STRIPE" checked class="accent-lime-500">
                             <div>
-                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Online Payment Gateway (Simulated)</h4>
-                                <p class="text-[10px] text-slate-500 dark:text-zinc-400">Instant credit/debit card, UPI, & Netbanking simulation</p>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Stripe Checkout (Cards, Apple Pay, Google Pay)</h4>
+                                <p class="text-[10px] text-slate-500 dark:text-zinc-400">Official secure payment gateway session</p>
                             </div>
                         </div>
-                        <span class="text-xs font-black text-lime-600 dark:text-lime-400">INSTANT</span>
+                        <span class="text-[10px] font-black text-lime-600 dark:text-lime-400">STRIPE</span>
+                    </label>
+
+                    <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60 cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <input type="radio" name="modal_payment_method" value="SIMULATION" class="accent-lime-500">
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Instant Sandbox Simulation</h4>
+                                <p class="text-[10px] text-slate-500 dark:text-zinc-400">Fast 1-click test checkout</p>
+                            </div>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-400">MOCK</span>
                     </label>
                 </div>
             </div>
@@ -197,7 +208,22 @@ async function executePayment() {
     btn.disabled = true;
     btn.textContent = "Processing payment...";
 
+    const selectedMethod = document.querySelector('input[name="modal_payment_method"]:checked')?.value || "STRIPE";
+
     try {
+        if (selectedMethod === "STRIPE") {
+            const resp = await window.Nexus.apiFetch("/api/v1/payments/checkout-session/order", {
+                method: "POST",
+                body: JSON.stringify({ order_id: currentPayOrderId })
+            });
+            const session = resp.data;
+            if (session.url) {
+                window.location.href = session.url;
+                return;
+            }
+        }
+
+        // Direct Simulation Fallback
         await window.Nexus.apiFetch(`/api/v1/orders/${currentPayOrderId}/pay`, {
             method: "POST",
             body: JSON.stringify({ simulate_status: "SUCCESS" })

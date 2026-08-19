@@ -9,6 +9,7 @@ from app.routers import (
     coupons,
     health,
     orders,
+    payments,
     plans,
     products,
     reviews,
@@ -32,6 +33,7 @@ api_v1_router.include_router(products.router)
 api_v1_router.include_router(coupons.router)
 api_v1_router.include_router(cart.router)
 api_v1_router.include_router(orders.router)
+api_v1_router.include_router(payments.router)
 api_v1_router.include_router(wishlist.router)
 api_v1_router.include_router(addresses.router)
 api_v1_router.include_router(reviews.router)

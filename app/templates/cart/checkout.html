@@ -42,11 +42,11 @@
                         <div class="flex items-center space-x-3">
                             <span class="text-xl">💳</span>
                             <div>
-                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Online Payment Gateway</h4>
-                                <p class="text-[11px] text-slate-500 dark:text-zinc-400">Credit / Debit Cards & Stripe</p>
+                                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Stripe Payment Gateway</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-zinc-400">Credit / Debit Cards, Apple & Google Pay</p>
                             </div>
                         </div>
-                        <input type="radio" name="payment_method" value="MOCK_GATEWAY" checked class="accent-lime-500">
+                        <input type="radio" name="payment_method" value="STRIPE" checked class="accent-lime-500">
                     </label>
                     <label class="p-4 rounded-2xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900/60 flex items-center justify-between cursor-pointer">
                         <div class="flex items-center space-x-3">
@@ -154,7 +154,7 @@ async function placeOrder() {
     }
 
     const paymentMethodEl = document.querySelector('input[name="payment_method"]:checked');
-    const paymentMethod = paymentMethodEl ? paymentMethodEl.value : "MOCK_GATEWAY";
+    const paymentMethod = paymentMethodEl ? paymentMethodEl.value : "STRIPE";
 
     btn.disabled = true;
     btn.textContent = "Processing Order...";
@@ -169,6 +169,24 @@ async function placeOrder() {
             })
         });
         const order = resp.data;
+
+        if (paymentMethod === "STRIPE") {
+            btn.textContent = "Connecting to Stripe...";
+            try {
+                const stripeResp = await window.Nexus.apiFetch("/api/v1/payments/checkout-session/order", {
+                    method: "POST",
+                    body: JSON.stringify({ order_id: order.id })
+                });
+                const session = stripeResp.data;
+                if (session.url) {
+                    window.location.href = session.url;
+                    return;
+                }
+            } catch(stripeErr) {
+                console.warn("Stripe redirect fallback to success page:", stripeErr);
+            }
+        }
+
         window.Nexus.showToast("Order placed successfully!", "success");
         setTimeout(() => {
             window.location.href = `/orders/${order.id}/success`;

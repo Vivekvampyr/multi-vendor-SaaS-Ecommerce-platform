@@ -49,11 +49,19 @@
         <!-- Payment Actions -->
         {% if order.payment_status.value != 'SUCCESS' %}
             <div class="p-6 rounded-2xl bg-lime-500/10 border border-lime-500/30 text-left space-y-3">
-                <h3 class="font-black text-sm text-slate-900 dark:text-white">💳 Complete Payment</h3>
-                <p class="text-xs text-slate-600 dark:text-zinc-300">This order is awaiting payment confirmation. Click below to simulate instant payment gateway execution.</p>
-                <button onclick="simulateOrderPayment()" id="pay-now-btn" class="w-full py-3 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
-                    Pay Now (${{ "%.2f"|format(order.total_amount) }})
-                </button>
+                <div class="flex items-center justify-between">
+                    <h3 class="font-black text-sm text-slate-900 dark:text-white">💳 Complete Payment</h3>
+                    <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black">Stripe Integrated</span>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-zinc-300">This order is awaiting payment confirmation. You can checkout securely via Stripe or use 1-click sandbox simulation.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <button onclick="payWithStripe()" id="stripe-pay-btn" class="w-full py-3 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                        Pay with Stripe (${{ "%.2f"|format(order.total_amount) }})
+                    </button>
+                    <button onclick="simulateOrderPayment()" id="pay-now-btn" class="w-full py-3 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-white text-xs font-bold rounded-xl transition-all cursor-pointer">
+                        Instant Test Simulation
+                    </button>
+                </div>
             </div>
         {% endif %}
 
@@ -69,6 +77,29 @@
 </div>
 
 <script>
+async function payWithStripe() {
+    const btn = document.getElementById("stripe-pay-btn");
+    btn.disabled = true;
+    btn.textContent = "Creating Stripe Session...";
+
+    try {
+        const resp = await window.Nexus.apiFetch("/api/v1/payments/checkout-session/order", {
+            method: "POST",
+            body: JSON.stringify({ order_id: {{ order.id }} })
+        });
+        const session = resp.data;
+        if (session.url) {
+            window.location.href = session.url;
+            return;
+        }
+        window.Nexus.showToast("Stripe session created", "success");
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to initialize Stripe checkout", "error");
+        btn.disabled = false;
+        btn.textContent = "Pay with Stripe (${{ '%.2f'|format(order.total_amount) }})";
+    }
+}
+
 async function simulateOrderPayment() {
     const btn = document.getElementById("pay-now-btn");
     btn.disabled = true;
@@ -84,7 +115,7 @@ async function simulateOrderPayment() {
     } catch(err) {
         window.Nexus.showToast(err.message, "error");
         btn.disabled = false;
-        btn.textContent = "Pay Now (${{ '%.2f'|format(order.total_amount) }})";
+        btn.textContent = "Instant Test Simulation";
     }
 }
 </script>

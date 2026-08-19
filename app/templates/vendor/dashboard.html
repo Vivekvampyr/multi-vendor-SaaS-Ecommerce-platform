@@ -397,9 +397,21 @@ async function handleDeleteStore() {
     }
 }
 
-// 4. Select / Switch SaaS Plan
+// 4. Select / Switch SaaS Plan via Stripe
 async function handleSelectPlan(planId) {
     try {
+        window.Nexus.showToast("Initializing SaaS Subscription checkout...", "info");
+        const resp = await window.Nexus.apiFetch("/api/v1/payments/checkout-session/subscription", {
+            method: "POST",
+            body: JSON.stringify({ plan_id: planId })
+        });
+        const session = resp.data;
+        if (session.url) {
+            window.location.href = session.url;
+            return;
+        }
+
+        // Fallback direct assign
         await window.Nexus.apiFetch("/api/v1/subscriptions/select-plan", {
             method: "POST",
             body: JSON.stringify({ plan_id: planId })
