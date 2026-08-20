@@ -24,9 +24,9 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <!-- Card 1: Combined Platform Revenue -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl relative overflow-hidden">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
                 <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Total Platform Revenue</span>
-                <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">Gross</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 whitespace-nowrap shrink-0">Gross</span>
             </div>
             <div class="mt-1 sm:mt-2">
                 <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(stats.total_revenue) }}</span>
@@ -39,9 +39,9 @@
 
         <!-- Card 2: SaaS Subscription Recurring Revenue -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
                 <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Subscription Revenue</span>
-                <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">MRR</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 whitespace-nowrap shrink-0">MRR</span>
             </div>
             <div class="mt-1 sm:mt-2">
                 <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(stats.subscription_revenue) }}</span>
@@ -53,9 +53,9 @@
 
         <!-- Card 3: Product Sales Commission -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
                 <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Product Commission</span>
-                <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">Sales</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 whitespace-nowrap shrink-0">Sales</span>
             </div>
             <div class="mt-1 sm:mt-2">
                 <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(stats.commission_revenue) }}</span>
@@ -67,9 +67,9 @@
 
         <!-- Card 4: Marketplace GMV & Payouts -->
         <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
                 <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Marketplace GMV</span>
-                <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">Gross</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 whitespace-nowrap shrink-0">Gross</span>
             </div>
             <div class="mt-1 sm:mt-2">
                 <span class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(stats.total_gmv) }}</span>
@@ -225,11 +225,11 @@
 
         <!-- Product Purchase Commission Audit Table -->
         <div class="space-y-3">
-            <div class="flex items-center justify-between">
-                <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-2">
-                    <span>Product Purchase Commission Ledger</span>
-                    <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">{{ commission_transactions|length }} recent items</span>
-                </h3>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-1 sm:gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Product Purchase Commission Ledger</h3>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 whitespace-nowrap shrink-0">{{ commission_transactions|length }} recent items</span>
+                </div>
                 <span class="text-xs text-slate-500 dark:text-zinc-400">Platform automatic commission split on every customer order</span>
             </div>
 
@@ -313,11 +313,11 @@
 
         <!-- SaaS Subscription Billings Table -->
         <div class="space-y-3 pt-2">
-            <div class="flex items-center justify-between">
-                <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center space-x-2">
-                    <span>Vendor SaaS Subscription Billings</span>
-                    <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">{{ subscriptions|length }} active tiers</span>
-                </h3>
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-1 sm:gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Vendor SaaS Subscription Billings</h3>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 whitespace-nowrap shrink-0">{{ subscriptions|length }} active tiers</span>
+                </div>
                 <span class="text-xs text-slate-500 dark:text-zinc-400">Recurring software subscription revenue from merchant storefronts</span>
             </div>
 
@@ -391,7 +391,7 @@
 
     <!-- TAB 1: VENDOR SHOPS MODERATION -->
     <div id="tab-content-vendors" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-1">
             <h2 class="text-lg font-black text-slate-900 dark:text-white">Merchant Stores & Moderation</h2>
             <span class="text-xs text-slate-500 dark:text-zinc-400">Review vendor applications, approve storefronts, or suspend access</span>
         </div>
@@ -460,12 +460,12 @@
 
     <!-- TAB 2: PRODUCT CATEGORIES -->
     <div id="tab-content-categories" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3">
             <div>
                 <h2 class="text-lg font-black text-slate-900 dark:text-white">Product Categories</h2>
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Organize catalog collections, taxonomy, and marketplace navigation</p>
             </div>
-            <button onclick="document.getElementById('create-category-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+            <button onclick="document.getElementById('create-category-modal').classList.remove('hidden')" class="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer text-center">
                 + Create Category
             </button>
         </div>
@@ -521,12 +521,12 @@
 
     <!-- TAB 3: SAAS SUBSCRIPTION PLANS -->
     <div id="tab-content-plans" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3">
             <div>
                 <h2 class="text-lg font-black text-slate-900 dark:text-white">SaaS Pricing Plans</h2>
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Configure vendor tiers, product listing limits, and platform commissions</p>
             </div>
-            <button onclick="document.getElementById('create-plan-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+            <button onclick="document.getElementById('create-plan-modal').classList.remove('hidden')" class="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer text-center">
                 + Create New Plan
             </button>
         </div>
@@ -576,12 +576,12 @@
 
     <!-- TAB 4: PROMOTIONAL COUPONS -->
     <div id="tab-content-coupons" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3">
             <div>
                 <h2 class="text-lg font-black text-slate-900 dark:text-white">Platform & Store Coupons</h2>
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Manage global discount codes and vendor promotions</p>
             </div>
-            <button onclick="document.getElementById('create-admin-coupon-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+            <button onclick="document.getElementById('create-admin-coupon-modal').classList.remove('hidden')" class="w-full sm:w-auto px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer text-center">
                 + Create Coupon
             </button>
         </div>
@@ -615,13 +615,13 @@
                                     {% if c.vendor_id %}
                                         <span class="text-slate-600 dark:text-zinc-400">Vendor #{{ c.vendor_id }}</span>
                                     {% else %}
-                                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 font-bold text-[10px] border border-slate-300 dark:border-zinc-700">PLATFORM-WIDE</span>
+                                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 font-bold text-[10px] border border-slate-300 dark:border-zinc-700 whitespace-nowrap">PLATFORM-WIDE</span>
                                     {% endif %}
                                 </td>
                                 <td class="p-4">{{ c.used_count }} / {{ c.usage_limit or '∞' }}</td>
                                 <td class="p-4">${{ "%.2f"|format(c.min_order_amount) if c.min_order_amount else '0.00' }}</td>
                                 <td class="p-4">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold {% if c.is_active %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30{% endif %}">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold {% if c.is_active %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30{% endif %} whitespace-nowrap">
                                         {% if c.is_active %}ACTIVE{% else %}DISABLED{% endif %}
                                     </span>
                                 </td>
@@ -649,7 +649,7 @@
 
     <!-- TAB 5: VENDOR SUBSCRIPTIONS -->
     <div id="tab-content-subscriptions" class="space-y-4 hidden">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-1">
             <div>
                 <h2 class="text-lg font-black text-slate-900 dark:text-white">Live Vendor Subscriptions</h2>
                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Active merchant plan subscriptions and plan assignments</p>
