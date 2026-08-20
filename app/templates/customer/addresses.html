@@ -10,18 +10,18 @@
             <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-3">
                 <div class="pb-3 border-b border-slate-200 dark:border-zinc-800 flex md:block items-center justify-between">
                     <div>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white">{{ current_user.full_name }}</h3>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[9px] font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">
+                            {{ current_user.role.value }}
+                        </span>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1">{{ current_user.full_name }}</h3>
                         <p class="text-xs text-slate-500 dark:text-zinc-400 truncate max-w-[200px]">{{ current_user.email }}</p>
                     </div>
-                    <span class="md:hidden px-2 py-0.5 text-[9px] uppercase font-black tracking-wider rounded bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">
-                        {{ current_user.role.value }}
-                    </span>
                 </div>
                 <nav class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
-                    <a href="/customer/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">👤 Overview</a>
-                    <a href="/customer/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📦 Orders</a>
-                    <a href="/customer/wishlist" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">💖 Wishlist</a>
-                    <a href="/customer/addresses" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">📍 Addresses</a>
+                    <a href="/customer/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Overview</a>
+                    <a href="/customer/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Orders</a>
+                    <a href="/customer/wishlist" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Wishlist</a>
+                    <a href="/customer/addresses" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-bold shadow-sm">Addresses</a>
                 </nav>
             </div>
         </aside>
@@ -30,7 +30,7 @@
         <div class="flex-1 space-y-6">
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl font-black text-slate-900 dark:text-white">Delivery Addresses</h1>
-                <button onclick="document.getElementById('add-address-modal').classList.remove('hidden')" class="px-4 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                <button onclick="document.getElementById('add-address-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                     + Add New Address
                 </button>
             </div>
@@ -38,11 +38,11 @@
             {% if addresses and addresses|length > 0 %}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {% for addr in addresses %}
-                        <div class="glass-panel p-5 rounded-3xl flex flex-col justify-between space-y-4 {% if addr.is_default %}border-lime-500/50 bg-lime-500/5{% endif %}" id="addr-card-{{ addr.id }}">
+                        <div class="glass-panel p-5 rounded-3xl flex flex-col justify-between space-y-4 {% if addr.is_default %}border-slate-400 dark:border-zinc-600 bg-slate-100/50 dark:bg-zinc-900/50{% endif %}" id="addr-card-{{ addr.id }}">
                             <div>
                                 <div class="flex items-center justify-between">
                                     <span class="font-bold text-sm text-slate-900 dark:text-white">{{ addr.full_name }}</span>
-                                    <span class="px-2 py-0.5 rounded text-[10px] uppercase font-black bg-slate-200 dark:bg-zinc-800 text-lime-600 dark:text-lime-400">{{ addr.address_type.value }}</span>
+                                    <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700">{{ addr.address_type.value }}</span>
                                 </div>
                                 <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">{{ addr.phone_number }}</p>
                                 <p class="text-xs text-slate-700 dark:text-zinc-300 mt-1">{{ addr.address_line1 }}{% if addr.address_line2 %}, {{ addr.address_line2 }}{% endif %}</p>
@@ -51,13 +51,13 @@
 
                             <div class="pt-3 border-t border-slate-200 dark:border-zinc-800 flex items-center justify-between text-xs">
                                 {% if addr.is_default %}
-                                    <span class="text-lime-600 dark:text-lime-400 font-black text-[11px]">✓ Default Address</span>
+                                    <span class="text-slate-900 dark:text-white font-bold text-[11px]">Default Address</span>
                                 {% else %}
-                                    <button onclick="setDefaultAddress({{ addr.id }})" class="text-lime-600 dark:text-lime-400 hover:underline font-bold cursor-pointer">
+                                    <button onclick="setDefaultAddress({{ addr.id }})" class="text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:underline font-semibold cursor-pointer">
                                         Set as Default
                                     </button>
                                 {% endif %}
-                                <button onclick="deleteAddress({{ addr.id }})" class="text-rose-500 hover:text-rose-600 font-bold cursor-pointer">
+                                <button onclick="deleteAddress({{ addr.id }})" class="text-rose-600 dark:text-rose-400 hover:underline font-semibold cursor-pointer">
                                     Delete
                                 </button>
                             </div>
@@ -84,38 +84,38 @@
         <form id="address-form" onsubmit="handleAddAddress(event)" class="space-y-3 text-xs">
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Full Legal Name</label>
-                <input type="text" id="addr-name" required placeholder="John Doe" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="addr-name" required placeholder="John Doe" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Phone Number</label>
-                <input type="text" id="addr-phone" required placeholder="+1 555-0199" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="addr-phone" required placeholder="+1 555-0199" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Street Address</label>
-                <input type="text" id="addr-line1" required placeholder="123 Main Street" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="addr-line1" required placeholder="123 Main Street" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">City</label>
-                    <input type="text" id="addr-city" required placeholder="Austin" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="text" id="addr-city" required placeholder="Austin" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">State / Province</label>
-                    <input type="text" id="addr-state" required placeholder="TX" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="text" id="addr-state" required placeholder="TX" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Postal Code</label>
-                    <input type="text" id="addr-zip" required placeholder="78701" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="text" id="addr-zip" required placeholder="78701" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Address Tag</label>
-                    <select id="addr-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <select id="addr-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                         <option value="HOME">HOME</option>
                         <option value="WORK">WORK</option>
                         <option value="OTHER">OTHER</option>
@@ -124,11 +124,11 @@
             </div>
 
             <div class="flex items-center space-x-2 pt-2">
-                <input type="checkbox" id="addr-default" class="accent-lime-500">
-                <label for="addr-default" class="text-slate-700 dark:text-zinc-300 font-semibold">Set as default delivery address</label>
+                <input type="checkbox" id="addr-default" class="accent-slate-900 dark:accent-zinc-100">
+                <label for="addr-default" class="text-slate-700 dark:text-zinc-300 font-medium">Set as default delivery address</label>
             </div>
 
-            <button type="submit" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Save Address
             </button>
         </form>

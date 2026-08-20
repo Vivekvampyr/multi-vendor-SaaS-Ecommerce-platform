@@ -74,7 +74,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = False
             title = line[4:].strip()
             html_blocks.append(
-                f'<h4 class="text-xs sm:text-sm font-black text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span>{title}</h4>'
+                f'<h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-700 dark:bg-zinc-300"></span>{title}</h4>'
             )
         elif line.startswith("## "):
             if in_list:
@@ -82,7 +82,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = False
             title = line[3:].strip()
             html_blocks.append(
-                f'<h3 class="text-sm sm:text-base font-black text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-lime-500"></span>{title}</h3>'
+                f'<h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-700 dark:bg-zinc-300"></span>{title}</h3>'
             )
         elif line.startswith("# "):
             if in_list:
@@ -90,7 +90,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = False
             title = line[2:].strip()
             html_blocks.append(
-                f'<h2 class="text-base sm:text-lg font-black text-slate-900 dark:text-white mt-5 mb-2">{title}</h2>'
+                f'<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white mt-5 mb-2">{title}</h2>'
             )
         elif line.startswith("- ") or line.startswith("* "):
             if not in_list:
@@ -100,7 +100,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = True
             content = line[2:].strip()
             html_blocks.append(
-                f'<li class="flex items-start space-x-2"><span class="text-lime-600 dark:text-lime-400 font-black flex-shrink-0 mt-0.5">•</span><span class="flex-1 leading-relaxed">{content}</span></li>'
+                f'<li class="flex items-start space-x-2"><span class="text-slate-700 dark:text-zinc-300 font-bold flex-shrink-0 mt-0.5">•</span><span class="flex-1 leading-relaxed">{content}</span></li>'
             )
         else:
             if in_list:

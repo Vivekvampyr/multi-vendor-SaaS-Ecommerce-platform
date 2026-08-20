@@ -1,8 +1,8 @@
 <!-- Floating Real-time Live Chat Widget -->
 <div id="chat-widget-container" class="relative">
     <!-- Floating Chat Trigger Button -->
-    <button id="chat-widget-btn" onclick="toggleChatWindow()" class="w-14 h-14 rounded-full flex items-center justify-center cursor-pointer focus:outline-none" title="Live Store Chat">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <button id="chat-widget-btn" onclick="toggleChatWindow()" class="fixed bottom-6 sm:bottom-8 right-6 sm:right-8 z-[9000] w-13 h-13 sm:w-14 sm:h-14 rounded-full flex items-center justify-center cursor-pointer focus:outline-none bg-slate-900 text-white dark:bg-zinc-800 dark:text-zinc-100 border border-slate-700 dark:border-zinc-700 hover:bg-slate-800 dark:hover:bg-zinc-700 hover:scale-105 transition-all shadow-xl" title="Live Store Chat">
+        <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
         </svg>
         <span id="chat-unread-badge" class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[10px] font-black rounded-full flex items-center justify-center hidden shadow-sm">0</span>
@@ -11,13 +11,13 @@
     <!-- Chat Modal Window -->
     <div id="chat-window" class="hidden overflow-hidden">
         <!-- Header -->
-        <div class="px-4 py-3.5 bg-slate-100 dark:bg-black border-b border-slate-200 dark:border-zinc-900 flex items-center justify-between">
+        <div class="px-4 py-3.5 bg-slate-100 dark:bg-zinc-900 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <div class="w-2.5 h-2.5 rounded-full bg-lime-500 animate-pulse"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-slate-900 dark:bg-zinc-100"></div>
                 <h3 id="chat-header-title" class="font-bold text-sm text-slate-900 dark:text-white">Live Store Chat</h3>
             </div>
             <div class="flex items-center space-x-2">
-                <button id="chat-back-btn" onclick="showConversationList()" class="text-xs text-lime-600 dark:text-lime-400 font-bold hover:underline hidden">← Back</button>
+                <button id="chat-back-btn" onclick="showConversationList()" class="text-xs text-slate-900 dark:text-white font-bold hover:underline hidden">← Back</button>
                 <button onclick="toggleChatWindow()" class="text-slate-400 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer">✕</button>
             </div>
         </div>
@@ -28,14 +28,14 @@
         </div>
 
         <!-- Single Conversation Message Stream View -->
-        <div id="chat-messages-view" class="flex-1 overflow-y-auto p-3 space-y-3 hidden flex flex-col bg-slate-50 dark:bg-black">
+        <div id="chat-messages-view" class="flex-1 overflow-y-auto p-3 space-y-3 hidden flex flex-col bg-slate-50 dark:bg-zinc-950">
             <!-- Messages injected dynamically -->
         </div>
 
         <!-- Message Input Footer -->
-        <form id="chat-input-form" onsubmit="handleSendMessage(event)" class="p-3 bg-white dark:bg-black border-t border-slate-200 dark:border-zinc-900 flex items-center space-x-2 hidden">
-            <input type="text" id="chat-msg-input" placeholder="Type a message..." class="flex-1 bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
-            <button type="submit" class="px-3.5 py-2 bg-lime-500 hover:bg-lime-400 text-black rounded-xl text-xs font-black transition-colors shadow-sm">
+        <form id="chat-input-form" onsubmit="handleSendMessage(event)" class="p-3 bg-white dark:bg-zinc-900 border-t border-slate-200 dark:border-zinc-800 flex items-center space-x-2 hidden">
+            <input type="text" id="chat-msg-input" placeholder="Type a message..." class="flex-1 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
+            <button type="submit" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 rounded-xl text-xs font-bold transition-colors shadow-sm cursor-pointer">
                 Send
             </button>
         </form>
@@ -95,10 +95,10 @@ async function loadConversations() {
         view.innerHTML = convs.map(c => `
             <div onclick="openChatThread(${c.other_user_id}, '${c.other_user_name}', ${c.vendor_id})" class="p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900/60 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 cursor-pointer transition-all flex items-center justify-between">
                 <div>
-                    <h4 class="text-xs font-bold text-slate-900 dark:text-white">${c.other_user_name} ${c.store_name ? `<span class="text-[10px] text-lime-600 dark:text-lime-400 font-bold">(${c.store_name})</span>` : ''}</h4>
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white">${c.other_user_name} ${c.store_name ? `<span class="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">(${c.store_name})</span>` : ''}</h4>
                     <p class="text-[11px] text-slate-500 dark:text-zinc-400 truncate max-w-[200px] mt-0.5">${c.last_message}</p>
                 </div>
-                ${c.unread_count > 0 ? `<span class="px-2 py-0.5 bg-lime-500 text-black text-[10px] font-black rounded-full">${c.unread_count}</span>` : ''}
+                ${c.unread_count > 0 ? `<span class="px-2 py-0.5 bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[10px] font-bold rounded-full">${c.unread_count}</span>` : ''}
             </div>
         `).join('');
     } catch(err) {
@@ -147,7 +147,7 @@ function appendMessageBubble(text, isMe, timeStr) {
     const div = document.createElement("div");
     div.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
     div.innerHTML = `
-        <div class="max-w-[75%] px-3.5 py-2 rounded-2xl text-xs font-semibold ${isMe ? 'bg-lime-500 text-black rounded-br-none shadow-sm' : 'bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-100 rounded-bl-none'}">
+        <div class="max-w-[75%] px-3.5 py-2 rounded-2xl text-xs font-semibold ${isMe ? 'bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 rounded-br-none shadow-sm' : 'bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-800 dark:text-zinc-100 rounded-bl-none'}">
             ${text}
         </div>
     `;

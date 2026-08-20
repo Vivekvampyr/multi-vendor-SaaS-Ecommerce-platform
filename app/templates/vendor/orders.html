@@ -10,15 +10,15 @@
             <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-3">
                 <div class="pb-3 border-b border-slate-200 dark:border-zinc-800 flex md:block items-center justify-between">
                     <div>
-                        <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[9px] font-black uppercase">Merchant</span>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-0.5 truncate max-w-[180px]">{{ current_user.full_name }}</h3>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[9px] font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Merchant</span>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1 truncate max-w-[180px]">{{ current_user.full_name }}</h3>
                     </div>
                 </div>
                 <nav class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
-                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📊 Dashboard</a>
-                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🛍️ Products</a>
-                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">🚚 Orders</a>
-                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🏷️ Coupons</a>
+                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Dashboard</a>
+                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Products</a>
+                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-bold shadow-sm">Orders</a>
+                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Coupons</a>
                 </nav>
             </div>
         </aside>
@@ -33,7 +33,7 @@
             <div class="glass-panel rounded-3xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs min-w-[620px]">
-                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
+                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-semibold">
                             <tr>
                                 <th class="p-4 whitespace-nowrap">Item Details</th>
                                 <th class="p-4 whitespace-nowrap">Qty & Price</th>
@@ -47,7 +47,7 @@
                                 <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors">
                                     <td class="p-4">
                                         <div class="font-bold text-slate-900 dark:text-white text-sm">{{ item.product_name }}</div>
-                                        <div class="text-[11px] text-lime-600 dark:text-lime-400 font-mono font-bold">SKU: {{ item.product_sku }}</div>
+                                        <div class="text-[11px] text-slate-500 dark:text-zinc-400 font-mono font-medium">SKU: {{ item.product_sku }}</div>
                                     </td>
                                     <td class="p-4">
                                         <div>{{ item.quantity }}x ${{ "%.2f"|format(item.unit_price) }}</div>
@@ -55,7 +55,7 @@
                                     </td>
                                     <td class="p-4">
                                         <div class="text-slate-500 dark:text-zinc-400">{{ "%.1f"|format(item.commission_rate) }}% commission</div>
-                                        <div class="text-[11px] text-rose-500 font-bold">-${{ "%.2f"|format(item.commission_amount) }}</div>
+                                        <div class="text-[11px] text-rose-500 font-medium">-${{ "%.2f"|format(item.commission_amount) }}</div>
                                     </td>
                                     <td class="p-4 font-black text-sm whitespace-nowrap">
                                         {% if item.status.value == 'CANCELLED' %}
@@ -65,27 +65,27 @@
                                             <span class="text-amber-500">${{ "%.2f"|format(item.vendor_earnings) }}</span>
                                             <div class="text-[10px] text-slate-400 dark:text-zinc-500 font-normal">Pending Payment</div>
                                         {% else %}
-                                            <span class="text-lime-600 dark:text-lime-400">${{ "%.2f"|format(item.vendor_earnings) }}</span>
+                                            <span class="text-slate-900 dark:text-white font-bold">${{ "%.2f"|format(item.vendor_earnings) }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="p-4">
                                         {% if item.status.value == 'CANCELLED' %}
-                                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-500 border border-rose-500/30 text-[10px] font-black inline-flex items-center space-x-1">
-                                                <span>✕ CANCELLED</span>
+                                            <span class="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 text-[10px] font-bold inline-flex items-center space-x-1">
+                                                <span>CANCELLED</span>
                                             </span>
                                         {% elif item.status.value == 'DELIVERED' %}
-                                            <span class="px-2.5 py-1 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30 text-[10px] font-black inline-flex items-center space-x-1">
-                                                <span>✓ DELIVERED</span>
+                                            <span class="px-2.5 py-1 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700 text-[10px] font-bold inline-flex items-center space-x-1">
+                                                <span>DELIVERED</span>
                                             </span>
                                         {% elif item.order and item.order.payment_method != 'COD' and item.order.payment_status.value != 'SUCCESS' %}
                                             <div class="space-y-1">
-                                                <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-bold inline-block">
-                                                    ⚠️ Awaiting Online Payment
+                                                <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-[10px] font-medium inline-block">
+                                                    Awaiting Online Payment
                                                 </span>
                                                 <p class="text-[10px] text-slate-400 dark:text-zinc-500">Fulfillment locked until customer pays</p>
                                             </div>
                                         {% else %}
-                                            <select onchange="updateFulfillmentStatus({{ item.id }}, this.value)" class="bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-2.5 py-1 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-bold cursor-pointer">
+                                            <select onchange="updateFulfillmentStatus({{ item.id }}, this.value)" class="bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-2.5 py-1 text-xs text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500 font-semibold cursor-pointer">
                                                 <option value="PENDING" {% if item.status.value == 'PENDING' %}selected{% endif %}>PENDING</option>
                                                 <option value="PROCESSING" {% if item.status.value == 'PROCESSING' %}selected{% endif %}>PROCESSING</option>
                                                 <option value="SHIPPED" {% if item.status.value == 'SHIPPED' %}selected{% endif %}>SHIPPED</option>

@@ -10,15 +10,15 @@
             <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-3">
                 <div class="pb-3 border-b border-slate-200 dark:border-zinc-800 flex md:block items-center justify-between">
                     <div>
-                        <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[9px] font-black uppercase">Merchant</span>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-0.5 truncate max-w-[180px]">{{ current_user.full_name }}</h3>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[9px] font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Merchant</span>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1 truncate max-w-[180px]">{{ current_user.full_name }}</h3>
                     </div>
                 </div>
                 <nav class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
-                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📊 Dashboard</a>
-                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">🛍️ Products</a>
-                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🚚 Orders</a>
-                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🏷️ Coupons</a>
+                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Dashboard</a>
+                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-bold shadow-sm">Products</a>
+                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Orders</a>
+                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Coupons</a>
                 </nav>
             </div>
         </aside>
@@ -30,7 +30,7 @@
                     <h1 class="text-2xl font-black text-slate-900 dark:text-white">Store Catalog & Products</h1>
                     <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Manage listings, SKUs, inventory levels, prices, and product images</p>
                 </div>
-                <button onclick="document.getElementById('add-product-modal').classList.remove('hidden')" class="px-4 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                <button onclick="document.getElementById('add-product-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                     + Add New Product
                 </button>
             </div>
@@ -38,7 +38,7 @@
             <div class="glass-panel rounded-3xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs min-w-[680px]">
-                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
+                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-semibold">
                             <tr>
                                 <th class="p-4 whitespace-nowrap">Product Name & SKU</th>
                                 <th class="p-4 whitespace-nowrap">Price</th>
@@ -53,7 +53,7 @@
                                 <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors" id="prod-row-{{ p.id }}">
                                     <td class="p-4">
                                         <div class="font-bold text-slate-900 dark:text-white text-sm">{{ p.name }}</div>
-                                        <div class="text-[11px] text-lime-600 dark:text-lime-400 font-mono font-bold">SKU: {{ p.sku }}</div>
+                                        <div class="text-[11px] text-slate-500 dark:text-zinc-400 font-mono font-medium">SKU: {{ p.sku }}</div>
                                         {% if p.short_description %}
                                             <div class="text-[11px] text-slate-500 dark:text-zinc-400 line-clamp-1 mt-0.5 max-w-xs">{{ p.short_description }}</div>
                                         {% endif %}
@@ -67,28 +67,28 @@
                                         {% endif %}
                                     </td>
                                     <td class="p-4 whitespace-nowrap">
-                                        <span class="{% if p.stock_quantity > 0 %}text-lime-600 dark:text-lime-400{% else %}text-rose-500{% endif %} font-bold">
+                                        <span class="{% if p.stock_quantity > 0 %}text-emerald-600 dark:text-emerald-400{% else %}text-rose-500{% endif %} font-bold">
                                             {{ p.stock_quantity }}
                                         </span>
                                     </td>
                                     <td class="p-4 whitespace-nowrap">
-                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if p.status.value == 'PUBLISHED' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-slate-200 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400{% endif %}">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold {% if p.status.value == 'PUBLISHED' %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-slate-100 dark:bg-zinc-900 text-slate-500 dark:text-zinc-400{% endif %}">
                                             {{ p.status.value }}
                                         </span>
                                     </td>
                                     <td class="p-4 whitespace-nowrap text-slate-500 dark:text-zinc-400">{{ p.category.name if p.category else 'General' }}</td>
                                     <td class="p-4 whitespace-nowrap text-right">
                                         <div class="inline-flex items-center justify-end space-x-1.5 whitespace-nowrap">
-                                            <a href="/products/{{ p.slug }}" target="_blank" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-lg text-[11px] font-bold transition-colors">
+                                            <a href="/products/{{ p.slug }}" target="_blank" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-lg text-[11px] font-semibold transition-colors">
                                                 View ↗
                                             </a>
-                                            <button onclick="openEditProductModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}', '{{ p.sku|replace("'", "\\'") }}', {{ p.category_id }}, {{ p.price }}, {{ p.compare_at_price or 'null' }}, {{ p.stock_quantity }}, '{{ p.status.value }}', '{{ (p.short_description or '')|replace("'", "\\'")|replace("\n", " ") }}', '{{ (p.description or '')|replace("'", "\\'")|replace("\n", " ") }}')" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-white rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
-                                                ✏️ Edit
+                                            <button onclick="openEditProductModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}', '{{ p.sku|replace("'", "\\'") }}', {{ p.category_id }}, {{ p.price }}, {{ p.compare_at_price or 'null' }}, {{ p.stock_quantity }}, '{{ p.status.value }}', '{{ (p.short_description or '')|replace("'", "\\'")|replace("\n", " ") }}', '{{ (p.description or '')|replace("'", "\\'")|replace("\n", " ") }}')" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer">
+                                                Edit
                                             </button>
-                                            <button onclick="openUploadImageModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}')" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-lime-500/15 hover:bg-lime-500/25 text-lime-600 dark:text-lime-400 border border-lime-500/30 rounded-lg text-[11px] font-bold transition-colors cursor-pointer">
-                                                📷 Photos
+                                            <button onclick="openUploadImageModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}')" class="whitespace-nowrap inline-flex items-center px-2.5 py-1 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 rounded-lg text-[11px] font-semibold transition-colors cursor-pointer">
+                                                Photos
                                             </button>
-                                            <button onclick="handleDeleteProduct({{ p.id }})" class="whitespace-nowrap inline-flex items-center justify-center w-7 h-6.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg text-[11px] font-bold transition-colors cursor-pointer" title="Delete Product">
+                                            <button onclick="handleDeleteProduct({{ p.id }})" class="whitespace-nowrap inline-flex items-center justify-center w-7 h-6.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg text-[11px] font-bold transition-colors cursor-pointer" title="Delete Product">
                                                 ✕
                                             </button>
                                         </div>
@@ -118,17 +118,17 @@
         <form id="create-product-form" onsubmit="handleCreateProduct(event)" class="space-y-3 text-xs">
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Product Title *</label>
-                <input type="text" id="prod-name" required placeholder="e.g. Wireless Noise-Cancelling Headphones" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="prod-name" required placeholder="e.g. Wireless Noise-Cancelling Headphones" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">SKU Code *</label>
-                    <input type="text" id="prod-sku" required placeholder="e.g. WN-HEAD-001" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 uppercase">
+                    <input type="text" id="prod-sku" required placeholder="e.g. WN-HEAD-001" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 uppercase">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Category *</label>
-                    <select id="prod-cat" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                    <select id="prod-cat" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500 font-semibold">
                         {% for cat in categories %}
                             <option value="{{ cat.id }}">{{ cat.name }}</option>
                         {% endfor %}
@@ -139,22 +139,22 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Selling Price ($) *</label>
-                    <input type="number" step="0.01" id="prod-price" required placeholder="99.99" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="prod-price" required placeholder="99.99" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Compare-at / MSRP Price ($)</label>
-                    <input type="number" step="0.01" id="prod-compare-price" placeholder="129.99 (Optional reference)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="prod-compare-price" placeholder="129.99 (Optional reference)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Initial Stock Units *</label>
-                    <input type="number" id="prod-stock" required value="10" min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="number" id="prod-stock" required value="10" min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Catalog Status</label>
-                    <select id="prod-status" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                    <select id="prod-status" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500 font-semibold">
                         <option value="PUBLISHED" selected>PUBLISHED</option>
                         <option value="DRAFT">DRAFT</option>
                     </select>
@@ -162,39 +162,38 @@
             </div>
 
             <!-- Gemini AI Generator Panel -->
-            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-lime-500/10 via-emerald-500/10 to-teal-500/10 border border-lime-500/30 space-y-2.5">
+            <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 space-y-2.5">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-1.5">
-                        <span class="text-base">✨</span>
-                        <span class="font-black text-xs text-slate-900 dark:text-white">Gemini AI Copywriter</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">AI</span>
+                        <span class="font-bold text-xs text-slate-900 dark:text-white">Gemini AI Copywriter</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700">AI</span>
                     </div>
                     <div class="flex items-center space-x-1.5">
-                        <select id="prod-ai-tone" class="bg-white/80 dark:bg-zinc-900/90 border border-lime-500/30 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-800 dark:text-zinc-200 focus:outline-none">
-                            <option value="professional">💼 Professional</option>
-                            <option value="exciting">🔥 Exciting & Trendy</option>
-                            <option value="minimalist">⚡ Minimalist</option>
-                            <option value="technical">🔬 Technical & Specs</option>
+                        <select id="prod-ai-tone" class="bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 dark:text-zinc-200 focus:outline-none">
+                            <option value="professional">Professional</option>
+                            <option value="exciting">Engaging & Trendy</option>
+                            <option value="minimalist">Minimalist</option>
+                            <option value="technical">Technical & Specs</option>
                         </select>
-                        <button type="button" onclick="generateProductAIDescription('create')" id="prod-ai-gen-btn" class="px-3 py-1 bg-lime-500 hover:bg-lime-400 text-black text-[11px] font-black rounded-lg shadow-sm transition-all cursor-pointer flex items-center space-x-1">
-                            <span>✨ Auto-Write</span>
+                        <button type="button" onclick="generateProductAIDescription('create')" id="prod-ai-gen-btn" class="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-[11px] font-bold rounded-lg shadow-sm transition-all cursor-pointer flex items-center space-x-1">
+                            <span>Auto-Write</span>
                         </button>
                     </div>
                 </div>
-                <input type="text" id="prod-ai-keywords" placeholder="Optional key specs or focus (e.g. 16GB GDDR7, noise cancellation, 2yr warranty)" class="w-full bg-white/70 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="prod-ai-keywords" placeholder="Optional key specs (e.g. 16GB GDDR7, noise cancellation, 2yr warranty)" class="w-full bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-400">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Short Description / Tagline</label>
-                <input type="text" id="prod-short-desc" maxlength="500" placeholder="Brief 1-line summary displayed on product cards..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="prod-short-desc" maxlength="500" placeholder="Brief 1-line summary displayed on product cards..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Full Detailed Description</label>
-                <textarea id="prod-desc" rows="3" placeholder="Describe the specifications, materials, features, and warranty..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500"></textarea>
+                <textarea id="prod-desc" rows="3" placeholder="Describe the specifications, materials, features, and warranty..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500"></textarea>
             </div>
 
-            <button type="submit" id="create-prod-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" id="create-prod-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Publish Product
             </button>
         </form>
@@ -214,17 +213,17 @@
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Product Title *</label>
-                <input type="text" id="edit-prod-name" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                <input type="text" id="edit-prod-name" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">SKU Code *</label>
-                    <input type="text" id="edit-prod-sku" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 uppercase">
+                    <input type="text" id="edit-prod-sku" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500 uppercase">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Category *</label>
-                    <select id="edit-prod-cat" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                    <select id="edit-prod-cat" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500 font-semibold">
                         {% for cat in categories %}
                             <option value="{{ cat.id }}">{{ cat.name }}</option>
                         {% endfor %}
@@ -235,22 +234,22 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Selling Price ($) *</label>
-                    <input type="number" step="0.01" id="edit-prod-price" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="edit-prod-price" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Compare-at / MSRP Price ($)</label>
-                    <input type="number" step="0.01" id="edit-prod-compare-price" placeholder="Optional MSRP" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="edit-prod-compare-price" placeholder="Optional MSRP" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Stock Units *</label>
-                    <input type="number" id="edit-prod-stock" required min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="number" id="edit-prod-stock" required min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Status</label>
-                    <select id="edit-prod-status" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500 font-semibold">
+                    <select id="edit-prod-status" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500 font-semibold">
                         <option value="PUBLISHED">PUBLISHED</option>
                         <option value="DRAFT">DRAFT</option>
                         <option value="ARCHIVED">ARCHIVED</option>
@@ -259,39 +258,38 @@
             </div>
 
             <!-- Gemini AI Generator Panel for Edit -->
-            <div class="p-3.5 rounded-2xl bg-gradient-to-r from-lime-500/10 via-emerald-500/10 to-teal-500/10 border border-lime-500/30 space-y-2.5">
+            <div class="p-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 space-y-2.5">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-1.5">
-                        <span class="text-base">✨</span>
-                        <span class="font-black text-xs text-slate-900 dark:text-white">Gemini AI Copywriter</span>
-                        <span class="px-1.5 py-0.5 rounded text-[9px] font-black bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30">AI</span>
+                        <span class="font-bold text-xs text-slate-900 dark:text-white">Gemini AI Copywriter</span>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700">AI</span>
                     </div>
                     <div class="flex items-center space-x-1.5">
-                        <select id="edit-prod-ai-tone" class="bg-white/80 dark:bg-zinc-900/90 border border-lime-500/30 rounded-lg px-2 py-1 text-[11px] font-bold text-slate-800 dark:text-zinc-200 focus:outline-none">
-                            <option value="professional">💼 Professional</option>
-                            <option value="exciting">🔥 Exciting & Trendy</option>
-                            <option value="minimalist">⚡ Minimalist</option>
-                            <option value="technical">🔬 Technical & Specs</option>
+                        <select id="edit-prod-ai-tone" class="bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-800 dark:text-zinc-200 focus:outline-none">
+                            <option value="professional">Professional</option>
+                            <option value="exciting">Engaging & Trendy</option>
+                            <option value="minimalist">Minimalist</option>
+                            <option value="technical">Technical & Specs</option>
                         </select>
-                        <button type="button" onclick="generateProductAIDescription('edit')" id="edit-prod-ai-gen-btn" class="px-3 py-1 bg-lime-500 hover:bg-lime-400 text-black text-[11px] font-black rounded-lg shadow-sm transition-all cursor-pointer flex items-center space-x-1">
-                            <span>✨ Auto-Write</span>
+                        <button type="button" onclick="generateProductAIDescription('edit')" id="edit-prod-ai-gen-btn" class="px-3 py-1 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-[11px] font-bold rounded-lg shadow-sm transition-all cursor-pointer flex items-center space-x-1">
+                            <span>Auto-Write</span>
                         </button>
                     </div>
                 </div>
-                <input type="text" id="edit-prod-ai-keywords" placeholder="Optional key specs or focus (e.g. 16GB GDDR7, noise cancellation, 2yr warranty)" class="w-full bg-white/70 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="edit-prod-ai-keywords" placeholder="Optional key specs (e.g. 16GB GDDR7, noise cancellation, 2yr warranty)" class="w-full bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-lg px-2.5 py-1 text-[11px] text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-400">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Short Description / Tagline</label>
-                <input type="text" id="edit-prod-short-desc" maxlength="500" placeholder="Brief 1-line summary..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                <input type="text" id="edit-prod-short-desc" maxlength="500" placeholder="Brief 1-line summary..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Full Detailed Description</label>
-                <textarea id="edit-prod-desc" rows="3" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500"></textarea>
+                <textarea id="edit-prod-desc" rows="3" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500"></textarea>
             </div>
 
-            <button type="submit" id="edit-prod-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" id="edit-prod-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Save Product Changes
             </button>
         </form>
@@ -304,7 +302,7 @@
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
             <div>
                 <h3 class="font-bold text-sm text-slate-900 dark:text-white">Upload Product Image</h3>
-                <p id="upload-prod-title" class="text-xs text-lime-600 dark:text-lime-400 font-bold"></p>
+                <p id="upload-prod-title" class="text-xs text-slate-600 dark:text-zinc-300 font-semibold mt-0.5"></p>
             </div>
             <button onclick="document.getElementById('upload-image-modal').classList.add('hidden')" class="text-slate-400 hover:text-black dark:hover:text-white cursor-pointer">✕</button>
         </div>
@@ -314,15 +312,15 @@
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Select Image File (JPG, PNG, WebP)</label>
-                <input type="file" id="upload-prod-file" accept="image/*" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-lime-500 file:text-black hover:file:bg-lime-400">
+                <input type="file" id="upload-prod-file" accept="image/*" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white dark:file:bg-zinc-100 dark:file:text-zinc-950 hover:file:opacity-90">
             </div>
 
             <div class="flex items-center space-x-2 pt-1">
-                <input type="checkbox" id="upload-is-primary" checked class="accent-lime-500">
-                <label for="upload-is-primary" class="text-slate-700 dark:text-zinc-300 font-bold">Set as Primary Product Image</label>
+                <input type="checkbox" id="upload-is-primary" checked class="accent-slate-900 dark:accent-zinc-100">
+                <label for="upload-is-primary" class="text-slate-700 dark:text-zinc-300 font-medium">Set as Primary Product Image</label>
             </div>
 
-            <button type="submit" id="upload-img-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" id="upload-img-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Upload Image
             </button>
         </form>
@@ -520,11 +518,11 @@ async function generateProductAIDescription(mode) {
 
             // Visual feedback pulse
             [shortDescInput, descTextarea].forEach(el => {
-                el.classList.add("ring-2", "ring-lime-500", "bg-lime-500/10");
-                setTimeout(() => el.classList.remove("ring-2", "ring-lime-500", "bg-lime-500/10"), 1200);
+                el.classList.add("ring-2", "ring-slate-400", "bg-slate-100", "dark:bg-zinc-800");
+                setTimeout(() => el.classList.remove("ring-2", "ring-slate-400", "bg-slate-100", "dark:bg-zinc-800"), 1200);
             });
 
-            window.Nexus.showToast("✨ AI copy generated with Gemini!", "success");
+            window.Nexus.showToast("AI copy generated with Gemini!", "success");
         }
     } catch(err) {
         window.Nexus.showToast(err.message || "Failed to generate AI description", "error");

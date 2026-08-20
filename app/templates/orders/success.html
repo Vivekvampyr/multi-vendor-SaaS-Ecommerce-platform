@@ -6,23 +6,23 @@
 <div class="max-w-3xl mx-auto px-4 py-16 text-center">
     <div class="glass-panel p-8 sm:p-12 rounded-3xl space-y-6">
         {% if order.status.value == 'CANCELLED' %}
-            <div class="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-500 text-3xl flex items-center justify-center mx-auto font-black">
+            <div class="w-16 h-16 rounded-2xl bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-3xl flex items-center justify-center mx-auto font-black">
                 ✕
             </div>
 
             <div>
                 <h1 class="text-3xl font-black text-slate-900 dark:text-white">Order Cancelled</h1>
-                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-lime-600 dark:text-lime-400 font-mono">{{ order.order_number }}</strong></p>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-slate-900 dark:text-white font-mono">{{ order.order_number }}</strong></p>
                 <p class="text-xs text-rose-500 font-semibold mt-1">This order has been cancelled. Any reserved items have been restored to catalog inventory.</p>
             </div>
         {% else %}
-            <div class="w-16 h-16 rounded-2xl bg-lime-500/20 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-3xl flex items-center justify-center mx-auto font-black">
+            <div class="w-16 h-16 rounded-2xl bg-slate-200 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 text-slate-800 dark:text-zinc-200 text-3xl flex items-center justify-center mx-auto font-black">
                 ✓
             </div>
 
             <div>
                 <h1 class="text-3xl font-black text-slate-900 dark:text-white">Thank You for Your Order!</h1>
-                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-lime-600 dark:text-lime-400 font-mono">{{ order.order_number }}</strong></p>
+                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-2">Order Reference: <strong class="text-slate-900 dark:text-white font-mono">{{ order.order_number }}</strong></p>
             </div>
         {% endif %}
 
@@ -30,14 +30,14 @@
         <div class="p-6 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900 text-left space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
                 <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Status</span>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-black {% if order.status.value == 'CANCELLED' %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% elif order.status.value in ['PAID', 'DELIVERED'] %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {% if order.status.value == 'CANCELLED' %}bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30{% elif order.status.value in ['PAID', 'DELIVERED'] %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30{% endif %}">
                     {{ order.status.value }}
                 </span>
             </div>
 
             <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
                 <span class="text-xs font-bold text-slate-500 dark:text-zinc-400">Payment Status</span>
-                <span class="px-2.5 py-0.5 rounded-full text-xs font-black {% if order.status.value == 'CANCELLED' %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% elif order.payment_status.value == 'SUCCESS' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% endif %}">
+                <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {% if order.status.value == 'CANCELLED' %}bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30{% elif order.payment_status.value == 'SUCCESS' %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30{% endif %}">
                     {% if order.status.value == 'CANCELLED' and order.payment_status.value != 'SUCCESS' %}CANCELLED{% else %}{{ order.payment_status.value }}{% endif %}
                 </span>
             </div>
@@ -49,7 +49,7 @@
                         <div class="flex items-center space-x-2">
                             <span>{{ item.quantity }}x {{ item.product_name }}</span>
                             {% if item.status.value == 'CANCELLED' %}
-                                <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 text-[10px] font-black">CANCELLED</span>
+                                <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-600 dark:text-rose-400 text-[10px] font-bold">CANCELLED</span>
                             {% endif %}
                         </div>
                         <span class="font-bold text-slate-900 dark:text-white {% if item.status.value == 'CANCELLED' %}line-through text-slate-400 dark:text-zinc-600{% endif %}">${{ "%.2f"|format(item.subtotal) }}</span>
@@ -59,20 +59,20 @@
 
             <div class="pt-3 border-t border-slate-200 dark:border-zinc-800 flex justify-between text-base font-black text-slate-900 dark:text-white">
                 <span>Total Amount</span>
-                <span class="text-lime-600 dark:text-lime-400">${{ "%.2f"|format(order.total_amount) }}</span>
+                <span class="text-slate-900 dark:text-white font-black">${{ "%.2f"|format(order.total_amount) }}</span>
             </div>
         </div>
 
         <!-- Payment Actions (Only for active, non-cancelled orders awaiting payment) -->
         {% if order.payment_status.value != 'SUCCESS' and order.status.value != 'CANCELLED' %}
-            <div class="p-6 rounded-2xl bg-lime-500/10 border border-lime-500/30 text-left space-y-3">
+            <div class="p-6 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-left space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="font-black text-sm text-slate-900 dark:text-white">💳 Complete Payment</h3>
-                    <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black">Stripe Integrated</span>
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white">Complete Payment</h3>
+                    <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-[10px] font-bold border border-slate-300 dark:border-zinc-700">Stripe Integrated</span>
                 </div>
                 <p class="text-xs text-slate-600 dark:text-zinc-300">This order is awaiting payment confirmation. You can checkout securely via Stripe or use 1-click sandbox simulation.</p>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                    <button onclick="payWithStripe()" id="stripe-pay-btn" class="w-full py-3 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                    <button onclick="payWithStripe()" id="stripe-pay-btn" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                         Pay with Stripe (${{ "%.2f"|format(order.total_amount) }})
                     </button>
                     <button onclick="simulateOrderPayment()" id="pay-now-btn" class="w-full py-3 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-white text-xs font-bold rounded-xl transition-all cursor-pointer">
@@ -86,7 +86,7 @@
             <a href="/customer/orders" class="px-5 py-2.5 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-xs font-bold text-slate-900 dark:text-zinc-200 rounded-xl transition-colors">
                 View My Orders
             </a>
-            <a href="/products" class="px-5 py-2.5 bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-xs font-bold text-slate-700 dark:text-zinc-300 rounded-xl transition-colors">
+            <a href="/products" class="px-5 py-2.5 bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-slate-500 text-xs font-bold text-slate-700 dark:text-zinc-300 rounded-xl transition-colors">
                 Continue Shopping
             </a>
             {# Check if order or any item is already shipped/delivered/cancelled #}

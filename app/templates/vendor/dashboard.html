@@ -10,21 +10,21 @@
             <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-3">
                 <div class="pb-3 border-b border-slate-200 dark:border-zinc-800 flex md:block items-center justify-between">
                     <div>
-                        <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[9px] font-black uppercase">Merchant</span>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-0.5 truncate max-w-[170px]">{{ overview.store_name if overview.has_store else current_user.full_name }}</h3>
-                        <p class="text-[11px] text-slate-500 dark:text-zinc-400">Plan: <strong class="text-lime-600 dark:text-lime-400">{{ overview.active_plan_name }}</strong></p>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[9px] font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Merchant</span>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1 truncate max-w-[170px]">{{ overview.store_name if overview.has_store else current_user.full_name }}</h3>
+                        <p class="text-[11px] text-slate-500 dark:text-zinc-400">Plan: <strong class="text-slate-900 dark:text-white font-bold">{{ overview.active_plan_name }}</strong></p>
                     </div>
                     {% if overview.has_store and overview.store_slug %}
-                        <a href="/stores/{{ overview.store_slug }}" target="_blank" class="md:hidden px-2.5 py-1 bg-slate-100 dark:bg-zinc-800 text-lime-600 dark:text-lime-400 text-[11px] font-bold rounded-lg">
-                            ↗ Store
+                        <a href="/stores/{{ overview.store_slug }}" target="_blank" class="md:hidden px-2.5 py-1 bg-slate-100 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-[11px] font-semibold rounded-lg">
+                            Store ↗
                         </a>
                     {% endif %}
                 </div>
                 <nav class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
-                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">📊 Dashboard</a>
-                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🛍️ Products</a>
-                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🚚 Orders</a>
-                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🏷️ Coupons</a>
+                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-bold shadow-sm">Dashboard</a>
+                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Products</a>
+                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Orders</a>
+                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Coupons</a>
                 </nav>
             </div>
         </aside>
@@ -39,8 +39,8 @@
                 </div>
                 <div class="hidden sm:flex items-center space-x-3">
                     {% if overview.has_store and overview.store_slug %}
-                        <a href="/stores/{{ overview.store_slug }}" target="_blank" class="px-4 py-2 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 text-xs font-bold rounded-xl transition-colors">
-                            ↗ View Public Storefront
+                        <a href="/stores/{{ overview.store_slug }}" target="_blank" class="px-4 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-900 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 text-xs font-semibold rounded-xl transition-colors">
+                            View Public Storefront ↗
                         </a>
                     {% endif %}
                 </div>
@@ -49,7 +49,7 @@
             <!-- KPI Metric Cards -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div class="glass-panel p-4 sm:p-5 rounded-2xl">
-                    <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold">Active Products</span>
+                    <span class="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-medium">Active Products</span>
                     <div class="flex items-baseline space-x-2 mt-2">
                         <span class="text-2xl font-black text-slate-900 dark:text-white">{{ overview.total_products }}</span>
                         <span class="text-xs text-slate-500">/ {{ overview.max_products_allowed }} limit</span>
@@ -57,21 +57,21 @@
                 </div>
 
                 <div class="glass-panel p-5 rounded-2xl">
-                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-bold">Total Sold Items</span>
+                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-medium">Total Sold Items</span>
                     <div class="mt-2">
                         <span class="text-2xl font-black text-slate-900 dark:text-white">{{ overview.total_orders }}</span>
                     </div>
                 </div>
 
                 <div class="glass-panel p-5 rounded-2xl">
-                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-bold">Net Merchant Revenue</span>
+                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-medium">Net Merchant Revenue</span>
                     <div class="mt-2">
-                        <span class="text-2xl font-black text-lime-600 dark:text-lime-400">${{ "%.2f"|format(overview.total_revenue) }}</span>
+                        <span class="text-2xl font-black text-slate-900 dark:text-white">${{ "%.2f"|format(overview.total_revenue) }}</span>
                     </div>
                 </div>
 
                 <div class="glass-panel p-5 rounded-2xl">
-                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-bold">Commission Tier</span>
+                    <span class="text-xs text-slate-500 dark:text-zinc-400 font-medium">Commission Tier</span>
                     <div class="mt-2">
                         <span class="text-2xl font-black text-slate-900 dark:text-white">{{ "%.1f"|format(overview.commission_rate) }}%</span>
                     </div>
@@ -80,47 +80,42 @@
 
             <!-- ONBOARDING: IF VENDOR HAS NO STORE PROFILE YET -->
             {% if not overview.has_store %}
-                <div class="glass-panel p-8 rounded-3xl border border-lime-500/40 bg-gradient-to-br from-lime-500/5 to-transparent space-y-6">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-14 h-14 rounded-2xl bg-lime-500/20 border border-lime-500/30 flex items-center justify-center text-3xl">
-                            🏪
-                        </div>
-                        <div>
-                            <h2 class="text-xl font-black text-slate-900 dark:text-white">Setup Your Store Profile</h2>
-                            <p class="text-xs text-slate-600 dark:text-zinc-300 mt-1">You need a registered storefront profile before you can publish catalog products and receive customer orders.</p>
-                        </div>
+                <div class="glass-panel p-8 rounded-3xl border border-slate-300 dark:border-zinc-800 space-y-6">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900 dark:text-white">Setup Your Store Profile</h2>
+                        <p class="text-xs text-slate-600 dark:text-zinc-300 mt-1">You need a registered storefront profile before you can publish catalog products and receive customer orders.</p>
                     </div>
 
                     <form id="create-store-form" onsubmit="handleCreateStore(event)" class="space-y-4 text-xs">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Store Name *</label>
-                                <input type="text" id="setup-store-name" required placeholder="e.g. Apex Tech Essentials" oninput="autoGenerateSlug(this.value)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2.5 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                                <input type="text" id="setup-store-name" required placeholder="e.g. Apex Tech Essentials" oninput="autoGenerateSlug(this.value)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2.5 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                             </div>
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Store URL Slug *</label>
-                                <input type="text" id="setup-store-slug" required placeholder="apex-tech-essentials" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2.5 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                                <input type="text" id="setup-store-slug" required placeholder="apex-tech-essentials" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2.5 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                             </div>
                         </div>
 
                         <div>
                             <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Store Description</label>
-                            <textarea id="setup-store-desc" rows="2" placeholder="Tell buyers what your store specializes in..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500"></textarea>
+                            <textarea id="setup-store-desc" rows="2" placeholder="Tell buyers what your store specializes in..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500"></textarea>
                         </div>
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Support Email</label>
-                                <input type="email" id="setup-store-email" placeholder="support@yourstore.com" value="{{ current_user.email }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                                <input type="email" id="setup-store-email" placeholder="support@yourstore.com" value="{{ current_user.email }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                             </div>
                             <div>
                                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Support Phone</label>
-                                <input type="text" id="setup-store-phone" placeholder="+1 555-0199" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                                <input type="text" id="setup-store-phone" placeholder="+1 555-0199" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                             </div>
                         </div>
 
-                        <button type="submit" id="setup-store-btn" class="w-full py-3 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-xl shadow-lime-500/25 transition-all text-sm cursor-pointer">
-                            🚀 Launch Storefront
+                        <button type="submit" id="setup-store-btn" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all text-sm cursor-pointer">
+                            Launch Storefront
                         </button>
                     </form>
                 </div>
@@ -129,42 +124,39 @@
                 <div class="glass-panel p-6 rounded-3xl space-y-6">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200 dark:border-zinc-800 gap-3">
                         <div class="flex items-center space-x-4">
-                            <div class="w-12 h-12 rounded-2xl bg-lime-500/20 border border-lime-500/30 flex items-center justify-center text-2xl">
-                                🏪
-                            </div>
                             <div>
                                 <div class="flex items-center space-x-2">
                                     <h3 class="font-black text-lg text-slate-900 dark:text-white">{{ overview.store_name }}</h3>
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if overview.status.value == 'APPROVED' %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% elif overview.status.value == 'PENDING' %}bg-amber-500/20 text-amber-500 border border-amber-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% endif %}">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {% if overview.status.value == 'APPROVED' %}bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 border border-slate-300 dark:border-zinc-700{% elif overview.status.value == 'PENDING' %}bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30{% else %}bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30{% endif %}">
                                         {{ overview.status.value }}
                                     </span>
                                 </div>
-                                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Slug: <code class="text-lime-600 dark:text-lime-400 font-mono font-bold">{{ overview.store_slug }}</code></p>
+                                <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">Slug: <code class="text-slate-800 dark:text-zinc-200 font-mono font-bold">{{ overview.store_slug }}</code></p>
                             </div>
                         </div>
 
                         <div class="flex items-center space-x-2">
-                            <button onclick="document.getElementById('edit-store-modal').classList.remove('hidden')" class="px-3.5 py-2 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-xl text-xs font-bold transition-colors cursor-pointer">
-                                ✏️ Update Store
+                            <button onclick="document.getElementById('edit-store-modal').classList.remove('hidden')" class="px-3.5 py-2 bg-slate-100 dark:bg-zinc-900 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-200 dark:border-zinc-800 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                                Update Store
                             </button>
-                            <button onclick="document.getElementById('delete-store-modal').classList.remove('hidden')" class="px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-500 rounded-xl text-xs font-bold transition-colors cursor-pointer">
-                                🗑️ Delete Store
+                            <button onclick="document.getElementById('delete-store-modal').classList.remove('hidden')" class="px-3.5 py-2 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                                Delete Store
                             </button>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                         <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
-                            <span class="text-slate-500 dark:text-zinc-400 font-semibold">Support Email</span>
+                            <span class="text-slate-500 dark:text-zinc-400 font-medium">Support Email</span>
                             <p class="font-bold text-slate-900 dark:text-white mt-1">{{ overview.support_email or 'Not configured' }}</p>
                         </div>
                         <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
-                            <span class="text-slate-500 dark:text-zinc-400 font-semibold">Support Phone</span>
+                            <span class="text-slate-500 dark:text-zinc-400 font-medium">Support Phone</span>
                             <p class="font-bold text-slate-900 dark:text-white mt-1">{{ overview.support_phone or 'Not configured' }}</p>
                         </div>
                         <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
-                            <span class="text-slate-500 dark:text-zinc-400 font-semibold">Store Visibility</span>
-                            <p class="font-bold mt-1 {% if overview.is_store_active %}text-lime-600 dark:text-lime-400{% else %}text-rose-500{% endif %}">
+                            <span class="text-slate-500 dark:text-zinc-400 font-medium">Store Visibility</span>
+                            <p class="font-bold mt-1 {% if overview.is_store_active %}text-emerald-600 dark:text-emerald-400{% else %}text-rose-500{% endif %}">
                                 {% if overview.is_store_active %}● Active & Public{% else %}○ Deactivated{% endif %}
                             </p>
                         </div>
@@ -172,7 +164,7 @@
 
                     {% if overview.store_description %}
                         <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900 text-xs">
-                            <span class="text-slate-500 dark:text-zinc-400 font-semibold">Store Description:</span>
+                            <span class="text-slate-500 dark:text-zinc-400 font-medium">Store Description:</span>
                             <p class="text-slate-700 dark:text-zinc-300 mt-1 leading-relaxed">{{ overview.store_description }}</p>
                         </div>
                     {% endif %}
@@ -186,23 +178,23 @@
                         <h3 class="font-black text-sm text-slate-900 dark:text-white">SaaS Subscription Plan</h3>
                         <p class="text-xs text-slate-500 dark:text-zinc-400">Your merchant tier determines listing capacities and commission rates</p>
                     </div>
-                    <button onclick="document.getElementById('upgrade-plan-modal').classList.remove('hidden')" class="px-4 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
-                        💳 Upgrade / Switch Plan
+                    <button onclick="document.getElementById('upgrade-plan-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+                        Upgrade / Switch Plan
                     </button>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                     <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
-                        <span class="text-slate-500 dark:text-zinc-400 font-semibold">Current Plan</span>
-                        <p class="font-black text-lime-600 dark:text-lime-400 text-sm mt-1">{{ overview.active_plan_name }}</p>
+                        <span class="text-slate-500 dark:text-zinc-400 font-medium">Current Plan</span>
+                        <p class="font-bold text-slate-900 dark:text-white text-sm mt-1">{{ overview.active_plan_name }}</p>
                     </div>
                     <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
-                        <span class="text-slate-500 dark:text-zinc-400 font-semibold">Product Listing Limit</span>
+                        <span class="text-slate-500 dark:text-zinc-400 font-medium">Product Listing Limit</span>
                         <p class="font-bold text-slate-900 dark:text-white text-sm mt-1">{{ overview.total_products }} / {{ overview.max_products_allowed }} listings</p>
                     </div>
                     <div class="p-4 rounded-2xl bg-slate-100 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-900">
-                        <span class="text-slate-500 dark:text-zinc-400 font-semibold">Platform Commission Rate</span>
-                        <p class="font-bold text-lime-600 dark:text-lime-400 text-sm mt-1">{{ "%.1f"|format(overview.commission_rate) }}%</p>
+                        <span class="text-slate-500 dark:text-zinc-400 font-medium">Platform Commission Rate</span>
+                        <p class="font-bold text-slate-900 dark:text-white text-sm mt-1">{{ "%.1f"|format(overview.commission_rate) }}%</p>
                     </div>
                 </div>
             </div>
@@ -222,31 +214,31 @@
         <form id="edit-store-form" onsubmit="handleUpdateStore(event)" class="space-y-3 text-xs">
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Store Name</label>
-                <input type="text" id="edit-store-name" value="{{ overview.store_name }}" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                <input type="text" id="edit-store-name" value="{{ overview.store_name }}" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Store Description</label>
-                <textarea id="edit-store-desc" rows="3" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">{{ overview.store_description }}</textarea>
+                <textarea id="edit-store-desc" rows="3" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">{{ overview.store_description }}</textarea>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Support Email</label>
-                    <input type="email" id="edit-store-email" value="{{ overview.support_email }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="email" id="edit-store-email" value="{{ overview.support_email }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Support Phone</label>
-                    <input type="text" id="edit-store-phone" value="{{ overview.support_phone }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="text" id="edit-store-phone" value="{{ overview.support_phone }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div class="flex items-center space-x-2 pt-2">
-                <input type="checkbox" id="edit-store-active" {% if overview.is_store_active %}checked{% endif %} class="accent-lime-500">
-                <label for="edit-store-active" class="text-slate-700 dark:text-zinc-300 font-bold">Store is Active & Publicly Visible</label>
+                <input type="checkbox" id="edit-store-active" {% if overview.is_store_active %}checked{% endif %} class="accent-slate-900 dark:accent-zinc-100">
+                <label for="edit-store-active" class="text-slate-700 dark:text-zinc-300 font-medium">Store is Active & Publicly Visible</label>
             </div>
 
-            <button type="submit" id="edit-store-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" id="edit-store-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Save Store Settings
             </button>
         </form>
@@ -257,7 +249,6 @@
 <div id="delete-store-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="glass-panel w-full max-w-md p-6 rounded-3xl border border-rose-500/30 shadow-2xl space-y-4">
         <div class="flex items-center space-x-3 text-rose-500">
-            <span class="text-2xl">⚠️</span>
             <h3 class="font-black text-base text-slate-900 dark:text-white">Delete Store Profile</h3>
         </div>
 
@@ -266,10 +257,10 @@
         </p>
 
         <div class="flex items-center space-x-3 pt-2">
-            <button onclick="document.getElementById('delete-store-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-zinc-300 text-xs font-bold rounded-xl transition-colors cursor-pointer">
+            <button onclick="document.getElementById('delete-store-modal').classList.add('hidden')" class="flex-1 py-2 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-zinc-300 text-xs font-semibold rounded-xl transition-colors cursor-pointer">
                 Cancel
             </button>
-            <button onclick="handleDeleteStore()" id="delete-store-btn" class="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-rose-600/30 transition-all cursor-pointer">
+            <button onclick="handleDeleteStore()" id="delete-store-btn" class="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Yes, Delete Store
             </button>
         </div>
@@ -290,12 +281,12 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {% for plan in plans %}
-                <div class="glass-panel p-5 rounded-2xl border {% if overview.active_plan_id == plan.id %}border-lime-500 bg-lime-500/10{% else %}border-slate-200 dark:border-zinc-800{% endif %} flex flex-col justify-between space-y-4">
+                <div class="glass-panel p-5 rounded-2xl border {% if overview.active_plan_id == plan.id %}border-slate-900 dark:border-zinc-100 bg-slate-50 dark:bg-zinc-900/60{% else %}border-slate-200 dark:border-zinc-800{% endif %} flex flex-col justify-between space-y-4">
                     <div>
                         <div class="flex items-center justify-between">
                             <h4 class="font-bold text-sm text-slate-900 dark:text-white">{{ plan.name }}</h4>
                             {% if overview.active_plan_id == plan.id %}
-                                <span class="px-2 py-0.5 rounded-full bg-lime-500 text-black text-[10px] font-black">CURRENT</span>
+                                <span class="px-2 py-0.5 rounded-full bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[10px] font-bold">CURRENT</span>
                             {% endif %}
                         </div>
                         <div class="mt-2 flex items-baseline space-x-1">
@@ -308,7 +299,7 @@
                         </ul>
                     </div>
 
-                    <button onclick="handleSelectPlan({{ plan.id }})" {% if overview.active_plan_id == plan.id %}disabled class="w-full py-2 bg-slate-200 dark:bg-zinc-800 text-slate-500 rounded-xl text-xs font-bold cursor-not-allowed"{% else %}class="w-full py-2 bg-lime-500 hover:bg-lime-400 text-black rounded-xl text-xs font-black transition-colors shadow-sm cursor-pointer"{% endif %}>
+                    <button onclick="handleSelectPlan({{ plan.id }})" {% if overview.active_plan_id == plan.id %}disabled class="w-full py-2 bg-slate-200 dark:bg-zinc-800 text-slate-500 rounded-xl text-xs font-semibold cursor-not-allowed"{% else %}class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 rounded-xl text-xs font-bold transition-colors shadow-sm cursor-pointer"{% endif %}>
                         {% if overview.active_plan_id == plan.id %}Active Tier{% else %}Select {{ plan.name }}{% endif %}
                     </button>
                 </div>

@@ -12,11 +12,11 @@
 
         <!-- Role Selector Tabs -->
         <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-zinc-900 rounded-2xl border border-slate-200 dark:border-zinc-800 mb-6">
-            <button type="button" id="role-cust-btn" onclick="selectRole('CUSTOMER')" class="py-2 text-xs font-black rounded-xl bg-lime-500 text-black transition-all">
-                🛍️ Shopper
+            <button type="button" id="role-cust-btn" onclick="selectRole('CUSTOMER')" class="py-2 text-xs font-bold rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 transition-all shadow-sm">
+                Shopper
             </button>
-            <button type="button" id="role-vend-btn" onclick="selectRole('VENDOR')" class="py-2 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all">
-                🏪 Merchant / Vendor
+            <button type="button" id="role-vend-btn" onclick="selectRole('VENDOR')" class="py-2 text-xs font-medium rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white transition-all">
+                Merchant / Vendor
             </button>
         </div>
 
@@ -25,26 +25,26 @@
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Full Legal Name</label>
-                <input type="text" id="reg-name" required placeholder="John Doe" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 transition-colors">
+                <input type="text" id="reg-name" required placeholder="John Doe" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Email Address</label>
-                <input type="email" id="reg-email" required placeholder="you@example.com" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 transition-colors">
+                <input type="email" id="reg-email" required placeholder="you@example.com" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Password</label>
-                <input type="password" id="reg-password" required minlength="8" placeholder="At least 8 characters" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500 transition-colors">
+                <input type="password" id="reg-password" required minlength="8" placeholder="At least 8 characters" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
             </div>
 
-            <button type="submit" id="reg-submit-btn" class="w-full py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm shadow-lg shadow-lime-500/25 transition-all">
+            <button type="submit" id="reg-submit-btn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold text-sm shadow-sm transition-all cursor-pointer">
                 Create Account
             </button>
         </form>
 
         <div class="mt-6 text-center text-xs text-slate-500 dark:text-zinc-400">
-            Already have an account? <a href="/login" class="text-lime-600 dark:text-lime-400 hover:underline font-bold">Log In</a>
+            Already have an account? <a href="/login" class="text-slate-900 dark:text-white hover:underline font-bold">Log In</a>
         </div>
     </div>
 </div>
@@ -55,11 +55,11 @@ function selectRole(role) {
     const custBtn = document.getElementById("role-cust-btn");
     const vendBtn = document.getElementById("role-vend-btn");
     if (role === "CUSTOMER") {
-        custBtn.className = "py-2 text-xs font-black rounded-xl bg-lime-500 text-black transition-all";
-        vendBtn.className = "py-2 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all";
+        custBtn.className = "py-2 text-xs font-bold rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 transition-all shadow-sm";
+        vendBtn.className = "py-2 text-xs font-medium rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white transition-all";
     } else {
-        vendBtn.className = "py-2 text-xs font-black rounded-xl bg-lime-500 text-black transition-all";
-        custBtn.className = "py-2 text-xs font-bold rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all";
+        vendBtn.className = "py-2 text-xs font-bold rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 transition-all shadow-sm";
+        custBtn.className = "py-2 text-xs font-medium rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white transition-all";
     }
 }
 

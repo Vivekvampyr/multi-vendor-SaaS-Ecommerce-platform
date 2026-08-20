@@ -1,0 +1,131 @@
+/* ==========================================================================
+   COLOR PALETTE & THEME CONFIGURATION
+   NexusSaaS Multi-Vendor Platform
+
+   HOW TO CUSTOMIZE:
+   -----------------
+   1. To change the default colors, simply edit the HEX values in :root (Dark mode)
+      or html.light (Light mode) below.
+   2. To use one of the built-in presets (e.g., Slate, Charcoal, Indigo, Emerald),
+      add data-theme="<preset-name>" to your <html> tag in base.html, or call:
+      window.NexusTheme.setPreset('<preset-name>') in JavaScript.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. DEFAULT THEME: Muted Gray + Slate / Charcoal (Professional / Minimalist)
+   ========================================================================== */
+:root {
+  /* Brand Primary Accents */
+  --brand-primary: #0f172a;        /* Slate 900 */
+  --brand-primary-hover: #1e293b;  /* Slate 800 */
+  --brand-primary-text: #ffffff;   /* Pure White */
+  --brand-primary-subtle: #334155; /* Slate 700 */
+
+  /* Neutral Slate Scale */
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  /* Neutral Zinc / Charcoal Scale */
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-600: #52525b;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-900: #18181b;
+  --color-zinc-950: #09090b;
+
+  /* Dark Mode Default Surface & Layout Tokens */
+  --bg-main: #09090b;
+  --bg-surface: #121217;
+  --bg-card: rgba(18, 18, 23, 0.85);
+  --border-card: #27272a;
+  --border-subtle: #1f1f23;
+  --text-primary: #f4f4f5;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-highlight: #94a3b8;
+}
+
+/* Light Mode Override */
+html.light {
+  --brand-primary: #0f172a;
+  --brand-primary-hover: #1e293b;
+  --brand-primary-text: #ffffff;
+  --brand-primary-subtle: #e2e8f0;
+
+  --bg-main: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --border-card: #e2e8f0;
+  --border-subtle: #cbd5e1;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --accent-highlight: #475569;
+}
+
+/* ==========================================================================
+   2. THEME PRESETS (Optional quick themes)
+   ========================================================================== */
+
+/* --- Preset: Matte Charcoal / Pure Monochrome --- */
+[data-theme="charcoal"] {
+  --brand-primary: #18181b;
+  --brand-primary-hover: #27272a;
+  --brand-primary-text: #ffffff;
+  --brand-primary-subtle: #3f3f46;
+  --accent-highlight: #a1a1aa;
+}
+
+/* --- Preset: Deep Indigo / Navy --- */
+[data-theme="indigo"] {
+  --brand-primary: #312e81;
+  --brand-primary-hover: #3730a3;
+  --brand-primary-text: #ffffff;
+  --brand-primary-subtle: #4338ca;
+  --accent-highlight: #818cf8;
+}
+html.light[data-theme="indigo"] {
+  --brand-primary: #3730a3;
+  --brand-primary-hover: #312e81;
+  --accent-highlight: #4f46e5;
+}
+
+/* --- Preset: Forest / Subtle Emerald --- */
+[data-theme="emerald"] {
+  --brand-primary: #064e3b;
+  --brand-primary-hover: #065f46;
+  --brand-primary-text: #ffffff;
+  --brand-primary-subtle: #047857;
+  --accent-highlight: #34d399;
+}
+html.light[data-theme="emerald"] {
+  --brand-primary: #065f46;
+  --brand-primary-hover: #064e3b;
+  --accent-highlight: #059669;
+}
+
+/* --- Preset: Midnight Obsidian --- */
+[data-theme="midnight"] {
+  --bg-main: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-card: rgba(10, 10, 10, 0.9);
+  --border-card: #1f1f1f;
+  --brand-primary: #ffffff;
+  --brand-primary-hover: #e5e5e5;
+  --brand-primary-text: #000000;
+  --accent-highlight: #737373;
+}

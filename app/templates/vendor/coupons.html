@@ -10,15 +10,15 @@
             <div class="glass-panel p-4 sm:p-6 rounded-3xl space-y-3">
                 <div class="pb-3 border-b border-slate-200 dark:border-zinc-800 flex md:block items-center justify-between">
                     <div>
-                        <span class="px-2 py-0.5 rounded-full bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[9px] font-black uppercase">Merchant</span>
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-0.5 truncate max-w-[180px]">{{ current_user.full_name }}</h3>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 text-[9px] font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Merchant</span>
+                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mt-1 truncate max-w-[180px]">{{ current_user.full_name }}</h3>
                     </div>
                 </div>
                 <nav class="flex md:flex-col overflow-x-auto gap-1.5 md:space-y-1 md:gap-0 pb-1 md:pb-0 scrollbar-none text-xs">
-                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">📊 Dashboard</a>
-                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🛍️ Products</a>
-                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">🚚 Orders</a>
-                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-lime-500 text-black font-black shadow-sm">🏷️ Coupons</a>
+                    <a href="/vendor/dashboard" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Dashboard</a>
+                    <a href="/vendor/products" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Products</a>
+                    <a href="/vendor/orders" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl text-slate-600 dark:text-zinc-400 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 font-medium transition-colors">Orders</a>
+                    <a href="/vendor/coupons" class="flex-shrink-0 whitespace-nowrap block px-3 py-2 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 font-bold shadow-sm">Coupons</a>
                 </nav>
             </div>
         </aside>
@@ -30,7 +30,7 @@
                     <h1 class="text-2xl font-black text-slate-900 dark:text-white">Store Promotional Coupons</h1>
                     <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Create percentage or fixed discount promotional codes for your products</p>
                 </div>
-                <button onclick="document.getElementById('add-coupon-modal').classList.remove('hidden')" class="px-4 py-2 bg-lime-500 hover:bg-lime-400 text-black text-xs font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+                <button onclick="document.getElementById('add-coupon-modal').classList.remove('hidden')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                     + Create Coupon Code
                 </button>
             </div>
@@ -38,7 +38,7 @@
             <div class="glass-panel rounded-3xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-bold">
+                        <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-semibold">
                             <tr>
                                 <th class="p-4">Coupon Code</th>
                                 <th class="p-4">Discount Value</th>
@@ -51,7 +51,7 @@
                         <tbody class="divide-y divide-slate-200 dark:divide-zinc-800/60 text-slate-700 dark:text-zinc-300">
                             {% for c in coupons %}
                                 <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors">
-                                    <td class="p-4 font-mono font-bold text-lime-600 dark:text-lime-400 text-sm">{{ c.code }}</td>
+                                    <td class="p-4 font-mono font-bold text-slate-900 dark:text-white text-sm">{{ c.code }}</td>
                                     <td class="p-4 font-black text-slate-900 dark:text-white">
                                         {% if c.discount_type.value == 'PERCENTAGE' %}
                                             {{ "%.1f"|format(c.discount_value) }}% OFF
@@ -62,17 +62,17 @@
                                     <td class="p-4">{{ c.used_count }} / {{ c.usage_limit or '∞' }}</td>
                                     <td class="p-4">${{ "%.2f"|format(c.min_order_amount) if c.min_order_amount else '0.00' }}</td>
                                     <td class="p-4">
-                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black {% if c.is_active %}bg-lime-500/20 text-lime-600 dark:text-lime-400 border border-lime-500/30{% else %}bg-rose-500/20 text-rose-500 border border-rose-500/30{% endif %}">
+                                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold {% if c.is_active %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30{% endif %}">
                                             {% if c.is_active %}ACTIVE{% else %}DISABLED{% endif %}
                                         </span>
                                     </td>
                                     <td class="p-4">
                                         <div class="flex items-center space-x-2">
-                                            <button onclick="openEditVendorCouponModal({{ c.id }}, '{{ c.code }}', '{{ c.discount_type.value }}', {{ c.discount_value }}, {{ c.min_order_amount or 0.0 }}, {{ c.usage_limit or 'null' }}, {{ 'true' if c.is_active else 'false' }}, '{{ (c.description or '') | replace('\'', '\\\'') }}')" class="px-3 py-1.5 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-900 dark:text-lime-400 rounded-xl text-xs font-bold transition-colors cursor-pointer">
-                                                ✏️ Edit
+                                            <button onclick="openEditVendorCouponModal({{ c.id }}, '{{ c.code }}', '{{ c.discount_type.value }}', {{ c.discount_value }}, {{ c.min_order_amount or 0.0 }}, {{ c.usage_limit or 'null' }}, {{ 'true' if c.is_active else 'false' }}, '{{ (c.description or '') | replace('\'', '\\\'') }}')" class="px-3 py-1.5 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                                                Edit
                                             </button>
-                                            <button onclick="handleDeleteVendorCoupon({{ c.id }}, '{{ c.code }}')" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-xl text-xs font-bold transition-colors cursor-pointer">
-                                                🗑️ Delete
+                                            <button onclick="handleDeleteVendorCoupon({{ c.id }}, '{{ c.code }}')" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold transition-colors cursor-pointer">
+                                                Delete
                                             </button>
                                         </div>
                                     </td>
@@ -101,35 +101,35 @@
         <form id="coupon-form" onsubmit="handleCreateCoupon(event)" class="space-y-3 text-xs">
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Coupon Promo Code</label>
-                <input type="text" id="coup-code" required placeholder="e.g. VIP20" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 uppercase placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                <input type="text" id="coup-code" required placeholder="e.g. VIP20" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 uppercase placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Type</label>
-                    <select id="coup-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <select id="coup-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                         <option value="PERCENTAGE">PERCENTAGE (%)</option>
                         <option value="FIXED">FIXED AMOUNT ($)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Value</label>
-                    <input type="number" step="0.01" id="coup-val" required placeholder="20.0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="coup-val" required placeholder="20.0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Min Order Amount ($)</label>
-                    <input type="number" step="0.01" id="coup-min" value="0.0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="coup-min" value="0.0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Total Usage Limit</label>
-                    <input type="number" id="coup-limit" placeholder="100" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-lime-500">
+                    <input type="number" id="coup-limit" placeholder="100" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
-            <button type="submit" id="create-coup-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" id="create-coup-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Create Coupon
             </button>
         </form>
@@ -155,39 +155,39 @@
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Type</label>
-                    <select id="edit-coup-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <select id="edit-coup-type" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                         <option value="PERCENTAGE">PERCENTAGE (%)</option>
                         <option value="FIXED">FIXED AMOUNT ($)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Discount Value</label>
-                    <input type="number" step="0.01" id="edit-coup-val" required min="0.01" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="edit-coup-val" required min="0.01" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Min Order Amount ($)</label>
-                    <input type="number" step="0.01" id="edit-coup-min" min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="number" step="0.01" id="edit-coup-min" min="0" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Total Usage Limit</label>
-                    <input type="number" id="edit-coup-limit" placeholder="Optional" min="1" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                    <input type="number" id="edit-coup-limit" placeholder="Optional" min="1" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
                 </div>
             </div>
 
             <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Description</label>
-                <input type="text" id="edit-coup-desc" placeholder="Promotion summary" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-lime-500">
+                <input type="text" id="edit-coup-desc" placeholder="Promotion summary" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500">
             </div>
 
             <div class="flex items-center space-x-2 pt-1">
-                <input type="checkbox" id="edit-coup-active" class="rounded border-slate-300 text-lime-500 focus:ring-lime-400">
-                <label for="edit-coup-active" class="font-bold text-slate-700 dark:text-zinc-300">Active & Enabled for Checkout</label>
+                <input type="checkbox" id="edit-coup-active" class="rounded border-slate-300 text-slate-900 focus:ring-slate-400">
+                <label for="edit-coup-active" class="font-medium text-slate-700 dark:text-zinc-300">Active & Enabled for Checkout</label>
             </div>
 
-            <button type="submit" id="edit-coup-submit-btn" class="w-full py-2.5 bg-lime-500 hover:bg-lime-400 text-black font-black rounded-xl shadow-lg shadow-lime-500/25 transition-all cursor-pointer">
+            <button type="submit" id="edit-coup-submit-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
                 Save Coupon Changes
             </button>
         </form>

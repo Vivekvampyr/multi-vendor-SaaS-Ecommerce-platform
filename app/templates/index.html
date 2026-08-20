@@ -6,30 +6,29 @@
 <!-- Hero Section -->
 <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
     <div class="absolute inset-0 -z-10 flex items-center justify-center">
-        <div class="w-[600px] h-[600px] bg-gradient-to-tr from-lime-500/20 via-emerald-500/10 to-lime-600/10 rounded-full blur-3xl"></div>
+        <div class="w-[600px] h-[600px] bg-gradient-to-tr from-slate-500/10 via-zinc-500/5 to-slate-600/10 rounded-full blur-3xl"></div>
     </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-lime-500/10 border border-lime-500/30 text-lime-600 dark:text-lime-400 text-xs font-bold mb-6">
-            <span class="w-2 h-2 rounded-full bg-lime-500 animate-ping"></span>
+        <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-slate-200 dark:bg-zinc-800 border border-slate-300 dark:border-zinc-700 text-slate-700 dark:text-zinc-300 text-xs font-bold mb-6">
             <span>Live Multi-Vendor SaaS Platform</span>
         </div>
         <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-slate-900 dark:text-white max-w-4xl mx-auto leading-tight sm:leading-none">
             Discover Exceptional Stores, <br class="hidden sm:inline">
-            <span class="bg-gradient-to-r from-lime-600 via-lime-500 to-emerald-500 dark:from-lime-400 dark:via-lime-300 dark:to-emerald-400 bg-clip-text text-transparent">Direct from Creators.</span>
+            <span class="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-zinc-300 dark:to-zinc-100 bg-clip-text text-transparent">Direct from Creators.</span>
         </h1>
         <p class="mt-6 text-base sm:text-lg text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto">
             Shop from thousands of independent verified vendors or launch your own multi-channel online storefront with seamless inventory and instant payouts.
         </p>
         <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/products" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-lime-500 hover:bg-lime-400 text-black font-black text-sm shadow-xl shadow-lime-500/25 hover:scale-105 transition-all">
+            <a href="/products" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold text-sm shadow-sm hover:scale-105 transition-all">
                 Explore Marketplace →
             </a>
             {% if current_user and current_user.role.value == 'CUSTOMER' %}
-                <a href="/customer/orders" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
-                    Track Your Orders 📦
+                <a href="/customer/orders" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-slate-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
+                    Track Your Orders
                 </a>
             {% elif not current_user or current_user.role.value != 'CUSTOMER' %}
-                <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-lime-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
+                <a href="/register?role=VENDOR" class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-slate-500 text-slate-800 dark:text-zinc-200 font-bold text-sm hover:bg-slate-200 dark:hover:bg-zinc-800 transition-all">
                     Sell on NexusSaaS
                 </a>
             {% endif %}
@@ -44,22 +43,22 @@
             <h2 class="text-2xl font-black text-slate-900 dark:text-white">Shop by Category</h2>
             <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Browse trending collections curated across top vendors</p>
         </div>
-        <a href="/products" class="text-xs font-bold text-lime-600 dark:text-lime-400 hover:underline">View All →</a>
+        <a href="/products" class="text-xs font-bold text-slate-900 dark:text-white hover:underline">View All →</a>
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
         {% for cat in categories %}
             {% set cat_icon = get_category_icon(cat) %}
             <a href="/products?category={{ cat.id }}" class="glass-panel p-3.5 sm:p-5 rounded-2xl glass-panel-hover flex items-center space-x-3 sm:space-x-4 group">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-lime-500/10 border border-lime-500/20 flex items-center justify-center p-2 group-hover:scale-110 transition-transform flex-shrink-0 overflow-hidden">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center p-2 group-hover:scale-110 transition-transform flex-shrink-0 overflow-hidden">
                     {% if cat_icon.icon_url %}
                         <img src="{{ cat_icon.icon_url }}" alt="{{ cat.name }}" class="w-full h-full object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <span class="text-lg sm:text-xl hidden items-center justify-center">{{ cat_icon.fallback_emoji }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-zinc-300 hidden items-center justify-center">{{ cat.name[:2]|upper }}</span>
                     {% else %}
-                        <span class="text-lg sm:text-xl flex items-center justify-center">{{ cat_icon.fallback_emoji }}</span>
+                        <span class="text-xs font-bold text-slate-700 dark:text-zinc-300 flex items-center justify-center">{{ cat.name[:2]|upper }}</span>
                     {% endif %}
                 </div>
                 <div class="min-w-0">
-                    <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-lime-600 dark:group-hover:text-lime-400 transition-colors truncate">{{ cat.name }}</h3>
+                    <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-zinc-300 transition-colors truncate">{{ cat.name }}</h3>
                     <p class="text-[10px] sm:text-[11px] text-slate-500 dark:text-zinc-500 mt-0.5 truncate">{{ cat.description or 'Explore collection' }}</p>
                 </div>
             </a>
@@ -76,7 +75,7 @@
             <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Featured Products</h2>
             <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1">Handpicked quality goods from verified merchants</p>
         </div>
-        <a href="/products" class="text-xs font-bold text-lime-600 dark:text-lime-400 hover:underline">Browse All →</a>
+        <a href="/products" class="text-xs font-bold text-slate-900 dark:text-white hover:underline">Browse All →</a>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
@@ -101,8 +100,8 @@
                 </div>
                 <div class="p-3 sm:p-4 flex-1 flex flex-col justify-between">
                     <div>
-                        <span class="text-[9px] sm:text-[10px] font-black uppercase tracking-wider text-lime-600 dark:text-lime-400">{{ prod.category.name if prod.category else 'General' }}</span>
-                        <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white mt-0.5 hover:text-lime-600 dark:hover:text-lime-400 transition-colors line-clamp-1">
+                        <span class="text-[9px] sm:text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-400">{{ prod.category.name if prod.category else 'General' }}</span>
+                        <h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white mt-0.5 hover:text-slate-700 dark:hover:text-zinc-300 transition-colors line-clamp-1">
                             <a href="/products/{{ prod.slug }}">{{ prod.name }}</a>
                         </h3>
                     </div>
@@ -113,7 +112,7 @@
                                 <span class="text-[10px] sm:text-xs text-slate-400 dark:text-zinc-500 line-through ml-1">${{ "%.2f"|format(prod.compare_at_price) }}</span>
                             {% endif %}
                         </div>
-                        <button data-add-to-cart="{{ prod.id }}" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-[11px] sm:text-xs font-black shadow-md shadow-lime-500/20 transition-all cursor-pointer">
+                        <button data-add-to-cart="{{ prod.id }}" class="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-[11px] sm:text-xs font-bold shadow-sm transition-all cursor-pointer">
                             Add +
                         </button>
                     </div>
@@ -137,13 +136,13 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {% for plan in plans %}
             {% set is_active = (active_plan_id and active_plan_id == plan.id) %}
-            <div class="glass-panel p-8 rounded-3xl relative flex flex-col justify-between transition-all {% if is_active %}border-2 border-lime-500 bg-lime-500/5 ring-2 ring-lime-500/30 shadow-xl shadow-lime-500/10{% else %}hover:border-lime-500/50{% endif %}">
+            <div class="glass-panel p-8 rounded-3xl relative flex flex-col justify-between transition-all {% if is_active %}border-2 border-slate-900 dark:border-zinc-100 bg-slate-900/5 dark:bg-zinc-800/40 ring-2 ring-slate-900/20 dark:ring-zinc-100/20 shadow-xl{% else %}hover:border-slate-400 dark:hover:border-zinc-700{% endif %}">
                 {% if is_active %}
-                    <span class="absolute -top-3 right-6 px-3.5 py-1 rounded-full bg-lime-500 text-black text-[10px] font-black uppercase tracking-wider shadow-md shadow-lime-500/40 flex items-center space-x-1">
-                        <span>✓ CURRENT ACTIVE PLAN</span>
+                    <span class="absolute -top-3 right-6 px-3.5 py-1 rounded-full bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center space-x-1">
+                        <span>CURRENT ACTIVE PLAN</span>
                     </span>
                 {% elif plan.name == 'Gold' %}
-                    <span class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-lime-500 text-black text-[10px] font-black uppercase tracking-wider shadow-md shadow-lime-500/30">
+                    <span class="absolute -top-3 right-6 px-3 py-1 rounded-full bg-slate-800 text-white dark:bg-zinc-200 dark:text-zinc-950 text-[10px] font-bold uppercase tracking-wider shadow-sm">
                         Most Popular
                     </span>
                 {% endif %}
@@ -151,7 +150,7 @@
                     <div class="flex items-center justify-between">
                         <h3 class="text-xl font-black text-slate-900 dark:text-white">{{ plan.name }}</h3>
                         {% if is_active %}
-                            <span class="px-2 py-0.5 rounded bg-lime-500/20 text-lime-600 dark:text-lime-400 text-[10px] font-black border border-lime-500/30 uppercase">
+                            <span class="px-2 py-0.5 rounded bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 text-[10px] font-bold border border-slate-300 dark:border-zinc-700 uppercase">
                                 Subscribed
                             </span>
                         {% endif %}
@@ -163,19 +162,19 @@
                     </div>
                     <ul class="mt-6 space-y-3 text-xs text-slate-600 dark:text-zinc-300">
                         <li class="flex items-center space-x-2">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
+                            <span class="text-slate-800 dark:text-zinc-200 font-bold">•</span>
                             <span>Up to <strong>{{ plan.max_products }}</strong> Product Listings</span>
                         </li>
                         <li class="flex items-center space-x-2">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
+                            <span class="text-slate-800 dark:text-zinc-200 font-bold">•</span>
                             <span>Low <strong>{{ "%.1f"|format(plan.commission_rate) }}%</strong> Platform Commission</span>
                         </li>
                         <li class="flex items-center space-x-2">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
+                            <span class="text-slate-800 dark:text-zinc-200 font-bold">•</span>
                             <span>Real-time Live Customer Chat</span>
                         </li>
                         <li class="flex items-center space-x-2">
-                            <span class="text-lime-600 dark:text-lime-400 font-bold">✓</span>
+                            <span class="text-slate-800 dark:text-zinc-200 font-bold">•</span>
                             <span>Custom Store Coupons & Analytics</span>
                         </li>
                     </ul>
@@ -183,16 +182,16 @@
                 <div class="mt-8">
                     {% if current_user and current_user.role.value == 'VENDOR' %}
                         {% if is_active %}
-                            <a href="/vendor/dashboard" class="block w-full text-center py-3 rounded-xl bg-lime-500/20 hover:bg-lime-500/30 text-lime-600 dark:text-lime-400 border border-lime-500/40 text-xs font-black transition-all">
-                                ✓ Currently Subscribed (Manage in Dashboard)
+                            <a href="/vendor/dashboard" class="block w-full text-center py-3 rounded-xl bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700 text-xs font-bold transition-all">
+                                Currently Subscribed (Manage in Dashboard)
                             </a>
                         {% else %}
-                            <a href="/vendor/dashboard" class="block w-full text-center py-3 rounded-xl bg-slate-200 dark:bg-zinc-800 hover:bg-lime-500 hover:text-black text-slate-800 dark:text-zinc-200 text-xs font-black transition-all">
+                            <a href="/vendor/dashboard" class="block w-full text-center py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold transition-all shadow-sm">
                                 Switch to {{ plan.name }} Plan →
                             </a>
                         {% endif %}
                     {% else %}
-                        <a href="/register?role=VENDOR" class="block w-full text-center py-3 rounded-xl bg-lime-500 hover:bg-lime-400 text-black text-xs font-black shadow-lg shadow-lime-500/25 transition-all">
+                        <a href="/register?role=VENDOR" class="block w-full text-center py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold shadow-sm transition-all">
                             Select {{ plan.name }} Plan
                         </a>
                     {% endif %}
