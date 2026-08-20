@@ -52,11 +52,23 @@
                             {% for p in products %}
                                 <tr class="hover:bg-slate-100/50 dark:hover:bg-zinc-900/50 transition-colors" id="prod-row-{{ p.id }}">
                                     <td class="p-4">
-                                        <div class="font-bold text-slate-900 dark:text-white text-sm">{{ p.name }}</div>
-                                        <div class="text-[11px] text-slate-500 dark:text-zinc-400 font-mono font-medium">SKU: {{ p.sku }}</div>
-                                        {% if p.short_description %}
-                                            <div class="text-[11px] text-slate-500 dark:text-zinc-400 line-clamp-1 mt-0.5 max-w-xs">{{ p.short_description }}</div>
-                                        {% endif %}
+                                        <div class="flex items-center space-x-3">
+                                            {% set primary_img = (p.images|selectattr('is_primary')|first) or (p.images[0] if p.images else None) %}
+                                            <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                                {% if primary_img %}
+                                                    <img src="{{ primary_img.image_url }}" alt="{{ p.name }}" class="w-full h-full object-cover">
+                                                {% else %}
+                                                    <span class="text-xs font-bold text-slate-400 dark:text-zinc-500">No Img</span>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <div class="font-bold text-slate-900 dark:text-white text-sm">{{ p.name }}</div>
+                                                <div class="text-[11px] text-slate-500 dark:text-zinc-400 font-mono font-medium">SKU: {{ p.sku }}</div>
+                                                {% if p.short_description %}
+                                                    <div class="text-[11px] text-slate-500 dark:text-zinc-400 line-clamp-1 mt-0.5 max-w-xs">{{ p.short_description }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
                                     </td>
                                     <td class="p-4 whitespace-nowrap">
                                         <div class="font-bold text-slate-900 dark:text-white">${{ "%.2f"|format(p.price) }}</div>
@@ -289,41 +301,61 @@
                 <textarea id="edit-prod-desc" rows="3" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 focus:outline-none focus:border-slate-500"></textarea>
             </div>
 
-            <button type="submit" id="edit-prod-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
-                Save Product Changes
-            </button>
+            <div class="flex items-center space-x-2 pt-1">
+                <button type="button" onclick="document.getElementById('edit-product-modal').classList.add('hidden'); openUploadImageModal(document.getElementById('edit-prod-id').value, document.getElementById('edit-prod-name').value);" class="py-2.5 px-4 bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-700 hover:bg-slate-200 dark:hover:bg-zinc-800 text-slate-800 dark:text-zinc-200 font-bold rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap">
+                    Manage Photos
+                </button>
+                <button type="submit" id="edit-prod-btn" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+                    Save Product Changes
+                </button>
+            </div>
         </form>
     </div>
 </div>
 
-<!-- Modal 3: Product Image Upload -->
+<!-- Modal 3: Manage Product Photos Modal -->
 <div id="upload-image-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="glass-panel w-full max-w-md p-6 rounded-3xl shadow-2xl space-y-4">
+    <div class="glass-panel w-full max-w-xl p-6 rounded-3xl shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-zinc-800">
             <div>
-                <h3 class="font-bold text-sm text-slate-900 dark:text-white">Upload Product Image</h3>
-                <p id="upload-prod-title" class="text-xs text-slate-600 dark:text-zinc-300 font-semibold mt-0.5"></p>
+                <h3 class="font-bold text-base text-slate-900 dark:text-white">Manage Product Photos</h3>
+                <p id="upload-prod-title" class="text-xs text-slate-500 dark:text-zinc-400 font-medium mt-0.5"></p>
             </div>
-            <button onclick="document.getElementById('upload-image-modal').classList.add('hidden')" class="text-slate-400 hover:text-black dark:hover:text-white cursor-pointer">✕</button>
+            <button onclick="closeProductImageModal()" class="text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer text-lg">✕</button>
         </div>
 
-        <form id="upload-image-form" onsubmit="handleUploadProductImage(event)" class="space-y-3 text-xs">
-            <input type="hidden" id="upload-prod-id">
-
-            <div>
-                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Select Image File (JPG, PNG, WebP)</label>
-                <input type="file" id="upload-prod-file" accept="image/*" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white dark:file:bg-zinc-100 dark:file:text-zinc-950 hover:file:opacity-90">
+        <!-- Section 1: Current Uploaded Images Gallery -->
+        <div>
+            <div class="flex items-center justify-between mb-2.5">
+                <label class="block font-bold text-xs text-slate-700 dark:text-zinc-300 uppercase tracking-wider">Current Photos</label>
+                <span id="gallery-count-badge" class="text-[11px] text-slate-500 dark:text-zinc-400">0 photos</span>
             </div>
-
-            <div class="flex items-center space-x-2 pt-1">
-                <input type="checkbox" id="upload-is-primary" checked class="accent-slate-900 dark:accent-zinc-100">
-                <label for="upload-is-primary" class="text-slate-700 dark:text-zinc-300 font-medium">Set as Primary Product Image</label>
+            <div id="product-images-gallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3 min-h-[100px] p-3 rounded-2xl bg-slate-100/70 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800">
+                <p class="text-xs text-slate-400 dark:text-zinc-500 col-span-full text-center py-6">Loading product photos...</p>
             </div>
+        </div>
 
-            <button type="submit" id="upload-img-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
-                Upload Image
-            </button>
-        </form>
+        <!-- Section 2: Upload New Photo Form -->
+        <div class="pt-3 border-t border-slate-200 dark:border-zinc-800">
+            <label class="block font-bold text-xs text-slate-700 dark:text-zinc-300 uppercase tracking-wider mb-2">Upload New Photo</label>
+            <form id="upload-image-form" onsubmit="handleUploadProductImage(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="upload-prod-id">
+
+                <div>
+                    <input type="file" id="upload-prod-file" accept="image/png,image/jpeg,image/webp,image/jpg" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white dark:file:bg-zinc-100 dark:file:text-zinc-950 hover:file:opacity-90 cursor-pointer">
+                    <p class="text-[10px] text-slate-500 dark:text-zinc-400 mt-1">Supports PNG, JPG, JPEG, and WebP.</p>
+                </div>
+
+                <div class="flex items-center space-x-2 pt-0.5">
+                    <input type="checkbox" id="upload-is-primary" checked class="rounded border-slate-300 text-slate-900 focus:ring-slate-500 accent-slate-900 dark:accent-zinc-100">
+                    <label for="upload-is-primary" class="text-slate-700 dark:text-zinc-300 font-medium select-none cursor-pointer">Set as Primary Cover Image</label>
+                </div>
+
+                <button type="submit" id="upload-img-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+                    Upload & Add to Gallery
+                </button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -426,10 +458,94 @@ async function handleDeleteProduct(productId) {
     }
 }
 
+function closeProductImageModal() {
+    document.getElementById("upload-image-modal").classList.add("hidden");
+}
+
 function openUploadImageModal(productId, productName) {
     document.getElementById("upload-prod-id").value = productId;
     document.getElementById("upload-prod-title").textContent = productName;
+    document.getElementById("upload-image-form").reset();
+    document.getElementById("upload-is-primary").checked = true;
     document.getElementById("upload-image-modal").classList.remove("hidden");
+    loadProductImages(productId);
+}
+
+async function loadProductImages(productId) {
+    const gallery = document.getElementById("product-images-gallery");
+    const countBadge = document.getElementById("gallery-count-badge");
+    gallery.innerHTML = '<p class="text-xs text-slate-400 dark:text-zinc-500 col-span-full text-center py-6">Loading product photos...</p>';
+
+    try {
+        const resp = await window.Nexus.apiFetch(`/api/v1/products/${productId}`);
+        const product = resp.data;
+        const images = product.images || [];
+        countBadge.textContent = `${images.length} photo${images.length === 1 ? '' : 's'}`;
+
+        if (images.length === 0) {
+            gallery.innerHTML = `
+                <div class="col-span-full py-6 text-center text-slate-400 dark:text-zinc-500">
+                    <p class="font-bold text-xs text-slate-600 dark:text-zinc-400">No photos uploaded yet</p>
+                    <p class="text-[11px] mt-0.5">Upload your first photo below to showcase this product.</p>
+                </div>`;
+            return;
+        }
+
+        gallery.innerHTML = images.map(img => `
+            <div class="relative group rounded-xl overflow-hidden border ${img.is_primary ? 'border-slate-900 dark:border-zinc-100 ring-2 ring-slate-900/10 dark:ring-zinc-100/20' : 'border-slate-200 dark:border-zinc-800'} bg-white dark:bg-zinc-950 p-1.5 flex flex-col justify-between shadow-xs">
+                <div class="relative w-full aspect-square rounded-lg overflow-hidden bg-slate-100 dark:bg-zinc-900">
+                    <img src="${img.image_url}" alt="Product Photo" class="w-full h-full object-cover">
+                    ${img.is_primary ? `
+                        <span class="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-slate-900/90 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[9px] font-bold shadow-xs">
+                            Primary
+                        </span>
+                    ` : ''}
+                    <button onclick="handleDeleteProductImage(${productId}, ${img.id})" class="absolute top-1 right-1 w-5 h-5 rounded bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center text-[10px] font-bold shadow-xs transition-transform hover:scale-110 cursor-pointer" title="Delete Photo">
+                        ✕
+                    </button>
+                </div>
+                <div class="mt-1.5">
+                    ${!img.is_primary ? `
+                        <button onclick="handleSetPrimaryImage(${productId}, ${img.id})" class="w-full py-1 text-[10px] font-bold rounded bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 transition-colors cursor-pointer text-center">
+                            Set as Primary
+                        </button>
+                    ` : `
+                        <span class="block w-full py-1 text-[10px] font-semibold text-slate-500 dark:text-zinc-400 text-center">
+                            Cover Image
+                        </span>
+                    `}
+                </div>
+            </div>
+        `).join('');
+    } catch(err) {
+        gallery.innerHTML = `<p class="text-xs text-rose-500 col-span-full text-center py-4">${err.message || 'Failed to load photos'}</p>`;
+    }
+}
+
+async function handleDeleteProductImage(productId, imageId) {
+    if (!confirm("Are you sure you want to remove this photo?")) return;
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/products/${productId}/images/${imageId}`, {
+            method: "DELETE"
+        });
+        window.Nexus.showToast("Product image removed", "info");
+        await loadProductImages(productId);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to delete image", "error");
+    }
+}
+
+async function handleSetPrimaryImage(productId, imageId) {
+    try {
+        await window.Nexus.apiFetch(`/api/v1/products/${productId}/images/${imageId}/primary`, {
+            method: "PUT"
+        });
+        window.Nexus.showToast("Primary cover photo updated", "success");
+        await loadProductImages(productId);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to update primary image", "error");
+    }
 }
 
 async function handleUploadProductImage(e) {
@@ -445,7 +561,7 @@ async function handleUploadProductImage(e) {
     }
 
     btn.disabled = true;
-    btn.textContent = "Uploading...";
+    btn.textContent = "Uploading Photo...";
 
     const formData = new FormData();
     formData.append("files", fileInput.files[0]);
@@ -460,12 +576,15 @@ async function handleUploadProductImage(e) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || "Image upload failed");
 
-        window.Nexus.showToast("Product image uploaded successfully!", "success");
-        setTimeout(() => window.location.reload(), 600);
+        window.Nexus.showToast("Photo uploaded successfully!", "success");
+        fileInput.value = "";
+        btn.disabled = false;
+        btn.textContent = "Upload & Add to Gallery";
+        await loadProductImages(productId);
     } catch(err) {
         window.Nexus.showToast(err.message || "Failed to upload image", "error");
         btn.disabled = false;
-        btn.textContent = "Upload Image";
+        btn.textContent = "Upload & Add to Gallery";
     }
 }
 
