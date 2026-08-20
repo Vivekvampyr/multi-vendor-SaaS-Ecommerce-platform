@@ -17,7 +17,12 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Password</label>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300">Password</label>
+                    <button type="button" onclick="togglePasswordVisibility('login-password', 'login-pwd-toggle-text')" class="text-[11px] font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer select-none">
+                        <span id="login-pwd-toggle-text">Show</span>
+                    </button>
+                </div>
                 <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
             </div>
 
@@ -33,6 +38,18 @@
 </div>
 
 <script>
+function togglePasswordVisibility(inputId, toggleTextId) {
+    const input = document.getElementById(inputId);
+    const toggleText = document.getElementById(toggleTextId);
+    if (!input) return;
+    if (input.type === "password") {
+        input.type = "text";
+        if (toggleText) toggleText.textContent = "Hide";
+    } else {
+        input.type = "password";
+        if (toggleText) toggleText.textContent = "Show";
+    }
+}
 async function handleLogin(e) {
     e.preventDefault();
     const btn = document.getElementById("login-submit-btn");
