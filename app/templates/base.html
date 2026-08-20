@@ -84,14 +84,18 @@
                     </span>
                 </a>
 
-                <!-- Search Bar -->
-                <div class="hidden md:flex flex-1 max-w-md mx-4">
+                <!-- Search Bar (Desktop) -->
+                <div class="hidden md:flex flex-1 max-w-md mx-4 relative" id="desktop-search-container">
                     <form action="/products" method="GET" class="w-full relative">
-                        <input type="text" name="search" placeholder="Search marketplace products, brands..." value="{{ request.query_params.get('search', '') }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-full pl-10 pr-4 py-2 text-sm text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-400 dark:focus:border-zinc-600 focus:ring-1 focus:ring-slate-400 transition-all">
-                        <svg class="w-4 h-4 text-slate-400 dark:text-zinc-500 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
+                        <input type="text" id="desktop-search-input" name="search" placeholder="Search marketplace products, brands..." value="{{ request.query_params.get('search', '') }}" autocomplete="off" oninput="window.Nexus.handleLiveSearch(this.value, 'desktop-search-results')" onfocus="window.Nexus.handleLiveSearch(this.value, 'desktop-search-results')" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-full pl-10 pr-4 py-2 text-sm text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-400 dark:focus:border-zinc-600 focus:ring-1 focus:ring-slate-400 transition-all">
+                        <button type="submit" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white absolute left-1.5 top-1 rounded-full cursor-pointer transition-colors" title="Search Marketplace" aria-label="Search">
+                            <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                        </button>
                     </form>
+                    <!-- Desktop Live Results Dropdown -->
+                    <div id="desktop-search-results" class="hidden absolute left-0 right-0 top-full mt-2 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-50 divide-y divide-slate-100 dark:divide-zinc-800/60 max-h-96 overflow-y-auto"></div>
                 </div>
 
                 <!-- Navigation Action Links -->
@@ -101,9 +105,16 @@
                         Catalog
                     </a>
 
-                    <!-- Wishlist Icon (Mobile + Desktop) -->
-                    <a href="/customer/wishlist" class="flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors relative flex-shrink-0 cursor-pointer" title="My Wishlist" aria-label="My Wishlist">
-                        <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <!-- Mobile Quick Search Button (Mobile Only) -->
+                    <button type="button" onclick="window.Nexus.toggleMobileSearch(event)" class="md:hidden flex w-9 h-9 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors relative flex-shrink-0 cursor-pointer" title="Search Marketplace" aria-label="Search Marketplace">
+                        <svg class="w-4.5 h-4.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Wishlist Icon (Desktop only, mobile accesses via drawer) -->
+                    <a href="/customer/wishlist" class="hidden md:flex w-10 h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors relative flex-shrink-0 cursor-pointer" title="My Wishlist" aria-label="My Wishlist">
+                        <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
                         </svg>
                     </a>
@@ -184,6 +195,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Expandable Search Bar Dropdown -->
+        <div id="mobile-search-bar" class="hidden md:hidden border-t border-slate-200 dark:border-zinc-900 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md px-4 py-2.5 transition-all shadow-md relative">
+            <form action="/products" method="GET" class="relative max-w-md mx-auto">
+                <input type="text" id="mobile-search-input" name="search" placeholder="Search marketplace products, brands..." value="{{ request.query_params.get('search', '') }}" autocomplete="off" oninput="window.Nexus.handleLiveSearch(this.value, 'mobile-search-results')" onfocus="window.Nexus.handleLiveSearch(this.value, 'mobile-search-results')" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-full pl-10 pr-9 py-2 text-xs text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-400 dark:focus:border-zinc-600 transition-all">
+                <button type="submit" class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-900 dark:hover:text-white absolute left-1.5 top-1 rounded-full cursor-pointer transition-colors" title="Search Marketplace" aria-label="Search">
+                    <svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+                <button type="button" onclick="window.Nexus.toggleMobileSearch(event)" class="absolute right-3 top-2 text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200 text-xs font-bold p-0.5" title="Close Search">✕</button>
+            </form>
+            <!-- Mobile Live Results Dropdown -->
+            <div id="mobile-search-results" class="hidden max-w-md mx-auto mt-2 bg-white dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-2xl overflow-hidden z-50 divide-y divide-slate-100 dark:divide-zinc-800/60 max-h-80 overflow-y-auto"></div>
+        </div>
     </header>
 
     <!-- Mobile Slide-in Drawer Backdrop -->
@@ -214,14 +240,6 @@
                     <span class="theme-text-indicator">Switch Mode</span>
                 </button>
             </div>
-
-            <!-- Mobile Search Bar -->
-            <form action="/products" method="GET" class="relative">
-                <input type="text" name="search" placeholder="Search marketplace..." value="{{ request.query_params.get('search', '') }}" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 dark:text-zinc-200 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-400">
-                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </form>
 
             <!-- User Status Card (if logged in) -->
             {% if current_user %}
@@ -389,7 +407,7 @@
     </footer>
 
     <!-- Main JavaScript Bundle -->
-    <script src="/static/js/main.js"></script>
+    <script src="/static/js/main.js?v=4"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -190,6 +190,12 @@ window.Nexus = {
     menu.classList.toggle("dropdown-open");
   },
 
+  closeUserDropdown: function () {
+    const menu = document.getElementById("user-dropdown-menu");
+    if (!menu) return;
+    menu.classList.remove("dropdown-open");
+  },
+
   // Mobile Navigation Drawer Toggle
   toggleMobileDrawer: function (e) {
     if (e) {
@@ -225,6 +231,91 @@ window.Nexus = {
     }
     document.body.style.overflow = "";
   },
+
+  // Mobile Expandable Search Bar Toggle
+  toggleMobileSearch: function (e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const bar = document.getElementById("mobile-search-bar");
+    if (!bar) return;
+    const isHidden = bar.classList.contains("hidden");
+    if (isHidden) {
+      bar.classList.remove("hidden");
+      const input = document.getElementById("mobile-search-input");
+      if (input) {
+        setTimeout(() => input.focus(), 50);
+      }
+    } else {
+      bar.classList.add("hidden");
+      const results = document.getElementById("mobile-search-results");
+      if (results) results.classList.add("hidden");
+    }
+  },
+
+  searchDebounceTimer: null,
+
+  // Live Real-Time Search Autocomplete & Quick Product Preview
+  handleLiveSearch: function (query, resultContainerId) {
+    clearTimeout(this.searchDebounceTimer);
+    const container = document.getElementById(resultContainerId);
+    if (!container) return;
+
+    const trimmed = (query || "").trim();
+    if (trimmed.length < 2) {
+      container.innerHTML = "";
+      container.classList.add("hidden");
+      return;
+    }
+
+    this.searchDebounceTimer = setTimeout(async () => {
+      try {
+        const resp = await this.apiFetch(`/api/v1/products?search=${encodeURIComponent(trimmed)}&limit=5`);
+        const products = resp.data || [];
+
+        if (products.length === 0) {
+          container.innerHTML = `
+            <div class="p-4 text-center text-xs text-slate-500 dark:text-zinc-400">
+              No products found matching "<span class="font-bold text-slate-800 dark:text-zinc-200">${trimmed}</span>"
+            </div>`;
+          container.classList.remove("hidden");
+          return;
+        }
+
+        let html = '<div class="p-1.5 space-y-1">';
+        products.forEach((p) => {
+          const imgUrl = p.images && p.images.length > 0 ? p.images[0].image_url : null;
+          const imgHtml = imgUrl
+            ? `<div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-zinc-900 p-0.5 flex items-center justify-center shrink-0 border border-slate-200 dark:border-zinc-800"><img src="${imgUrl}" alt="${p.name}" class="max-h-full max-w-full object-contain"></div>`
+            : `<div class="w-10 h-10 rounded-lg bg-slate-200 dark:bg-zinc-900 flex items-center justify-center text-[9px] font-bold text-slate-500 shrink-0">No Img</div>`;
+
+          html += `
+            <a href="/products/${p.slug}" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
+              ${imgHtml}
+              <div class="flex-1 min-w-0">
+                <div class="font-bold text-xs text-slate-900 dark:text-white truncate">${p.name}</div>
+                <div class="text-[10px] text-slate-500 dark:text-zinc-400">${p.category ? p.category.name : "Product"}</div>
+              </div>
+              <div class="font-black text-xs text-slate-900 dark:text-white shrink-0">
+                $${p.price.toFixed(2)}
+              </div>
+            </a>`;
+        });
+        html += "</div>";
+
+        html += `
+          <a href="/products?search=${encodeURIComponent(trimmed)}" class="block p-2.5 text-center text-xs font-bold text-slate-900 dark:text-white bg-slate-50 dark:bg-zinc-900/80 hover:bg-slate-100 dark:hover:bg-zinc-900 border-t border-slate-200 dark:border-zinc-800 transition-colors">
+            View all results for "${trimmed}" →
+          </a>`;
+
+        container.innerHTML = html;
+        container.classList.remove("hidden");
+      } catch (err) {
+        console.warn("Live search error:", err);
+      }
+    }, 200);
+  },
 };
 
 // Initialize Cart Badge & Dynamic Handlers on DOM Ready
@@ -238,6 +329,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("user-menu-container");
     if (container && !container.contains(e.target)) {
       window.Nexus.closeUserDropdown();
+    }
+    // Close search dropdowns when clicking outside
+    if (!e.target.closest("#desktop-search-container")) {
+      const dResults = document.getElementById("desktop-search-results");
+      if (dResults) dResults.classList.add("hidden");
+    }
+    if (!e.target.closest("#mobile-search-bar")) {
+      const mResults = document.getElementById("mobile-search-results");
+      if (mResults) mResults.classList.add("hidden");
     }
   });
 

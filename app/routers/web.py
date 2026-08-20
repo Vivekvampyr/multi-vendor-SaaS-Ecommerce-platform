@@ -41,15 +41,28 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
     if not text or not str(text).strip():
         return Markup('<p class="text-xs sm:text-sm text-slate-500 dark:text-zinc-400">No description provided.</p>')
 
-    escaped = html.escape(str(text).strip())
+    # 1. Normalize line endings and separate inline headings / bullets that lack newlines
+    normalized = str(text).replace("\r\n", "\n").replace("\r", "\n").strip()
+    normalized = re.sub(r"([^\n])\s*(#{1,4}\s+[A-Za-z0-9])", r"\1\n\n\2", normalized)
+    normalized = re.sub(r"([^\n])\s+([-\*]\s+\*\*)", r"\1\n\2", normalized)
+    normalized = re.sub(r"([^\n])\s+([-\*]\s+[A-Za-z0-9])", r"\1\n\2", normalized)
+    normalized = re.sub(
+        r"^(#{1,4}\s+[^\n]+?)\s+([A-Z][a-z0-9]+(?:\s+[a-z0-9]+){3,})",
+        r"\1\n\n\2",
+        normalized,
+        flags=re.MULTILINE,
+    )
 
-    # Bold **text** -> <strong>
+    # 2. Escape raw HTML for security
+    escaped = html.escape(normalized)
+
+    # 3. Format Bold **text** -> <strong>
     escaped = re.sub(
         r"\*\*(.+?)\*\*",
         r'<strong class="font-bold text-slate-900 dark:text-white">\1</strong>',
         escaped,
     )
-    # Italic *text* -> <em>
+    # Format Italic *text* -> <em>
     escaped = re.sub(
         r"\*(.+?)\*",
         r'<em class="italic text-slate-700 dark:text-zinc-300">\1</em>',
@@ -62,7 +75,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
 
     for raw_line in lines:
         line = raw_line.strip()
-        if not line:
+        if not line or line in ("#", "##", "###", "####"):
             if in_list:
                 html_blocks.append("</ul>")
                 in_list = False
@@ -74,7 +87,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = False
             title = line[4:].strip()
             html_blocks.append(
-                f'<h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-slate-700 dark:bg-zinc-300"></span>{title}</h4>'
+                f'<h4 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-4 mb-1.5 tracking-tight"><span class="inline-block w-1.5 h-1.5 rounded-full bg-slate-700 dark:bg-zinc-300 mr-1.5 align-middle"></span>{title}</h4>'
             )
         elif line.startswith("## "):
             if in_list:
@@ -82,7 +95,7 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = False
             title = line[3:].strip()
             html_blocks.append(
-                f'<h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white mt-4 mb-2 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-slate-700 dark:bg-zinc-300"></span>{title}</h3>'
+                f'<h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white mt-4 mb-2"><span class="inline-block w-2 h-2 rounded-full bg-slate-700 dark:bg-zinc-300 mr-2 align-middle"></span>{title}</h3>'
             )
         elif line.startswith("# "):
             if in_list:
@@ -100,14 +113,14 @@ def render_markdown_filter(text: Optional[str]) -> Markup:
                 in_list = True
             content = line[2:].strip()
             html_blocks.append(
-                f'<li class="flex items-start space-x-2"><span class="text-slate-700 dark:text-zinc-300 font-bold flex-shrink-0 mt-0.5">•</span><span class="flex-1 leading-relaxed">{content}</span></li>'
+                f'<li class="flex items-start space-x-2"><span class="text-slate-700 dark:text-zinc-300 font-bold shrink-0 mt-0.5">•</span><span class="flex-1 leading-relaxed">{content}</span></li>'
             )
         else:
             if in_list:
                 html_blocks.append("</ul>")
                 in_list = False
             html_blocks.append(
-                f'<p class="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed mb-2">{line}</p>'
+                f'<p class="text-xs sm:text-sm text-slate-700 dark:text-zinc-300 leading-relaxed mb-2.5">{line}</p>'
             )
 
     if in_list:
