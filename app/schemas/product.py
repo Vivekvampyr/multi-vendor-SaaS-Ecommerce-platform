@@ -19,6 +19,12 @@ class ProductImageOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class ProductImageUrlCreate(BaseModel):
+    image_url: str = Field(min_length=5, max_length=500, description="Direct web image URL (HTTP/HTTPS)")
+    is_primary: bool = Field(default=True, description="Whether to set this image as primary cover")
+    alt_text: Optional[str] = Field(default=None, max_length=255, description="Optional image alt text")
+
+
 class ProductBase(BaseModel):
     category_id: int = Field(description="Target Category ID")
     name: str = Field(min_length=2, max_length=255, description="Product title")
@@ -33,6 +39,8 @@ class ProductBase(BaseModel):
 
 
 class ProductCreate(ProductBase):
+    image_url: Optional[str] = Field(default=None, max_length=500, description="Optional initial image URL")
+
     @model_validator(mode="before")
     @classmethod
     def generate_slug_if_missing(cls, data):

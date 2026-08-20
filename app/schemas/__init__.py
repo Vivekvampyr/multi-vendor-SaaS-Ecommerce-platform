@@ -62,6 +62,7 @@ from app.schemas.product import (
     ProductBase,
     ProductCreate,
     ProductImageOut,
+    ProductImageUrlCreate,
     ProductOut,
     ProductUpdate,
 )
@@ -140,6 +141,7 @@ __all__ = [
     "ProductUpdate",
     "ProductOut",
     "ProductImageOut",
+    "ProductImageUrlCreate",
     "CouponBase",
     "CouponCreate",
     "CouponUpdate",

@@ -105,8 +105,20 @@ class ProductService:
         product_in_dict = product_in.model_dump()
         product_in_dict["slug"] = slug
         product_in_dict["sku"] = sku
+        initial_image_url = product_in_dict.pop("image_url", None)
 
         created_prod = self.prod_repo.create(vendor_id=vendor_user.id, product_in=ProductCreate(**product_in_dict))
+
+        if initial_image_url and str(initial_image_url).strip():
+            self.image_repo.add_image(
+                product_id=created_prod.id,
+                image_url=str(initial_image_url).strip(),
+                is_primary=True,
+                display_order=0,
+                alt_text=created_prod.name,
+            )
+            self.db.refresh(created_prod)
+
         logger.info(
             "Created product ID %d ('%s') for vendor ID %d. Total products: %d/%d",
             created_prod.id,
@@ -283,6 +295,47 @@ class ProductService:
             self.image_repo.set_primary(product_id, remaining[0].id)
 
         return True
+
+    def add_image_url(
+        self,
+        user: User,
+        product_id: int,
+        image_url: str,
+        is_primary: bool = True,
+        alt_text: Optional[str] = None,
+    ) -> ProductImage:
+        """Add an external Image URL to a product."""
+        prod = self.prod_repo.get_by_id(product_id)
+        if not prod:
+            raise NotFoundException(message=f"Product with ID {product_id} not found")
+
+        if user.role != UserRole.ADMIN and prod.vendor_id != user.id:
+            raise ForbiddenException(message="You do not have permission to modify this product")
+
+        clean_url = str(image_url).strip()
+        if not clean_url or not (clean_url.startswith("http://") or clean_url.startswith("https://") or clean_url.startswith("/")):
+            raise BadRequestException(message="Invalid image URL. Must start with http:// or https://")
+
+        existing_images = self.image_repo.get_images_by_product_id(product_id)
+        has_primary = any(img.is_primary for img in existing_images)
+
+        should_be_primary = is_primary or (not has_primary)
+        if should_be_primary and has_primary:
+            for img in existing_images:
+                if img.is_primary:
+                    img.is_primary = False
+            self.db.commit()
+
+        display_order = len(existing_images)
+        img_record = self.image_repo.add_image(
+            product_id=product_id,
+            image_url=clean_url,
+            is_primary=should_be_primary,
+            display_order=display_order,
+            alt_text=alt_text or prod.name,
+        )
+        logger.info("Added image URL '%s' to product ID %d", clean_url, product_id)
+        return img_record
 
     def list_products(
         self,

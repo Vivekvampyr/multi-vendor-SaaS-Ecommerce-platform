@@ -10,6 +10,7 @@ from app.schemas.common import APIResponse, MessageResponse
 from app.schemas.product import (
     ProductCreate,
     ProductImageOut,
+    ProductImageUrlCreate,
     ProductOut,
     ProductUpdate,
 )
@@ -171,6 +172,33 @@ async def upload_product_images(
         success=True,
         message=f"Successfully uploaded {len(images)} images",
         data=[ProductImageOut.model_validate(img) for img in images],
+    )
+
+
+@router.post(
+    "/{product_id}/images/url",
+    response_model=APIResponse[ProductImageOut],
+    status_code=status.HTTP_201_CREATED,
+    summary="Add an image URL to product (Vendor owner or Admin)",
+)
+def add_product_image_url(
+    product_id: int,
+    image_in: ProductImageUrlCreate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> APIResponse[ProductImageOut]:
+    prod_service = ProductService(db)
+    img = prod_service.add_image_url(
+        user=current_user,
+        product_id=product_id,
+        image_url=image_in.image_url,
+        is_primary=image_in.is_primary,
+        alt_text=image_in.alt_text,
+    )
+    return APIResponse(
+        success=True,
+        message="Image URL added successfully",
+        data=ProductImageOut.model_validate(img),
     )
 
 

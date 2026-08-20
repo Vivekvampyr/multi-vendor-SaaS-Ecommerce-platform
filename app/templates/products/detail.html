@@ -17,10 +17,11 @@
         <!-- Image Gallery -->
         <div class="space-y-4">
             <div class="glass-panel rounded-3xl overflow-hidden p-2">
-                {% if product.images and product.images|length > 0 %}
-                    <img id="main-product-img" src="{{ product.images[0].image_url }}" alt="{{ product.name }}" class="w-full h-64 sm:h-96 object-cover rounded-2xl">
+                {% set primary_img = (product.images|selectattr('is_primary')|first) or (product.images[0] if product.images else None) %}
+                {% if primary_img %}
+                    <img id="main-product-img" src="{{ primary_img.image_url }}" alt="{{ product.name }}" class="w-full h-64 sm:h-96 object-cover rounded-2xl" onerror="this.parentElement.innerHTML='<div class=\'w-full h-64 sm:h-96 bg-slate-100 dark:bg-zinc-900 rounded-2xl flex items-center justify-center text-slate-400 dark:text-zinc-600 font-bold text-sm\'>No Image Available</div>';">
                 {% else %}
-                    <div class="w-full h-64 sm:h-96 bg-slate-200 dark:bg-zinc-900 rounded-2xl flex items-center justify-center text-slate-500 dark:text-zinc-500 font-bold text-sm">No Image Available</div>
+                    <div class="w-full h-64 sm:h-96 bg-slate-100 dark:bg-zinc-900 rounded-2xl flex items-center justify-center text-slate-400 dark:text-zinc-600 font-bold text-sm">No Image Available</div>
                 {% endif %}
             </div>
 

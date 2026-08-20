@@ -196,6 +196,11 @@
             </div>
 
             <div>
+                <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Cover Photo Web URL (Optional)</label>
+                <input type="url" id="prod-image-url" placeholder="https://images.unsplash.com/... (Direct Image Link)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
+            </div>
+
+            <div>
                 <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Short Description / Tagline</label>
                 <input type="text" id="prod-short-desc" maxlength="500" placeholder="Brief 1-line summary displayed on product cards..." class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
             </div>
@@ -335,13 +340,55 @@
             </div>
         </div>
 
-        <!-- Section 2: Upload New Photo Form -->
-        <div class="pt-3 border-t border-slate-200 dark:border-zinc-800">
-            <label class="block font-bold text-xs text-slate-700 dark:text-zinc-300 uppercase tracking-wider mb-2">Upload New Photo</label>
-            <form id="upload-image-form" onsubmit="handleUploadProductImage(event)" class="space-y-3 text-xs">
+        <!-- Section 2: Add New Photo (Dual Option Tabs) -->
+        <div class="pt-3 border-t border-slate-200 dark:border-zinc-800 space-y-3">
+            <div class="flex items-center justify-between">
+                <label class="block font-bold text-xs text-slate-700 dark:text-zinc-300 uppercase tracking-wider">Add New Photo</label>
+                <!-- Method Tabs -->
+                <div class="inline-flex p-0.5 rounded-lg bg-slate-200 dark:bg-zinc-800 text-xs font-semibold">
+                    <button type="button" id="tab-btn-url" onclick="switchPhotoTab('url')" class="px-3 py-1 rounded-md bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs transition-all cursor-pointer">
+                        Image Web URL
+                    </button>
+                    <button type="button" id="tab-btn-file" onclick="switchPhotoTab('file')" class="px-3 py-1 rounded-md text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer">
+                        Upload File
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 1: Image URL Form (Persistent across free cloud hosting) -->
+            <form id="url-image-form" onsubmit="handleSaveImageUrl(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="url-prod-id">
+                <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Image URL (Unsplash, Cloudinary, Imgur, CDN, etc.)</label>
+                    <input type="url" id="url-img-input" oninput="previewUrlImage(this.value)" required placeholder="https://images.unsplash.com/... or https://example.com/item.png" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500">
+                    <p class="text-[10px] text-slate-500 dark:text-zinc-400 mt-1">Recommended: Cloud-hosted URLs stay permanently safe and never disappear on server restarts.</p>
+                </div>
+
+                <!-- URL Preview Thumbnail -->
+                <div id="url-preview-box" class="hidden flex items-center space-x-3 p-2.5 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800">
+                    <img id="url-preview-img" src="" alt="Preview" class="w-12 h-12 object-cover rounded-lg border border-slate-200 dark:border-zinc-700" onerror="this.src=''; document.getElementById('url-preview-box').classList.add('hidden');">
+                    <div class="text-[11px] text-slate-600 dark:text-zinc-400 truncate flex-1">
+                        <span class="font-bold text-slate-900 dark:text-white block">Preview Loaded</span>
+                        <span id="url-preview-text" class="truncate block text-[10px]"></span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2 pt-0.5">
+                    <input type="checkbox" id="url-is-primary" checked class="rounded border-slate-300 text-slate-900 focus:ring-slate-500 accent-slate-900 dark:accent-zinc-100">
+                    <label for="url-is-primary" class="text-slate-700 dark:text-zinc-300 font-medium select-none cursor-pointer">Set as Primary Cover Image</label>
+                </div>
+
+                <button type="submit" id="url-img-btn" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold rounded-xl shadow-sm transition-all cursor-pointer">
+                    Save Photo URL to Gallery
+                </button>
+            </form>
+
+            <!-- Tab 2: Upload File Form -->
+            <form id="upload-image-form" onsubmit="handleUploadProductImage(event)" class="space-y-3 text-xs hidden">
                 <input type="hidden" id="upload-prod-id">
 
                 <div>
+                    <label class="block font-bold text-slate-700 dark:text-zinc-300 mb-1">Select File</label>
                     <input type="file" id="upload-prod-file" accept="image/png,image/jpeg,image/webp,image/jpg" required class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-3 py-2 text-slate-900 dark:text-zinc-100 file:mr-3 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white dark:file:bg-zinc-100 dark:file:text-zinc-950 hover:file:opacity-90 cursor-pointer">
                     <p class="text-[10px] text-slate-500 dark:text-zinc-400 mt-1">Supports PNG, JPG, JPEG, and WebP.</p>
                 </div>
@@ -368,6 +415,7 @@ async function handleCreateProduct(e) {
 
     const comparePriceVal = document.getElementById("prod-compare-price").value;
     const shortDescVal = document.getElementById("prod-short-desc").value.trim();
+    const imageUrlVal = document.getElementById("prod-image-url").value.trim();
 
     const payload = {
         name: document.getElementById("prod-name").value.trim(),
@@ -376,6 +424,7 @@ async function handleCreateProduct(e) {
         price: parseFloat(document.getElementById("prod-price").value),
         compare_at_price: comparePriceVal ? parseFloat(comparePriceVal) : null,
         stock_quantity: parseInt(document.getElementById("prod-stock").value),
+        image_url: imageUrlVal || null,
         short_description: shortDescVal || null,
         description: document.getElementById("prod-desc").value.trim() || null,
         status: document.getElementById("prod-status").value || "PUBLISHED"
@@ -458,17 +507,94 @@ async function handleDeleteProduct(productId) {
     }
 }
 
+function switchPhotoTab(tab) {
+    const urlForm = document.getElementById("url-image-form");
+    const fileForm = document.getElementById("upload-image-form");
+    const tabUrl = document.getElementById("tab-btn-url");
+    const tabFile = document.getElementById("tab-btn-file");
+
+    if (tab === 'url') {
+        urlForm.classList.remove("hidden");
+        fileForm.classList.add("hidden");
+        tabUrl.className = "px-3 py-1 rounded-md bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs transition-all cursor-pointer";
+        tabFile.className = "px-3 py-1 rounded-md text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer";
+    } else {
+        urlForm.classList.add("hidden");
+        fileForm.classList.remove("hidden");
+        tabFile.className = "px-3 py-1 rounded-md bg-white dark:bg-zinc-900 text-slate-900 dark:text-white shadow-xs transition-all cursor-pointer";
+        tabUrl.className = "px-3 py-1 rounded-md text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white transition-all cursor-pointer";
+    }
+}
+
+function previewUrlImage(url) {
+    const box = document.getElementById("url-preview-box");
+    const img = document.getElementById("url-preview-img");
+    const txt = document.getElementById("url-preview-text");
+    const trimmed = url.trim();
+
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+        img.src = trimmed;
+        txt.textContent = trimmed;
+        box.classList.remove("hidden");
+    } else {
+        box.classList.add("hidden");
+    }
+}
+
 function closeProductImageModal() {
     document.getElementById("upload-image-modal").classList.add("hidden");
 }
 
 function openUploadImageModal(productId, productName) {
+    document.getElementById("url-prod-id").value = productId;
     document.getElementById("upload-prod-id").value = productId;
     document.getElementById("upload-prod-title").textContent = productName;
+    document.getElementById("url-image-form").reset();
     document.getElementById("upload-image-form").reset();
+    document.getElementById("url-preview-box").classList.add("hidden");
+    document.getElementById("url-is-primary").checked = true;
     document.getElementById("upload-is-primary").checked = true;
+    switchPhotoTab('url');
     document.getElementById("upload-image-modal").classList.remove("hidden");
     loadProductImages(productId);
+}
+
+async function handleSaveImageUrl(e) {
+    e.preventDefault();
+    const productId = document.getElementById("url-prod-id").value;
+    const urlInput = document.getElementById("url-img-input");
+    const isPrimary = document.getElementById("url-is-primary").checked;
+    const btn = document.getElementById("url-img-btn");
+
+    const imgUrl = urlInput.value.trim();
+    if (!imgUrl) {
+        window.Nexus.showToast("Please enter a valid image URL", "error");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Saving URL...";
+
+    try {
+        await window.Nexus.apiFetch(`/api/v1/products/${productId}/images/url`, {
+            method: "POST",
+            body: JSON.stringify({
+                image_url: imgUrl,
+                is_primary: isPrimary
+            })
+        });
+
+        window.Nexus.showToast("Image URL added to gallery successfully!", "success");
+        urlInput.value = "";
+        document.getElementById("url-preview-box").classList.add("hidden");
+        btn.disabled = false;
+        btn.textContent = "Save Photo URL to Gallery";
+        await loadProductImages(productId);
+    } catch(err) {
+        window.Nexus.showToast(err.message || "Failed to add image URL", "error");
+        btn.disabled = false;
+        btn.textContent = "Save Photo URL to Gallery";
+    }
 }
 
 async function loadProductImages(productId) {

@@ -214,3 +214,41 @@ def test_public_product_search_and_filters(client, test_product):
     resp_empty = client.get("/api/v1/products?min_price=500&max_price=600")
     assert resp_empty.status_code == 200
     assert len(resp_empty.json()["data"]) == 0
+
+
+def test_add_product_image_by_url_success(client, vendor_headers, test_product):
+    payload = {
+        "image_url": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e",
+        "is_primary": True,
+        "alt_text": "High-Res Studio Shot"
+    }
+    response = client.post(
+        f"/api/v1/products/{test_product.id}/images/url",
+        json=payload,
+        headers=vendor_headers,
+    )
+    assert response.status_code == 201
+    data = response.json()["data"]
+    assert data["image_url"] == payload["image_url"]
+    assert data["is_primary"] is True
+
+
+def test_create_product_with_initial_image_url(client, vendor_headers, test_vendor_profile, active_vendor_subscription, test_category):
+    payload = {
+        "category_id": test_category.id,
+        "name": "Mechanical Keyboard RGB",
+        "sku": "KB-RGB-001",
+        "price": 129.99,
+        "stock_quantity": 30,
+        "image_url": "https://images.unsplash.com/photo-1587829741301-dc798b83add3",
+    }
+    response = client.post(
+        "/api/v1/products",
+        json=payload,
+        headers=vendor_headers,
+    )
+    assert response.status_code == 201
+    prod = response.json()["data"]
+    assert len(prod["images"]) == 1
+    assert prod["images"][0]["image_url"] == payload["image_url"]
+    assert prod["images"][0]["is_primary"] is True
