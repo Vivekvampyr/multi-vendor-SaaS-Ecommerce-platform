@@ -57,10 +57,10 @@
                     {% for prod in products %}
                         <div class="glass-panel rounded-2xl overflow-hidden glass-panel-hover flex flex-col justify-between">
                             <div class="relative">
-                                <a href="/products/{{ prod.slug }}" class="block w-full h-36 sm:h-48 bg-slate-100 dark:bg-zinc-900 overflow-hidden">
+                                <a href="/products/{{ prod.slug }}" class="block w-full aspect-square bg-slate-50 dark:bg-zinc-900/60 p-3 flex items-center justify-center overflow-hidden group">
                                     {% set primary_img = (prod.images|selectattr('is_primary')|first) or (prod.images[0] if prod.images else None) %}
                                     {% if primary_img %}
-                                        <img src="{{ primary_img.image_url }}" alt="{{ prod.name }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-slate-400 dark:text-zinc-600 font-medium text-xs bg-slate-100 dark:bg-zinc-900\'>No Image</div>';">
+                                        <img src="{{ primary_img.image_url }}" alt="{{ prod.name }}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300 mx-auto" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'w-full h-full flex items-center justify-center text-slate-400 dark:text-zinc-600 font-medium text-xs bg-slate-50 dark:bg-zinc-900\'>No Image</div>';">
                                     {% else %}
                                         <div class="w-full h-full flex items-center justify-center text-slate-400 dark:text-zinc-600 font-medium text-xs">No Image</div>
                                     {% endif %}
