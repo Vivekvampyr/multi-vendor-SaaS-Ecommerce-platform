@@ -299,6 +299,14 @@ input[type="number"] {
   appearance: textfield;
 }
 
+/* Disable Microsoft Edge / WebKit default password peek eye icons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 /* Smartphone Responsive Optimization */
 @media (max-width: 640px) {
   #chat-widget-btn {

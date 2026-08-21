@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from app.models.user import UserRole
 
 
@@ -8,6 +8,13 @@ class UserBase(BaseModel):
     email: EmailStr = Field(description="User's unique email address")
     full_name: str = Field(min_length=2, max_length=255, description="Full name of the user")
     phone_number: Optional[str] = Field(default=None, max_length=50, description="Optional phone number")
+
+    @field_validator("email")
+    @classmethod
+    def validate_email_no_spaces(cls, v: EmailStr) -> EmailStr:
+        if any(c.isspace() for c in str(v)):
+            raise ValueError("Spaces are not allowed in email addresses.")
+        return v
 
 
 class UserCreate(UserBase):
@@ -21,6 +28,13 @@ class UserCreate(UserBase):
         description="Role assigned to the user (CUSTOMER or VENDOR upon registration)",
     )
 
+    @field_validator("password")
+    @classmethod
+    def validate_password_no_spaces(cls, v: str) -> str:
+        if any(c.isspace() for c in v):
+            raise ValueError("Spaces are not allowed in passwords.")
+        return v
+
 
 class UserUpdate(BaseModel):
     full_name: Optional[str] = Field(default=None, min_length=2, max_length=255)
@@ -30,6 +44,13 @@ class UserUpdate(BaseModel):
 class UserPasswordUpdate(BaseModel):
     current_password: str = Field(min_length=1, description="Current password")
     new_password: str = Field(min_length=8, max_length=128, description="New password")
+
+    @field_validator("new_password")
+    @classmethod
+    def validate_new_password_no_spaces(cls, v: str) -> str:
+        if any(c.isspace() for c in v):
+            raise ValueError("Spaces are not allowed in passwords.")
+        return v
 
 
 class UserOut(BaseModel):

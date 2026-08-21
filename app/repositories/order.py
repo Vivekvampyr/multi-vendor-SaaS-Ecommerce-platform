@@ -187,3 +187,37 @@ class OrderRepository:
         if status is not None:
             stmt = stmt.where(Order.status == status)
         return self.db.execute(stmt).scalar() or 0
+
+    def get_latest_purchase_info(self, user_id: int, product_id: int) -> Optional[dict]:
+        """Fetch the most recent verified purchase of a product by a customer."""
+        stmt = (
+            select(OrderItem, Order)
+            .join(Order, OrderItem.order_id == Order.id)
+            .where(
+                Order.customer_id == user_id,
+                OrderItem.product_id == product_id,
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (
+                        Order.status.in_([
+                            OrderStatus.PAID,
+                            OrderStatus.PROCESSING,
+                            OrderStatus.SHIPPED,
+                            OrderStatus.DELIVERED,
+                        ])
+                    )
+                ),
+            )
+            .order_by(Order.id.desc())
+        )
+        res = self.db.execute(stmt).first()
+        if not res:
+            return None
+        item, order = res
+        return {
+            "order_id": order.id,
+            "order_number": order.order_number,
+            "quantity": item.quantity,
+            "purchased_at": order.created_at,
+            "status": order.status.value,
+        }

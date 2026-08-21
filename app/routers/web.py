@@ -10,6 +10,7 @@ from app.core.dependencies import get_optional_user_for_web
 from app.models.subscription import SubscriptionStatus
 from app.models.user import User, UserRole
 from app.repositories.category import CategoryRepository
+from app.repositories.order import OrderRepository
 from app.repositories.subscription import SubscriptionRepository
 from app.services.address import AddressService
 from app.services.admin import AdminService
@@ -303,6 +304,20 @@ async def product_detail_page(
     review_service = ReviewService(db)
     reviews_summary = review_service.get_product_reviews(product_id=product.id, skip=0, limit=20)
 
+    has_purchased = False
+    has_reviewed = False
+    past_purchase = None
+    user_review = None
+
+    if current_user:
+        order_repo = OrderRepository(db)
+        past_purchase = order_repo.get_latest_purchase_info(user_id=current_user.id, product_id=product.id)
+        has_purchased = (past_purchase is not None) or (current_user.role == UserRole.ADMIN)
+        user_rev_model = review_service.review_repo.get_by_user_and_product(user_id=current_user.id, product_id=product.id)
+        if user_rev_model:
+            user_review = review_service._map_to_out(user_rev_model)
+            has_reviewed = True
+
     return templates.TemplateResponse(
         request=request,
         name="products/detail.html",
@@ -311,6 +326,10 @@ async def product_detail_page(
             "current_user": current_user,
             "product": product,
             "reviews_summary": reviews_summary,
+            "has_purchased": has_purchased,
+            "has_reviewed": has_reviewed,
+            "past_purchase": past_purchase,
+            "user_review": user_review,
         },
     )
 

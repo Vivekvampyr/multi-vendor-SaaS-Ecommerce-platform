@@ -30,17 +30,32 @@
 
             <div>
                 <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300 mb-1">Email Address</label>
-                <input type="email" id="reg-email" required placeholder="you@example.com" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
+                <input type="email" id="reg-email" required placeholder="you@example.com" oninput="validateLiveEmail(this.value)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
+                
+                <!-- Live Email Validation & Guidance Box -->
+                <div id="email-feedback-container" class="mt-1.5 hidden transition-all duration-200">
+                    <div id="email-feedback-msg" class="text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition-all">
+                        <span id="email-feedback-icon" class="font-bold text-xs shrink-0"></span>
+                        <span id="email-feedback-text" class="flex-1 leading-snug"></span>
+                    </div>
+                </div>
             </div>
 
             <div>
                 <div class="flex items-center justify-between mb-1">
                     <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300">Password</label>
-                    <button type="button" onclick="togglePasswordVisibility('reg-password', 'reg-pwd-toggle-text')" class="text-[11px] font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer select-none">
-                        <span id="reg-pwd-toggle-text">Show</span>
+                    <button type="button" onclick="togglePasswordVisibility('reg-password', 'reg-pwd-icon-show', 'reg-pwd-icon-hide', 'reg-pwd-text')" class="flex items-center space-x-1 text-[11px] font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer select-none" title="Toggle password visibility">
+                        <svg id="reg-pwd-icon-show" class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <svg id="reg-pwd-icon-hide" class="w-3.5 h-3.5 pointer-events-none hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
+                        </svg>
+                        <span id="reg-pwd-text">Show</span>
                     </button>
                 </div>
-                <input type="password" id="reg-password" required minlength="8" oninput="updatePasswordStrength(this.value)" placeholder="At least 8 characters" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
+                <input type="password" id="reg-password" required minlength="8" oninput="updatePasswordStrength(this.value); validatePasswordMatch();" placeholder="At least 8 characters (no spaces)" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
 
                 <!-- Password Strength Indicator Component -->
                 <div id="password-strength-container" class="mt-2 space-y-1.5 hidden transition-all duration-300">
@@ -74,6 +89,35 @@
                         <span id="req-sym" class="px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-zinc-800/70 text-slate-500 dark:text-zinc-400 border border-transparent transition-all font-medium flex items-center space-x-1">
                             <span class="req-icon text-[9px] font-bold">•</span> <span>Symbols</span>
                         </span>
+                        <span id="req-space" class="px-2 py-0.5 rounded-md bg-slate-200/70 dark:bg-zinc-800/70 text-slate-500 dark:text-zinc-400 border border-transparent transition-all font-medium flex items-center space-x-1">
+                            <span class="req-icon text-[9px] font-bold">•</span> <span>No spaces</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-zinc-300">Confirm Password</label>
+                    <button type="button" onclick="togglePasswordVisibility('reg-confirm-password', 'reg-cpwd-icon-show', 'reg-cpwd-icon-hide', 'reg-cpwd-text')" class="flex items-center space-x-1 text-[11px] font-semibold text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-white transition-colors cursor-pointer select-none" title="Toggle confirm password visibility">
+                        <svg id="reg-cpwd-icon-show" class="w-3.5 h-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        <svg id="reg-cpwd-icon-hide" class="w-3.5 h-3.5 pointer-events-none hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"></path>
+                        </svg>
+                        <span id="reg-cpwd-text">Show</span>
+                    </button>
+                </div>
+                <input type="password" id="reg-confirm-password" required minlength="8" oninput="validatePasswordMatch()" placeholder="Re-enter your password" class="w-full bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-zinc-100 placeholder-slate-400 dark:placeholder-zinc-500 focus:outline-none focus:border-slate-500 transition-colors">
+                
+                <!-- Live Password Match Feedback -->
+                <div id="password-match-container" class="mt-1.5 hidden transition-all duration-200">
+                    <div id="password-match-msg" class="text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl transition-all">
+                        <span id="password-match-icon" class="font-bold text-xs shrink-0"></span>
+                        <span id="password-match-text" class="flex-1 leading-snug"></span>
                     </div>
                 </div>
             </div>
@@ -103,17 +147,122 @@ function selectRole(role) {
     }
 }
 
-function togglePasswordVisibility(inputId, toggleTextId) {
+function togglePasswordVisibility(inputId, showIconId, hideIconId, textId) {
     const input = document.getElementById(inputId);
-    const toggleText = document.getElementById(toggleTextId);
     if (!input) return;
+    const showIcon = document.getElementById(showIconId);
+    const hideIcon = document.getElementById(hideIconId);
+    const textSpan = document.getElementById(textId);
+
     if (input.type === "password") {
         input.type = "text";
-        if (toggleText) toggleText.textContent = "Hide";
+        if (showIcon) showIcon.classList.add("hidden");
+        if (hideIcon) hideIcon.classList.remove("hidden");
+        if (textSpan) textSpan.textContent = "Hide";
     } else {
         input.type = "password";
-        if (toggleText) toggleText.textContent = "Show";
+        if (showIcon) showIcon.classList.remove("hidden");
+        if (hideIcon) hideIcon.classList.add("hidden");
+        if (textSpan) textSpan.textContent = "Show";
     }
+}
+
+// Real-Time Live Email Guidance & Validation
+function validateLiveEmail(email) {
+    const container = document.getElementById("email-feedback-container");
+    const msgBox = document.getElementById("email-feedback-msg");
+    const icon = document.getElementById("email-feedback-icon");
+    const text = document.getElementById("email-feedback-text");
+    const emailInput = document.getElementById("reg-email");
+
+    if (!email || email.length === 0) {
+        container.classList.add("hidden");
+        emailInput.classList.remove("border-rose-500", "border-emerald-500");
+        return false;
+    }
+    container.classList.remove("hidden");
+
+    // 1. Check for spaces in email
+    if (/\s/.test(email)) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+        icon.textContent = "✕";
+        text.textContent = "Spaces are not allowed in email addresses. Please remove spaces.";
+        emailInput.classList.add("border-rose-500");
+        emailInput.classList.remove("border-emerald-500");
+        return false;
+    }
+
+    // 2. Check for missing '@' symbol
+    if (!email.includes("@")) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+        icon.textContent = "ℹ";
+        text.textContent = "Must include '@' symbol (e.g., yourname@example.com)";
+        emailInput.classList.remove("border-emerald-500", "border-rose-500");
+        return false;
+    }
+
+    const parts = email.split("@");
+    if (parts.length > 2) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+        icon.textContent = "✕";
+        text.textContent = "Email cannot contain multiple '@' symbols.";
+        emailInput.classList.add("border-rose-500");
+        emailInput.classList.remove("border-emerald-500");
+        return false;
+    }
+
+    const userPart = parts[0];
+    const domainPart = parts[1];
+
+    if (!userPart || userPart.length === 0) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+        icon.textContent = "ℹ";
+        text.textContent = "Enter username before '@' (e.g., name@example.com)";
+        return false;
+    }
+
+    if (!domainPart || domainPart.length === 0) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+        icon.textContent = "ℹ";
+        text.textContent = "Please enter domain after '@' (e.g., @example.com or @gmail.com)";
+        return false;
+    }
+
+    // 3. Check for domain with extension
+    if (!domainPart.includes(".")) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+        icon.textContent = "ℹ";
+        text.textContent = "Include a domain extension (e.g., @example.com, .org, .net)";
+        return false;
+    }
+
+    const domainParts = domainPart.split(".");
+    const tld = domainParts[domainParts.length - 1];
+    if (tld.length < 2) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20";
+        icon.textContent = "ℹ";
+        text.textContent = "Enter a valid top-level domain (e.g., .com, .org, .io)";
+        return false;
+    }
+
+    // 4. Full RFC standard pattern
+    const fullPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!fullPattern.test(email)) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+        icon.textContent = "✕";
+        text.textContent = "Invalid format. Expected format: name@example.com";
+        emailInput.classList.add("border-rose-500");
+        emailInput.classList.remove("border-emerald-500");
+        return false;
+    }
+
+    // 5. Valid email format!
+    msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+    icon.textContent = "✓";
+    text.textContent = "Valid email address format (e.g. " + email + ")";
+    emailInput.classList.remove("border-rose-500");
+    emailInput.classList.add("border-emerald-500");
+    return true;
 }
 
 function updatePasswordStrength(password) {
@@ -123,32 +272,52 @@ function updatePasswordStrength(password) {
     const bar3 = document.getElementById("pwd-bar-3");
     const label = document.getElementById("pwd-strength-label");
     const hint = document.getElementById("pwd-strength-hint");
+    const pwdInput = document.getElementById("reg-password");
 
     const reqLen = document.getElementById("req-len");
     const reqCase = document.getElementById("req-case");
     const reqNum = document.getElementById("req-num");
     const reqSym = document.getElementById("req-sym");
+    const reqSpace = document.getElementById("req-space");
 
     if (!password || password.length === 0) {
         container.classList.add("hidden");
+        pwdInput.classList.remove("border-rose-500");
         return;
     }
     container.classList.remove("hidden");
 
     // Check individual criteria
+    const hasSpaces = /\s/.test(password);
+    const hasNoSpaces = !hasSpaces;
     const hasLength = password.length >= 8;
     const hasLongLength = password.length >= 10;
     const hasLower = /[a-z]/.test(password);
     const hasUpper = /[A-Z]/.test(password);
     const hasMixedCase = hasLower && hasUpper;
     const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+    const hasSpecial = /[^A-Za-z0-9\s]/.test(password);
 
     // Update checklist pills
     updateReqPill(reqLen, hasLength);
     updateReqPill(reqCase, hasMixedCase);
     updateReqPill(reqNum, hasNumber);
     updateReqPill(reqSym, hasSpecial);
+    updateReqPill(reqSpace, hasNoSpaces);
+
+    // If password contains spaces, flag immediately
+    if (hasSpaces) {
+        bar1.className = "h-full rounded-full transition-all duration-300 bg-rose-500 shadow-xs";
+        bar2.className = "h-full rounded-full transition-all duration-300 bg-slate-200 dark:bg-zinc-800";
+        bar3.className = "h-full rounded-full transition-all duration-300 bg-slate-200 dark:bg-zinc-800";
+        label.textContent = "Spaces Disallowed";
+        label.className = "font-bold text-rose-500";
+        hint.textContent = "Remove all spaces from password";
+        pwdInput.classList.add("border-rose-500");
+        return;
+    } else {
+        pwdInput.classList.remove("border-rose-500");
+    }
 
     // Calculate score
     let score = 0;
@@ -200,13 +369,75 @@ function updateReqPill(element, isMet) {
     }
 }
 
+// Live Password Match Validation
+function validatePasswordMatch() {
+    const pwd = document.getElementById("reg-password").value;
+    const cpwdInput = document.getElementById("reg-confirm-password");
+    const cpwd = cpwdInput.value;
+    const container = document.getElementById("password-match-container");
+    const msgBox = document.getElementById("password-match-msg");
+    const icon = document.getElementById("password-match-icon");
+    const text = document.getElementById("password-match-text");
+
+    if (!cpwd || cpwd.length === 0) {
+        container.classList.add("hidden");
+        cpwdInput.classList.remove("border-rose-500", "border-emerald-500");
+        return false;
+    }
+    container.classList.remove("hidden");
+
+    if (pwd !== cpwd) {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+        icon.textContent = "✕";
+        text.textContent = "Passwords do not match yet.";
+        cpwdInput.classList.add("border-rose-500");
+        cpwdInput.classList.remove("border-emerald-500");
+        return false;
+    } else {
+        msgBox.className = "text-[11px] font-medium flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+        icon.textContent = "✓";
+        text.textContent = "Passwords match perfectly.";
+        cpwdInput.classList.remove("border-rose-500");
+        cpwdInput.classList.add("border-emerald-500");
+        return true;
+    }
+}
+
 async function handleRegister(e) {
     e.preventDefault();
     const btn = document.getElementById("reg-submit-btn");
     const fullName = document.getElementById("reg-name").value.trim();
     const email = document.getElementById("reg-email").value.trim();
     const password = document.getElementById("reg-password").value;
+    const confirmPassword = document.getElementById("reg-confirm-password").value;
     const role = document.getElementById("reg-role").value;
+
+    // Strict Client Validation
+    if (/\s/.test(email)) {
+        window.Nexus.showToast("Spaces are not allowed in email addresses.", "error");
+        document.getElementById("reg-email").focus();
+        return;
+    }
+    if (/\s/.test(password)) {
+        window.Nexus.showToast("Spaces are not allowed in passwords.", "error");
+        document.getElementById("reg-password").focus();
+        return;
+    }
+    if (!validateLiveEmail(email)) {
+        window.Nexus.showToast("Please enter a valid email address (e.g. name@example.com)", "error");
+        document.getElementById("reg-email").focus();
+        return;
+    }
+    if (password.length < 8) {
+        window.Nexus.showToast("Password must be at least 8 characters long.", "error");
+        document.getElementById("reg-password").focus();
+        return;
+    }
+    if (password !== confirmPassword) {
+        window.Nexus.showToast("Passwords do not match. Please ensure both passwords match.", "error");
+        document.getElementById("reg-confirm-password").focus();
+        return;
+    }
 
     btn.disabled = true;
     btn.textContent = "Creating account...";
@@ -239,6 +470,38 @@ async function handleRegister(e) {
 document.addEventListener("DOMContentLoaded", () => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("role") === "VENDOR") selectRole("VENDOR");
+
+    // Prevent typing spaces in email & password inputs
+    const emailInput = document.getElementById("reg-email");
+    const pwdInput = document.getElementById("reg-password");
+    const cpwdInput = document.getElementById("reg-confirm-password");
+
+    if (emailInput) {
+        emailInput.addEventListener("keydown", (e) => {
+            if (e.key === " ") {
+                e.preventDefault();
+                window.Nexus.showToast("Spaces are not allowed in email addresses.", "error");
+            }
+        });
+    }
+
+    if (pwdInput) {
+        pwdInput.addEventListener("keydown", (e) => {
+            if (e.key === " ") {
+                e.preventDefault();
+                window.Nexus.showToast("Spaces are not allowed in passwords.", "error");
+            }
+        });
+    }
+
+    if (cpwdInput) {
+        cpwdInput.addEventListener("keydown", (e) => {
+            if (e.key === " ") {
+                e.preventDefault();
+                window.Nexus.showToast("Spaces are not allowed in passwords.", "error");
+            }
+        });
+    }
 });
 </script>
 {% endblock %}
