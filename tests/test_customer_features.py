@@ -121,12 +121,46 @@ def test_product_reviews_and_ratings(
     assert summary["average_rating"] == 0.0
     assert summary["total_reviews"] == 0
 
-    # 2. Customer submits review without having purchased -> is_verified_purchase = False
+    # 2. Customer attempts review without having purchased -> 403 Forbidden
     rev_payload = {
         "rating": 5,
         "title": "Excellent Quality!",
         "comment": "Exceeded all expectations, premium craftsmanship.",
     }
+    unverified_resp = client.post(
+        f"/api/v1/products/{test_product.id}/reviews",
+        json=rev_payload,
+        headers=customer_headers,
+    )
+    assert unverified_resp.status_code == 403
+
+    # 3. Create paid order for customer
+    order = Order(
+        order_number="ORD-TEST-REV-01",
+        customer_id=test_customer.id,
+        status=OrderStatus.DELIVERED,
+        payment_status=PaymentStatus.SUCCESS,
+        subtotal_amount=test_product.price,
+        total_amount=test_product.price,
+    )
+    db_session.add(order)
+    db_session.flush()
+
+    item = OrderItem(
+        order_id=order.id,
+        product_id=test_product.id,
+        vendor_id=test_product.vendor_id,
+        product_name=test_product.name,
+        product_sku=test_product.sku,
+        unit_price=test_product.price,
+        quantity=1,
+        subtotal=test_product.price,
+        status=OrderStatus.DELIVERED,
+    )
+    db_session.add(item)
+    db_session.commit()
+
+    # 4. Verified customer submits review -> 201 Created
     rev_resp = client.post(
         f"/api/v1/products/{test_product.id}/reviews",
         json=rev_payload,
@@ -135,10 +169,10 @@ def test_product_reviews_and_ratings(
     assert rev_resp.status_code == 201
     rev_data = rev_resp.json()["data"]
     assert rev_data["rating"] == 5
-    assert rev_data["is_verified_purchase"] is False
+    assert rev_data["is_verified_purchase"] is True
     rev_id = rev_data["id"]
 
-    # 3. Duplicate review attempt by same customer fails with 409 Conflict
+    # 5. Duplicate review attempt by same customer fails with 409 Conflict
     dup_resp = client.post(
         f"/api/v1/products/{test_product.id}/reviews",
         json=rev_payload,
@@ -146,7 +180,7 @@ def test_product_reviews_and_ratings(
     )
     assert dup_resp.status_code == 409
 
-    # 4. Update review
+    # 6. Update review
     upd_resp = client.put(
         f"/api/v1/reviews/{rev_id}",
         json={"rating": 4, "title": "Great (Revised)"},
@@ -156,7 +190,7 @@ def test_product_reviews_and_ratings(
     assert upd_resp.json()["data"]["rating"] == 4
     assert upd_resp.json()["data"]["title"] == "Great (Revised)"
 
-    # 5. Public review summary aggregation
+    # 7. Public review summary aggregation
     summary_resp = client.get(f"/api/v1/products/{test_product.id}/reviews")
     assert summary_resp.status_code == 200
     sum_data = summary_resp.json()["data"]
@@ -164,7 +198,7 @@ def test_product_reviews_and_ratings(
     assert sum_data["total_reviews"] == 1
     assert sum_data["rating_breakdown"]["4"] == 1
 
-    # 6. Delete review
+    # 8. Delete review
     del_resp = client.delete(f"/api/v1/reviews/{rev_id}", headers=customer_headers)
     assert del_resp.status_code == 200
 
@@ -210,3 +244,81 @@ def test_verified_buyer_review_badge(
     )
     assert rev_resp.status_code == 201
     assert rev_resp.json()["data"]["is_verified_purchase"] is True
+
+
+def test_vendor_reply_to_review(
+    client,
+    db_session,
+    customer_headers,
+    vendor_headers,
+    admin_headers,
+    test_customer,
+    test_vendor,
+    test_product,
+):
+    # 1. Setup completed paid order for customer
+    order = Order(
+        order_number="ORD-TEST-REPLY-01",
+        customer_id=test_customer.id,
+        status=OrderStatus.DELIVERED,
+        payment_status=PaymentStatus.SUCCESS,
+        subtotal_amount=test_product.price,
+        total_amount=test_product.price,
+    )
+    db_session.add(order)
+    db_session.flush()
+
+    item = OrderItem(
+        order_id=order.id,
+        product_id=test_product.id,
+        vendor_id=test_product.vendor_id,
+        product_name=test_product.name,
+        product_sku=test_product.sku,
+        unit_price=test_product.price,
+        quantity=1,
+        subtotal=test_product.price,
+        status=OrderStatus.DELIVERED,
+    )
+    db_session.add(item)
+    db_session.commit()
+
+    # 2. Customer submits review
+    rev_resp = client.post(
+        f"/api/v1/products/{test_product.id}/reviews",
+        json={"rating": 4, "title": "Love it!", "comment": "Great product overall."},
+        headers=customer_headers,
+    )
+    assert rev_resp.status_code == 201
+    review_id = rev_resp.json()["data"]["id"]
+
+    # 3. Customer attempts to post vendor reply -> 403 Forbidden
+    cust_reply_resp = client.post(
+        f"/api/v1/reviews/{review_id}/reply",
+        json={"reply": "Customer trying to reply as vendor"},
+        headers=customer_headers,
+    )
+    assert cust_reply_resp.status_code == 403
+
+    # 4. Product Vendor posts reply -> 200 OK
+    reply_resp = client.post(
+        f"/api/v1/reviews/{review_id}/reply",
+        json={"reply": "Thank you for your valuable feedback! We appreciate your support."},
+        headers=vendor_headers,
+    )
+    assert reply_resp.status_code == 200
+    reply_data = reply_resp.json()["data"]
+    assert reply_data["vendor_reply"] == "Thank you for your valuable feedback! We appreciate your support."
+    assert reply_data["vendor_reply_at"] is not None
+
+    # 5. Public summary includes vendor_reply
+    pub_resp = client.get(f"/api/v1/products/{test_product.id}/reviews")
+    assert pub_resp.status_code == 200
+    pub_reviews = pub_resp.json()["data"]["reviews"]
+    assert len(pub_reviews) == 1
+    assert pub_reviews[0]["vendor_reply"] == "Thank you for your valuable feedback! We appreciate your support."
+
+    # 6. Vendor deletes reply -> 200 OK
+    del_reply_resp = client.delete(f"/api/v1/reviews/{review_id}/reply", headers=vendor_headers)
+    assert del_reply_resp.status_code == 200
+    assert del_reply_resp.json()["data"]["vendor_reply"] is None
+

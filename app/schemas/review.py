@@ -15,6 +15,10 @@ class ReviewUpdate(BaseModel):
     comment: Optional[str] = None
 
 
+class ReviewReplyCreate(BaseModel):
+    reply: str = Field(min_length=1, max_length=2000, description="Vendor's official response text")
+
+
 class ReviewOut(BaseModel):
     id: int
     user_id: int
@@ -24,6 +28,8 @@ class ReviewOut(BaseModel):
     title: Optional[str] = None
     comment: Optional[str] = None
     is_verified_purchase: bool
+    vendor_reply: Optional[str] = None
+    vendor_reply_at: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
 

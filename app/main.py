@@ -31,12 +31,25 @@ UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 (UPLOADS_DIR / "products").mkdir(parents=True, exist_ok=True)
 
 
+def run_schema_updates():
+    """Ensure newly added columns exist in tables without breaking existing databases."""
+    try:
+        from sqlalchemy import text
+        from app.core.database import engine
+        with engine.begin() as conn:
+            conn.execute(text("ALTER TABLE reviews ADD COLUMN IF NOT EXISTS vendor_reply TEXT;"))
+            conn.execute(text("ALTER TABLE reviews ADD COLUMN IF NOT EXISTS vendor_reply_at TIMESTAMP WITHOUT TIME ZONE;"))
+    except Exception as e:
+        logger.warning("Auto schema update skipped or error: %s", e)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Application lifespan context manager for startup and shutdown procedures.
     """
     logger.info("Starting %s v%s in [%s] mode...", settings.PROJECT_NAME, settings.VERSION, settings.ENVIRONMENT)
+    run_schema_updates()
     yield
     logger.info("Shutting down %s...", settings.PROJECT_NAME)
 

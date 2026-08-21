@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import (
@@ -37,6 +38,8 @@ class ReviewService:
             title=review.title,
             comment=review.comment,
             is_verified_purchase=review.is_verified_purchase,
+            vendor_reply=review.vendor_reply,
+            vendor_reply_at=review.vendor_reply_at,
             created_at=review.created_at,
             updated_at=review.updated_at,
         )
@@ -56,6 +59,11 @@ class ReviewService:
 
         # Check if customer has verified purchase history for this product
         is_verified = self.review_repo.check_has_purchased(user_id=user.id, product_id=product_id)
+        if not is_verified and user.role != UserRole.ADMIN:
+            raise ForbiddenException(
+                message="Only verified buyers who have successfully purchased this product can submit a review."
+            )
+
         review = self.review_repo.create(
             user_id=user.id,
             product_id=product_id,
@@ -94,6 +102,70 @@ class ReviewService:
             raise ForbiddenException(message="You do not have permission to delete this review")
 
         return self.review_repo.delete(review)
+
+    def reply_to_review(self, user: User, review_id: int, reply_text: str) -> ReviewOut:
+        """Vendor or Admin post an official reply to a customer review."""
+        review = self.review_repo.get_by_id(review_id)
+        if not review:
+            raise NotFoundException(message=f"Review with ID {review_id} not found")
+
+        prod = review.product or self.prod_repo.get_by_id(review.product_id)
+        if not prod:
+            raise NotFoundException(message=f"Product for review {review_id} not found")
+
+        # Must be the owner vendor of the product or platform Admin
+        if user.role != UserRole.ADMIN and prod.vendor_id != user.id:
+            raise ForbiddenException(
+                message="Only the merchant who listed this product (or an Admin) can reply to this review."
+            )
+
+        clean_reply = reply_text.strip()
+        if not clean_reply:
+            raise ConflictException(message="Reply cannot be empty")
+
+        updated = self.review_repo.update(
+            review,
+            {
+                "vendor_reply": clean_reply,
+                "vendor_reply_at": datetime.now(timezone.utc),
+            },
+        )
+        logger.info(
+            "Vendor (User ID %d) replied to review ID %d on product ID %d",
+            user.id,
+            review_id,
+            prod.id,
+        )
+        return self._map_to_out(updated)
+
+    def delete_vendor_reply(self, user: User, review_id: int) -> ReviewOut:
+        """Vendor or Admin delete official merchant response."""
+        review = self.review_repo.get_by_id(review_id)
+        if not review:
+            raise NotFoundException(message=f"Review with ID {review_id} not found")
+
+        prod = review.product or self.prod_repo.get_by_id(review.product_id)
+        if not prod:
+            raise NotFoundException(message=f"Product for review {review_id} not found")
+
+        if user.role != UserRole.ADMIN and prod.vendor_id != user.id:
+            raise ForbiddenException(
+                message="Only the merchant who listed this product (or an Admin) can delete this reply."
+            )
+
+        updated = self.review_repo.update(
+            review,
+            {
+                "vendor_reply": None,
+                "vendor_reply_at": None,
+            },
+        )
+        logger.info(
+            "Vendor (User ID %d) removed reply on review ID %d",
+            user.id,
+            review_id,
+        )
+        return self._map_to_out(updated)
 
     def get_product_reviews(
         self,

@@ -9,6 +9,7 @@ from app.schemas.review import (
     ProductReviewSummary,
     ReviewCreate,
     ReviewOut,
+    ReviewReplyCreate,
     ReviewUpdate,
 )
 from app.services.review import ReviewService
@@ -96,3 +97,49 @@ def delete_review(
         success=True,
         message="Review deleted successfully",
     )
+
+
+@router.post(
+    "/reviews/{review_id}/reply",
+    response_model=APIResponse[ReviewOut],
+    status_code=status.HTTP_200_OK,
+    summary="Reply to customer review (Product Vendor or Admin)",
+)
+def reply_to_review(
+    review_id: int,
+    reply_in: ReviewReplyCreate,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> APIResponse[ReviewOut]:
+    review_service = ReviewService(db)
+    updated = review_service.reply_to_review(
+        user=current_user,
+        review_id=review_id,
+        reply_text=reply_in.reply,
+    )
+    return APIResponse(
+        success=True,
+        message="Merchant reply posted successfully",
+        data=updated,
+    )
+
+
+@router.delete(
+    "/reviews/{review_id}/reply",
+    response_model=APIResponse[ReviewOut],
+    status_code=status.HTTP_200_OK,
+    summary="Delete merchant reply (Product Vendor or Admin)",
+)
+def delete_vendor_reply(
+    review_id: int,
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db),
+) -> APIResponse[ReviewOut]:
+    review_service = ReviewService(db)
+    updated = review_service.delete_vendor_reply(user=current_user, review_id=review_id)
+    return APIResponse(
+        success=True,
+        message="Merchant reply removed",
+        data=updated,
+    )
+

@@ -2,7 +2,7 @@ from typing import Dict, List, Optional, Tuple
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload
 
-from app.models.order import Order, OrderItem, OrderStatus
+from app.models.order import Order, OrderItem, OrderStatus, PaymentStatus
 from app.models.review import Review
 from app.schemas.review import ReviewCreate
 
@@ -12,10 +12,10 @@ class ReviewRepository:
         self.db = db
 
     def get_by_id(self, review_id: int) -> Optional[Review]:
-        """Fetch review by ID."""
+        """Fetch review by ID with user and product associations."""
         stmt = (
             select(Review)
-            .options(joinedload(Review.user))
+            .options(joinedload(Review.user), joinedload(Review.product))
             .where(Review.id == review_id)
         )
         return self.db.execute(stmt).scalar_one_or_none()
@@ -33,12 +33,17 @@ class ReviewRepository:
             .where(
                 Order.customer_id == user_id,
                 OrderItem.product_id == product_id,
-                Order.status.in_([
-                    OrderStatus.PAID,
-                    OrderStatus.PROCESSING,
-                    OrderStatus.SHIPPED,
-                    OrderStatus.DELIVERED,
-                ]),
+                (
+                    (Order.payment_status == PaymentStatus.SUCCESS)
+                    | (
+                        Order.status.in_([
+                            OrderStatus.PAID,
+                            OrderStatus.PROCESSING,
+                            OrderStatus.SHIPPED,
+                            OrderStatus.DELIVERED,
+                        ])
+                    )
+                ),
             )
         )
         return self.db.execute(stmt).first() is not None
@@ -67,7 +72,7 @@ class ReviewRepository:
     def update(self, review: Review, update_data: dict) -> Review:
         """Update review fields."""
         for field, value in update_data.items():
-            if hasattr(review, field) and value is not None:
+            if hasattr(review, field):
                 setattr(review, field, value)
         self.db.commit()
         self.db.refresh(review)
