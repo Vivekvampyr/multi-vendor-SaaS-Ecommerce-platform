@@ -316,13 +316,79 @@ window.Nexus = {
       }
     }, 200);
   },
+
+  initProductTitleMarquee: function () {
+    // Self-contained in global mouse listeners below
+  },
 };
+
+// Global Horizontal Text Scroll on Hover for Product Titles
+(function initMarqueeScroll() {
+  function handleCardHover(e) {
+    const marquee = e.target.closest(".product-title-marquee") || 
+                    (e.target.closest(".group") ? e.target.closest(".group").querySelector(".product-title-marquee") : null);
+    if (!marquee) return;
+    const link = marquee.querySelector("a, .marquee-text");
+    if (!link) return;
+
+    if (link._marqueeActive) return;
+
+    // Unlock text constraints to accurately measure natural unconstrained text width
+    link.style.maxWidth = "none";
+    link.style.overflow = "visible";
+    link.style.textOverflow = "clip";
+
+    const containerWidth = marquee.clientWidth;
+    const textWidth = link.scrollWidth;
+    const overflowDiff = textWidth - containerWidth;
+
+    if (overflowDiff > 4) {
+      link._marqueeActive = true;
+      const speed = 35; // px per second
+      const duration = Math.max(1.4, Math.min(6, overflowDiff / speed));
+      link.style.transition = `transform ${duration}s linear 0.2s`;
+      link.style.transform = `translateX(-${overflowDiff + 6}px)`;
+    } else {
+      link.style.maxWidth = "";
+      link.style.overflow = "";
+      link.style.textOverflow = "";
+    }
+  }
+
+  function handleCardLeave(e) {
+    const marquee = e.target.closest(".product-title-marquee") || 
+                    (e.target.closest(".group") ? e.target.closest(".group").querySelector(".product-title-marquee") : null);
+    if (!marquee) return;
+
+    const card = marquee.closest(".group") || marquee;
+    if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+
+    const link = marquee.querySelector("a, .marquee-text");
+    if (!link || !link._marqueeActive) return;
+
+    link._marqueeActive = false;
+    link.style.transition = "transform 0.35s ease-out";
+    link.style.transform = "translateX(0)";
+
+    setTimeout(() => {
+      if (!link._marqueeActive) {
+        link.style.maxWidth = "";
+        link.style.overflow = "";
+        link.style.textOverflow = "";
+      }
+    }, 350);
+  }
+
+  document.addEventListener("mouseover", handleCardHover, { passive: true });
+  document.addEventListener("mouseout", handleCardLeave, { passive: true });
+})();
 
 // Initialize Cart Badge & Dynamic Handlers on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
   window.Nexus.getSessionToken();
   window.Nexus.initTheme();
   window.Nexus.updateCartBadge();
+  window.Nexus.initProductTitleMarquee();
 
   // Close user profile dropdown when clicking outside
   document.addEventListener("click", (e) => {

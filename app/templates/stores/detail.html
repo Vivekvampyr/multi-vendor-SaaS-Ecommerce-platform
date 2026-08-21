@@ -53,8 +53,8 @@
                     </div>
                     <div class="p-4 flex-1 flex flex-col justify-between">
                         <div>
-                            <h3 class="font-bold text-sm text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-zinc-300 transition-colors line-clamp-1">
-                                <a href="/products/{{ prod.slug }}">{{ prod.name }}</a>
+                            <h3 class="font-bold text-sm text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-zinc-300 transition-colors product-title-marquee">
+                                <a href="/products/{{ prod.slug }}" title="{{ prod.name }}">{{ prod.name }}</a>
                             </h3>
                             <p class="text-xs text-slate-500 dark:text-zinc-400 mt-1 line-clamp-2">{{ (prod.short_description or prod.description or '') | strip_markdown }}</p>
                         </div>

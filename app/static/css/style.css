@@ -307,6 +307,34 @@ input::-ms-clear {
   height: 0 !important;
 }
 
+/* Horizontal Text Scroll on Hover for Product Titles */
+.product-title-marquee {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  display: block;
+}
+
+.product-title-marquee a,
+.product-title-marquee .marquee-text {
+  display: inline-block;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  transition: transform 0.35s ease-out;
+  will-change: transform;
+}
+
+.product-title-marquee.is-overflowing a,
+.product-title-marquee.is-overflowing .marquee-text {
+  overflow: visible;
+  text-overflow: clip;
+}
+
 /* Smartphone Responsive Optimization */
 @media (max-width: 640px) {
   #chat-widget-btn {
@@ -324,3 +352,4 @@ input::-ms-clear {
     border-radius: 1rem;
   }
 }
+

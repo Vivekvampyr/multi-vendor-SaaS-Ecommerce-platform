@@ -48,8 +48,8 @@
                             </div>
                             <div class="p-4 flex-1 flex flex-col justify-between">
                                 <div>
-                                    <h3 class="font-bold text-sm text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-zinc-300 transition-colors line-clamp-1">
-                                        <a href="/products/{{ item.product_slug }}">{{ item.product_name }}</a>
+                                    <h3 class="font-bold text-sm text-slate-900 dark:text-white hover:text-slate-600 dark:hover:text-zinc-300 transition-colors product-title-marquee">
+                                        <a href="/products/{{ item.product_slug }}" title="{{ item.product_name }}">{{ item.product_name }}</a>
                                     </h3>
                                     <p class="text-sm text-slate-900 dark:text-white font-black mt-1">${{ "%.2f"|format(item.price) }}</p>
                                 </div>
