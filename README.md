@@ -263,12 +263,13 @@ uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 
 ---
 
+
 ## 🧪 Running Automated Tests
 
 ```bash
 pytest -v
 ```
-*(All 98 unit and integration tests passing)*
+*(All 108 unit and integration tests passing)*
 
 ---
 
