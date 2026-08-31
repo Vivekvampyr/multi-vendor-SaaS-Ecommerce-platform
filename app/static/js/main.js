@@ -138,6 +138,10 @@ window.Nexus = {
   },
 
   addToCart: async function (productId, quantity = 1) {
+    if (window.NexusCurrentUser && window.NexusCurrentUser.role === "VENDOR") {
+      this.showToast("A Customer account is required to perform this action.", "warning");
+      return;
+    }
     try {
       await this.apiFetch("/api/v1/cart/items", {
         method: "POST",
@@ -152,6 +156,10 @@ window.Nexus = {
 
   // Wishlist Actions
   toggleWishlist: async function (productId, btnElement) {
+    if (window.NexusCurrentUser && window.NexusCurrentUser.role === "VENDOR") {
+      this.showToast("A Customer account is required to perform this action.", "warning");
+      return;
+    }
     try {
       const resp = await this.apiFetch("/api/v1/wishlist/toggle", {
         method: "POST",

@@ -2,10 +2,10 @@ import logging
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import BadRequestException, NotFoundException
+from app.core.exceptions import BadRequestException, ForbiddenException, NotFoundException
 from app.models.cart import Cart
 from app.models.product import ProductStatus
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.repositories.cart import CartRepository
 from app.repositories.product import ProductRepository
 from app.schemas.cart import CartItemAdd, CartItemOut, CartItemUpdate, CartOut
@@ -77,6 +77,9 @@ class CartService:
         item_in: CartItemAdd,
     ) -> CartOut:
         """Add product to cart with inventory availability checks."""
+        if user and user.role == UserRole.VENDOR:
+            raise ForbiddenException("A Customer account is required to perform this action.")
+
         prod = self.prod_repo.get_by_id(item_in.product_id)
         if not prod or prod.status != ProductStatus.PUBLISHED or not prod.is_approved:
             raise NotFoundException(message=f"Product with ID {item_in.product_id} is not available for purchase")

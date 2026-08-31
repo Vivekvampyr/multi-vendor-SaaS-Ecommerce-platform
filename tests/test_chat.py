@@ -122,23 +122,24 @@ def test_chat_role_permissions_matrix(
     )
     assert cust_to_cust.status_code == 403
 
-    # 4. Vendor <-> Vendor (Forbidden)
+    # 4. Vendor <-> Vendor (Allowed)
     vendor_to_vendor = client.post(
         "/api/v1/chat/messages",
-        json={"receiver_id": vendor2.id, "vendor_id": test_vendor.id, "message": "Hey competitor!"},
+        json={"receiver_id": vendor2.id, "vendor_id": test_vendor.id, "message": "Hey partner merchant!"},
         headers=vendor_headers,
     )
-    assert vendor_to_vendor.status_code == 403
+    assert vendor_to_vendor.status_code == 201
 
 
-def test_send_message_to_self_fails(client, customer_headers, test_customer):
+def test_send_message_to_self_allowed(client, vendor_headers, test_vendor):
     payload = {
-        "receiver_id": test_customer.id,
-        "vendor_id": test_customer.id,
-        "message": "Talking to myself",
+        "receiver_id": test_vendor.id,
+        "vendor_id": test_vendor.id,
+        "message": "Testing own store chat notes",
     }
-    resp = client.post("/api/v1/chat/messages", json=payload, headers=customer_headers)
-    assert resp.status_code == 400
+    resp = client.post("/api/v1/chat/messages", json=payload, headers=vendor_headers)
+    assert resp.status_code == 201
+    assert resp.json()["data"]["message"] == "Testing own store chat notes"
 
 
 def test_websocket_chat_authentication_and_live_messaging(

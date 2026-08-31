@@ -60,6 +60,17 @@
             }
         }
     </script>
+    <script>
+        {% if current_user %}
+        window.NexusCurrentUser = {
+            id: {{ current_user.id }},
+            role: "{{ current_user.role.value }}",
+            fullName: "{{ current_user.full_name|replace('"', '\\"') }}"
+        };
+        {% else %}
+        window.NexusCurrentUser = null;
+        {% endif %}
+    </script>
     <!-- Google Fonts Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

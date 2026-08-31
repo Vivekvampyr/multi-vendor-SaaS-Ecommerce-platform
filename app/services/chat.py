@@ -46,24 +46,24 @@ class ChatService:
         """
         Persists message and dispatches real-time WebSocket event to receiver if online.
         """
-        if sender.id == msg_in.receiver_id:
-            raise BadRequestException("You cannot send a message to yourself")
-
         receiver = self.user_repo.get_by_id(msg_in.receiver_id)
         if not receiver:
             raise NotFoundException(message=f"Recipient user ID {msg_in.receiver_id} not found")
 
         # Enforce Chat Role Permissions:
-        # 1. Admin <-> Vendor (Allowed)
-        # 2. Vendor <-> Customer (Allowed)
-        # 3. Admin <-> Admin (Allowed)
-        # 4. Customer <-> Admin (Forbidden)
-        # 5. Customer <-> Customer (Forbidden)
-        # 6. Vendor <-> Vendor (Forbidden)
+        # 1. Self message (Testing own store / store notes) (Allowed)
+        # 2. Admin <-> Vendor (Allowed)
+        # 3. Vendor <-> Customer (Allowed)
+        # 4. Vendor <-> Vendor (Allowed)
+        # 5. Admin <-> Admin (Allowed)
+        # 6. Customer <-> Admin (Forbidden)
+        # 7. Customer <-> Customer (Forbidden)
         roles = {sender.role, receiver.role}
         allowed = (
-            (UserRole.ADMIN in roles and UserRole.VENDOR in roles)
+            (sender.id == receiver.id)
+            or (UserRole.ADMIN in roles and UserRole.VENDOR in roles)
             or (UserRole.VENDOR in roles and UserRole.CUSTOMER in roles)
+            or (sender.role == UserRole.VENDOR and receiver.role == UserRole.VENDOR)
             or (sender.role == UserRole.ADMIN and receiver.role == UserRole.ADMIN)
         )
         if not allowed:
@@ -79,12 +79,14 @@ class ChatService:
         )
         msg_out = self._map_to_out(msg)
 
-        # Dispatch real-time WebSocket packet to receiver if online
-        payload = {
-            "type": "new_message",
-            "message": msg_out.model_dump(mode="json"),
-        }
-        sent = await ws_manager.send_to_user(user_id=msg_in.receiver_id, data=payload)
+        # Dispatch real-time WebSocket packet to receiver if online (and not self)
+        sent = False
+        if sender.id != msg_in.receiver_id:
+            payload = {
+                "type": "new_message",
+                "message": msg_out.model_dump(mode="json"),
+            }
+            sent = await ws_manager.send_to_user(user_id=msg_in.receiver_id, data=payload)
 
         return msg_out, sent
 

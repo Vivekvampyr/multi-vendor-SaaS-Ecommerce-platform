@@ -35,7 +35,68 @@
                 </button>
             </div>
 
-            <div class="glass-panel rounded-3xl overflow-hidden">
+            <!-- Mobile Card View (Visible on Mobile / Small Screens) -->
+            <div class="block md:hidden space-y-3">
+                {% for p in products %}
+                    <div class="glass-panel p-4 rounded-2xl space-y-3" id="prod-card-{{ p.id }}">
+                        <div class="flex items-start space-x-3">
+                            {% set primary_img = (p.images|selectattr('is_primary')|first) or (p.images[0] if p.images else None) %}
+                            <div class="w-14 h-14 rounded-xl bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 p-1 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                {% if primary_img %}
+                                    <img src="{{ primary_img.image_url }}" alt="{{ p.name }}" class="max-h-full max-w-full object-contain">
+                                {% else %}
+                                    <span class="text-[9px] font-bold text-slate-400 dark:text-zinc-500">No Img</span>
+                                {% endif %}
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-start justify-between gap-2">
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-xs leading-snug line-clamp-2">{{ p.name }}</h4>
+                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold flex-shrink-0 {% if p.status.value == 'PUBLISHED' %}bg-slate-200 dark:bg-zinc-800 text-slate-800 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700{% else %}bg-slate-100 dark:bg-zinc-900 text-slate-500 dark:text-zinc-400{% endif %}">
+                                        {{ p.status.value }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between mt-1 text-[11px]">
+                                    <span class="font-mono text-slate-400 dark:text-zinc-500">SKU: {{ p.sku }}</span>
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="font-black text-slate-900 dark:text-white">${{ "%.2f"|format(p.price) }}</span>
+                                        {% if p.compare_at_price and p.compare_at_price > p.price %}
+                                            <span class="text-[10px] text-slate-400 line-through">${{ "%.2f"|format(p.compare_at_price) }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-[11px] pt-2 border-t border-slate-100 dark:border-zinc-800/60">
+                            <span class="text-slate-500 dark:text-zinc-400">Stock: <strong class="{% if p.stock_quantity > 0 %}text-emerald-600 dark:text-emerald-400{% else %}text-rose-500{% endif %}">{{ p.stock_quantity }} units</strong></span>
+                            <span class="text-slate-500 dark:text-zinc-400">{{ p.category.name if p.category else 'General' }}</span>
+                        </div>
+
+                        <!-- Mobile Action Buttons Row -->
+                        <div class="grid grid-cols-4 gap-1.5 pt-1">
+                            <a href="/products/{{ p.slug }}" target="_blank" class="py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-lg text-[11px] font-semibold text-center transition-colors">
+                                View ↗
+                            </a>
+                            <button type="button" onclick="openEditProductModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}', '{{ p.sku|replace("'", "\\'") }}', {{ p.category_id }}, {{ p.price }}, {{ p.compare_at_price or 'null' }}, {{ p.stock_quantity }}, '{{ p.status.value }}', '{{ (p.short_description or '')|replace("'", "\\'")|replace("\n", " ") }}', '{{ (p.description or '')|replace("'", "\\'")|replace("\n", " ") }}')" class="py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 rounded-lg text-[11px] font-semibold text-center transition-colors cursor-pointer">
+                                Edit
+                            </button>
+                            <button type="button" onclick="openUploadImageModal({{ p.id }}, '{{ p.name|replace("'", "\\'") }}')" class="py-1.5 px-2 bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 border border-slate-200 dark:border-zinc-700 rounded-lg text-[11px] font-semibold text-center transition-colors cursor-pointer">
+                                Photos
+                            </button>
+                            <button type="button" onclick="handleDeleteProduct({{ p.id }})" class="py-1.5 px-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg text-[11px] font-bold text-center transition-colors cursor-pointer" title="Delete Product">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="glass-panel p-8 rounded-2xl text-center text-slate-500 text-xs">
+                        No products added yet. Click "+ Add New Product" to create your first listing.
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Desktop Table View (Hidden on mobile) -->
+            <div class="hidden md:block glass-panel rounded-3xl overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs min-w-[680px]">
                         <thead class="bg-slate-100 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 text-slate-500 dark:text-zinc-400 font-semibold">
@@ -502,6 +563,8 @@ async function handleDeleteProduct(productId) {
         window.Nexus.showToast("Product deleted successfully", "info");
         const row = document.getElementById(`prod-row-${productId}`);
         if (row) row.remove();
+        const card = document.getElementById(`prod-card-${productId}`);
+        if (card) card.remove();
     } catch(err) {
         window.Nexus.showToast(err.message || "Failed to delete product", "error");
     }

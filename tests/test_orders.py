@@ -42,6 +42,16 @@ def test_cart_operations_lifecycle(client, customer_headers, test_product):
     assert del_resp.json()["data"]["total_items"] == 0
 
 
+def test_vendor_cannot_add_to_cart(client, vendor_headers, test_product):
+    resp = client.post(
+        "/api/v1/cart/items",
+        json={"product_id": test_product.id, "quantity": 1},
+        headers=vendor_headers,
+    )
+    assert resp.status_code == 403
+    assert "Customer account is required" in resp.json()["error"]["message"]
+
+
 def test_guest_cart_with_session_token(client, test_product):
     session_headers = {"X-Session-Token": "guest-session-12345"}
     add_resp = client.post(

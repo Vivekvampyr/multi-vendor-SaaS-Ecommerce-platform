@@ -155,7 +155,8 @@
                     </div>
                 </div>
                 <button
-                    onclick="openChatThread({{ product.vendor_id }}, '{{ product.vendor.full_name }}', {{ product.vendor_id }}); toggleChatWindow();"
+                    type="button"
+                    onclick="initiateSellerChat({{ product.vendor_id }}, '{{ product.vendor.full_name }}', {{ product.vendor_id }});"
                     class="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 text-xs font-bold shadow-sm transition-colors cursor-pointer">
                     Chat with Seller
                 </button>

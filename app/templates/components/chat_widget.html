@@ -48,6 +48,15 @@ let currentVendorId = null;
 let chatSocket = null;
 
 function toggleChatWindow() {
+    const token = window.Nexus ? window.Nexus.getToken() : null;
+    if (!token && !window.NexusCurrentUser) {
+        if (window.Nexus && window.Nexus.showToast) {
+            window.Nexus.showToast("Please log in or sign up to view your chats", "info");
+        }
+        const currentUrl = window.location.pathname + window.location.search;
+        window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+        return;
+    }
     const win = document.getElementById("chat-window");
     const isHidden = win.classList.contains("hidden");
     if (isHidden) {
@@ -57,6 +66,25 @@ function toggleChatWindow() {
     } else {
         win.classList.add("hidden");
     }
+}
+
+function initiateSellerChat(peerId, peerName, vendorId) {
+    const token = window.Nexus ? window.Nexus.getToken() : null;
+    if (!token && !window.NexusCurrentUser) {
+        if (window.Nexus && window.Nexus.showToast) {
+            window.Nexus.showToast("Please log in or sign up to chat with merchants", "info");
+        }
+        const currentUrl = window.location.pathname + window.location.search;
+        window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+        return;
+    }
+    if (window.NexusCurrentUser && window.NexusCurrentUser.role === "VENDOR") {
+        if (window.Nexus && window.Nexus.showToast) {
+            window.Nexus.showToast("A Customer account is required to perform this action.", "warning");
+        }
+        return;
+    }
+    openChatThread(peerId, peerName, vendorId);
 }
 
 function initChatSocket() {
@@ -78,6 +106,12 @@ function initChatSocket() {
                 } else {
                     updateUnreadBadge();
                 }
+            } else if (data.type === "ack") {
+                // Sent message ACK
+            } else if (data.type === "error") {
+                if (window.Nexus && window.Nexus.showToast) {
+                    window.Nexus.showToast(data.message || "Chat error", "error");
+                }
             }
         } catch(e) { console.error("WS Parse error", e); }
     };
@@ -85,6 +119,26 @@ function initChatSocket() {
 
 async function loadConversations() {
     const view = document.getElementById("chat-conversations-view");
+    const token = window.Nexus ? window.Nexus.getToken() : null;
+    if (!token && !window.NexusCurrentUser) {
+        view.innerHTML = `
+            <div class="p-6 text-center space-y-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-zinc-800 flex items-center justify-center mx-auto text-slate-500">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h4 class="font-bold text-xs text-slate-900 dark:text-white">Authentication Required</h4>
+                <p class="text-[11px] text-slate-500 dark:text-zinc-400 leading-relaxed">Please log in or create an account to start chatting with verified store merchants.</p>
+                <div class="flex items-center justify-center gap-2 pt-2">
+                    <a href="/login" class="px-3.5 py-1.5 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-xs font-bold shadow-xs">Log In</a>
+                    <a href="/register" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-800 dark:text-zinc-200 text-xs font-bold">Sign Up</a>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
     try {
         const resp = await window.Nexus.apiFetch("/api/v1/chat/conversations");
         const convs = resp.data || [];
@@ -93,7 +147,7 @@ async function loadConversations() {
             return;
         }
         view.innerHTML = convs.map(c => `
-            <div onclick="openChatThread(${c.other_user_id}, '${c.other_user_name}', ${c.vendor_id})" class="p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900/60 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 cursor-pointer transition-all flex items-center justify-between">
+            <div onclick="openChatThread(${c.other_user_id}, '${c.other_user_name.replace(/'/g, "\\'")}', ${c.vendor_id})" class="p-2.5 rounded-xl bg-slate-50 dark:bg-zinc-900/60 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800 cursor-pointer transition-all flex items-center justify-between">
                 <div>
                     <h4 class="text-xs font-bold text-slate-900 dark:text-white">${c.other_user_name} ${c.store_name ? `<span class="text-[10px] text-slate-500 dark:text-zinc-400 font-medium">(${c.store_name})</span>` : ''}</h4>
                     <p class="text-[11px] text-slate-500 dark:text-zinc-400 truncate max-w-[200px] mt-0.5">${c.last_message}</p>
@@ -107,13 +161,31 @@ async function loadConversations() {
 }
 
 async function openChatThread(peerId, peerName, vendorId) {
+    const token = window.Nexus ? window.Nexus.getToken() : null;
+    if (!token && !window.NexusCurrentUser) {
+        if (window.Nexus && window.Nexus.showToast) {
+            window.Nexus.showToast("Please log in or sign up to chat with merchants", "info");
+        }
+        const currentUrl = window.location.pathname + window.location.search;
+        window.location.href = `/login?next=${encodeURIComponent(currentUrl)}`;
+        return;
+    }
     currentPeerId = peerId;
     currentVendorId = vendorId || peerId;
-    document.getElementById("chat-header-title").textContent = peerName;
+    
+    // Check if chatting with oneself
+    const isSelf = window.NexusCurrentUser && window.NexusCurrentUser.id === peerId;
+    document.getElementById("chat-header-title").textContent = isSelf ? `${peerName} (You)` : peerName;
     document.getElementById("chat-back-btn").classList.remove("hidden");
     document.getElementById("chat-conversations-view").classList.add("hidden");
     document.getElementById("chat-messages-view").classList.remove("hidden");
     document.getElementById("chat-input-form").classList.remove("hidden");
+
+    const win = document.getElementById("chat-window");
+    if (win && win.classList.contains("hidden")) {
+        win.classList.remove("hidden");
+        initChatSocket();
+    }
 
     const stream = document.getElementById("chat-messages-view");
     stream.innerHTML = `<p class="text-xs text-slate-400 dark:text-zinc-500 text-center py-4">Loading history...</p>`;
@@ -121,14 +193,18 @@ async function openChatThread(peerId, peerName, vendorId) {
         const resp = await window.Nexus.apiFetch(`/api/v1/chat/history/${peerId}`);
         const messages = resp.data || [];
         stream.innerHTML = "";
-        messages.forEach(m => {
-            const isMe = m.sender_id !== peerId;
-            appendMessageBubble(m.message, isMe, m.created_at);
-        });
+        if (messages.length === 0) {
+            stream.innerHTML = `<p class="text-xs text-slate-400 dark:text-zinc-500 text-center py-8">Start the conversation with ${peerName}!</p>`;
+        } else {
+            messages.forEach(m => {
+                const isMe = window.NexusCurrentUser ? (m.sender_id === window.NexusCurrentUser.id) : (m.sender_id !== peerId);
+                appendMessageBubble(m.message, isMe, m.created_at);
+            });
+        }
         stream.scrollTop = stream.scrollHeight;
         await window.Nexus.apiFetch(`/api/v1/chat/read/${peerId}`, { method: "PUT" });
     } catch(err) {
-        stream.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">Error loading messages</p>`;
+        stream.innerHTML = `<p class="text-xs text-rose-500 text-center py-4">${err.message || 'Error loading messages'}</p>`;
     }
 }
 
@@ -171,14 +247,20 @@ async function handleSendMessage(e) {
             message: text
         }));
     } else {
-        await window.Nexus.apiFetch("/api/v1/chat/messages", {
-            method: "POST",
-            body: JSON.stringify({
-                receiver_id: currentPeerId,
-                vendor_id: currentVendorId,
-                message: text
-            })
-        });
+        try {
+            await window.Nexus.apiFetch("/api/v1/chat/messages", {
+                method: "POST",
+                body: JSON.stringify({
+                    receiver_id: currentPeerId,
+                    vendor_id: currentVendorId,
+                    message: text
+                })
+            });
+        } catch(err) {
+            if (window.Nexus && window.Nexus.showToast) {
+                window.Nexus.showToast(err.message || "Failed to send message", "error");
+            }
+        }
     }
 }
 </script>
