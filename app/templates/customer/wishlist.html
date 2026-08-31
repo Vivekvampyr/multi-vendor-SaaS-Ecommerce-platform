@@ -82,7 +82,12 @@ async function removeFromWishlist(productId) {
     try {
         await window.Nexus.apiFetch(`/api/v1/wishlist/${productId}`, { method: "DELETE" });
         window.Nexus.showToast("Item removed from wishlist", "info");
-        document.getElementById(`wishlist-card-${productId}`)?.remove();
+        const card = document.getElementById(`wishlist-card-${productId}`);
+        if (card) card.remove();
+        const grid = document.querySelector(".grid");
+        if (grid && grid.children.length === 0) {
+            window.location.reload();
+        }
     } catch(err) {
         window.Nexus.showToast(err.message, "error");
     }

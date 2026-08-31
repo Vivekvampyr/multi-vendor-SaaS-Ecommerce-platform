@@ -6,7 +6,7 @@ from app.core.database import get_db
 from app.core.dependencies import require_customer
 from app.models.user import User
 from app.schemas.common import APIResponse, MessageResponse
-from app.schemas.wishlist import WishlistItemAdd, WishlistItemOut
+from app.schemas.wishlist import WishlistItemAdd, WishlistItemOut, WishlistToggleOut
 from app.services.wishlist import WishlistService
 
 router = APIRouter(prefix="/wishlist", tags=["Customer Wishlist"])
@@ -30,6 +30,26 @@ def get_my_wishlist(
         success=True,
         message=f"Retrieved {len(items)} wishlist items",
         data=items,
+    )
+
+
+@router.post(
+    "/toggle",
+    response_model=APIResponse[WishlistToggleOut],
+    status_code=status.HTTP_200_OK,
+    summary="Toggle product in customer wishlist (Customer only)",
+)
+def toggle_wishlist(
+    item_in: WishlistItemAdd,
+    customer: User = Depends(require_customer),
+    db: Session = Depends(get_db),
+) -> APIResponse[WishlistToggleOut]:
+    wishlist_service = WishlistService(db)
+    result = wishlist_service.toggle_wishlist(user=customer, product_id=item_in.product_id)
+    return APIResponse(
+        success=True,
+        message=result["message"],
+        data=WishlistToggleOut(in_wishlist=result["in_wishlist"], product_id=item_in.product_id),
     )
 
 

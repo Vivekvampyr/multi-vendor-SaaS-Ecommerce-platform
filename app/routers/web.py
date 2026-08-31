@@ -181,6 +181,14 @@ def get_category_icon_info(category) -> dict:
     return {"icon_url": None, "fallback_emoji": "📦"}
 
 
+def _get_user_wishlist_ids(db: Session, user: Optional[User]) -> set[int]:
+    if not user or user.role != UserRole.CUSTOMER:
+        return set()
+    wishlist_service = WishlistService(db)
+    items = wishlist_service.list_wishlist(user=user, limit=200)
+    return {item.product_id for item in items}
+
+
 templates.env.globals["get_category_icon"] = get_category_icon_info
 
 web_router = APIRouter(include_in_schema=False)
@@ -203,6 +211,7 @@ async def home_page(
     plans, _ = plan_service.list_plans(only_active=True)
     categories = cat_repo.list(only_active=True, skip=0, limit=8)
     products, _ = prod_service.list_products(skip=0, limit=8)
+    user_wishlist_ids = _get_user_wishlist_ids(db, current_user)
 
     active_plan_id = None
     if current_user and current_user.role == UserRole.VENDOR:
@@ -221,6 +230,7 @@ async def home_page(
             "categories": categories,
             "products": products,
             "active_plan_id": active_plan_id,
+            "user_wishlist_ids": user_wishlist_ids,
         },
     )
 
@@ -276,6 +286,7 @@ async def products_catalog_page(
         skip=0,
         limit=50,
     )
+    user_wishlist_ids = _get_user_wishlist_ids(db, current_user)
 
     return templates.TemplateResponse(
         request=request,
@@ -287,6 +298,7 @@ async def products_catalog_page(
             "products": products,
             "selected_category": category,
             "search_query": search,
+            "user_wishlist_ids": user_wishlist_ids,
         },
     )
 
@@ -318,6 +330,8 @@ async def product_detail_page(
             user_review = review_service._map_to_out(user_rev_model)
             has_reviewed = True
 
+    user_wishlist_ids = _get_user_wishlist_ids(db, current_user)
+
     return templates.TemplateResponse(
         request=request,
         name="products/detail.html",
@@ -330,6 +344,7 @@ async def product_detail_page(
             "has_reviewed": has_reviewed,
             "past_purchase": past_purchase,
             "user_review": user_review,
+            "user_wishlist_ids": user_wishlist_ids,
         },
     )
 
@@ -346,6 +361,7 @@ async def store_detail_page(
 
     prod_service = ProductService(db)
     products, _ = prod_service.list_products(vendor_id=store.user_id, skip=0, limit=50)
+    user_wishlist_ids = _get_user_wishlist_ids(db, current_user)
 
     return templates.TemplateResponse(
         request=request,
@@ -355,6 +371,7 @@ async def store_detail_page(
             "current_user": current_user,
             "store": store,
             "products": products,
+            "user_wishlist_ids": user_wishlist_ids,
         },
     )
 

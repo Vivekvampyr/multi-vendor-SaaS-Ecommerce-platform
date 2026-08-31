@@ -47,6 +47,19 @@ class WishlistService:
         item = self.wishlist_repo.add_item(user_id=user.id, product_id=product_id)
         return self._map_to_out(item)
 
+    def toggle_wishlist(self, user: User, product_id: int) -> dict:
+        """Toggle product in customer wishlist (add if missing, remove if present)."""
+        existing = self.wishlist_repo.get_item(user_id=user.id, product_id=product_id)
+        if existing:
+            self.wishlist_repo.remove_item(user_id=user.id, product_id=product_id)
+            return {"in_wishlist": False, "message": "Item removed from wishlist"}
+        else:
+            prod = self.prod_repo.get_by_id(product_id)
+            if not prod or not prod.is_approved:
+                raise NotFoundException(message=f"Product with ID {product_id} not found")
+            self.wishlist_repo.add_item(user_id=user.id, product_id=product_id)
+            return {"in_wishlist": True, "message": "Saved to wishlist!"}
+
     def remove_from_wishlist(self, user: User, product_id: int) -> bool:
         """Remove product from customer wishlist."""
         return self.wishlist_repo.remove_item(user_id=user.id, product_id=product_id)

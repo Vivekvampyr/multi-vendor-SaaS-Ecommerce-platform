@@ -38,6 +38,23 @@ def test_wishlist_lifecycle(client, customer_headers, test_product):
     list_resp_after = client.get("/api/v1/wishlist", headers=customer_headers)
     assert len(list_resp_after.json()["data"]) == 0
 
+    # 6. Test Wishlist Toggle
+    toggle1 = client.post(
+        "/api/v1/wishlist/toggle",
+        json={"product_id": test_product.id},
+        headers=customer_headers,
+    )
+    assert toggle1.status_code == 200
+    assert toggle1.json()["data"]["in_wishlist"] is True
+
+    toggle2 = client.post(
+        "/api/v1/wishlist/toggle",
+        json={"product_id": test_product.id},
+        headers=customer_headers,
+    )
+    assert toggle2.status_code == 200
+    assert toggle2.json()["data"]["in_wishlist"] is False
+
 
 def test_customer_saved_addresses_management(client, customer_headers):
     # 1. Create first address (should auto-become default)

@@ -7,6 +7,11 @@ class WishlistItemAdd(BaseModel):
     product_id: int = Field(description="Product ID to add to wishlist")
 
 
+class WishlistToggleOut(BaseModel):
+    in_wishlist: bool
+    product_id: int
+
+
 class WishlistItemOut(BaseModel):
     id: int
     user_id: int

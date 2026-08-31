@@ -151,15 +151,53 @@ window.Nexus = {
   },
 
   // Wishlist Actions
-  addToWishlist: async function (productId) {
+  toggleWishlist: async function (productId, btnElement) {
     try {
-      await this.apiFetch("/api/v1/wishlist", {
+      const resp = await this.apiFetch("/api/v1/wishlist/toggle", {
         method: "POST",
         body: JSON.stringify({ product_id: parseInt(productId) }),
       });
-      this.showToast("Saved to wishlist!", "success");
+      const inWishlist = resp && resp.data ? Boolean(resp.data.in_wishlist) : false;
+      const msg = (resp && resp.message) ? resp.message : (inWishlist ? "Saved to wishlist!" : "Item removed from wishlist");
+      this.showToast(msg, inWishlist ? "success" : "info");
+
+      // Update all matching wishlist buttons across the page
+      document.querySelectorAll(`[data-add-to-wishlist="${productId}"]`).forEach((btn) => {
+        this.updateWishlistBtnState(btn, inWishlist);
+      });
     } catch (err) {
-      this.showToast(err.message, "error");
+      if (err.message && (err.message.includes("401") || err.message.includes("log in") || err.message.includes("Not authenticated") || err.message.includes("Could not validate") || err.message.includes("Unauthorized"))) {
+        this.showToast("Please log in as a customer to manage your wishlist.", "error");
+        setTimeout(() => {
+          window.location.href = `/login?next=${encodeURIComponent(window.location.pathname)}`;
+        }, 800);
+      } else {
+        this.showToast(err.message, "error");
+      }
+    }
+  },
+
+  addToWishlist: function (productId, btnElement) {
+    return this.toggleWishlist(productId, btnElement);
+  },
+
+  updateWishlistBtnState: function (btn, inWishlist) {
+    if (!btn) return;
+    btn.setAttribute("data-in-wishlist", inWishlist ? "true" : "false");
+    btn.setAttribute("title", inWishlist ? "Remove from Wishlist" : "Save to Wishlist");
+    btn.setAttribute("aria-label", inWishlist ? "Remove from Wishlist" : "Save to Wishlist");
+
+    const svg = btn.querySelector("svg");
+    if (svg) {
+      if (inWishlist) {
+        svg.classList.remove("text-slate-400", "dark:text-zinc-400", "text-slate-500");
+        svg.classList.add("text-rose-500", "fill-rose-500");
+        svg.setAttribute("fill", "currentColor");
+      } else {
+        svg.classList.remove("text-rose-500", "fill-rose-500");
+        svg.classList.add("text-slate-400", "dark:text-zinc-400");
+        svg.setAttribute("fill", "none");
+      }
     }
   },
 
@@ -459,8 +497,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("[data-add-to-wishlist]").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       const prodId = btn.getAttribute("data-add-to-wishlist");
-      window.Nexus.addToWishlist(prodId);
+      window.Nexus.toggleWishlist(prodId, btn);
     });
   });
 });

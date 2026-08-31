@@ -130,10 +130,12 @@
                         class="flex-1 py-3 px-5 sm:px-6 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-zinc-100 dark:hover:bg-white dark:text-zinc-950 font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center space-x-2 cursor-pointer">
                         <span>Add to Shopping Cart</span>
                     </button>
-                    <button data-add-to-wishlist="{{ product.id }}"
-                        class="p-3 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-rose-500 text-slate-500 dark:text-zinc-400 hover:text-rose-500 transition-colors cursor-pointer"
-                        title="Save to Wishlist">
-                        ♥
+                    <button type="button" data-add-to-wishlist="{{ product.id }}" data-in-wishlist="{{ 'true' if (user_wishlist_ids and product.id in user_wishlist_ids) else 'false' }}"
+                        class="p-3 rounded-xl bg-slate-100 dark:bg-zinc-900 border border-slate-300 dark:border-zinc-800 hover:border-rose-500 text-slate-500 dark:text-zinc-400 hover:text-rose-500 transition-colors cursor-pointer flex items-center justify-center"
+                        title="{{ 'Remove from Wishlist' if (user_wishlist_ids and product.id in user_wishlist_ids) else 'Save to Wishlist' }}" aria-label="{{ 'Remove from Wishlist' if (user_wishlist_ids and product.id in user_wishlist_ids) else 'Save to Wishlist' }}">
+                        <svg class="w-5 h-5 transition-colors {% if user_wishlist_ids and product.id in user_wishlist_ids %}text-rose-500 fill-rose-500{% else %}text-slate-400 dark:text-zinc-400{% endif %}" fill="{% if user_wishlist_ids and product.id in user_wishlist_ids %}currentColor{% else %}none{% endif %}" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
                     </button>
                 </div>
             </div>
