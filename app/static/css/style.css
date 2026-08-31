@@ -335,6 +335,26 @@ input::-ms-clear {
   text-overflow: clip;
 }
 
+/* Universal Cart Badge Styling */
+.cart-count-badge {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.cart-count-badge.hidden {
+  display: none !important;
+}
+
 /* Smartphone Responsive Optimization */
 @media (max-width: 640px) {
   #chat-widget-btn {
@@ -352,4 +372,5 @@ input::-ms-clear {
     border-radius: 1rem;
   }
 }
+
 

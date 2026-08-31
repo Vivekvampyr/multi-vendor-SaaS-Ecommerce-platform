@@ -52,15 +52,15 @@
                     {{ product.category.name if product.category else 'General' }}
                 </span>
                 <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white mt-3">{{ product.name }}</h1>
-                <div class="flex items-center space-x-3 mt-2 text-xs text-slate-500 dark:text-zinc-400">
-                    <span>SKU: <code
-                            class="text-slate-700 dark:text-zinc-300 font-mono font-semibold">{{ product.sku }}</code></span>
-                    <span>•</span>
-                    <span
-                        class="{% if product.stock_quantity > 0 %}text-emerald-600 dark:text-emerald-400{% else %}text-rose-500{% endif %} font-bold">
-                        {% if product.stock_quantity > 0 %}● In Stock ({{ product.stock_quantity }} units){% else %}○
-                        Out of Stock{% endif %}
-                    </span>
+                <div class="flex flex-wrap items-center gap-2 mt-2.5 text-xs">
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-slate-600 dark:text-zinc-400 font-medium">
+                        <span>SKU:</span>
+                        <code class="text-slate-900 dark:text-zinc-200 font-mono font-semibold text-[11px]">{{ product.sku }}</code>
+                    </div>
+                    <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg {% if product.stock_quantity > 0 %}bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20{% else %}bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20{% endif %} font-semibold text-xs">
+                        <span class="w-2 h-2 rounded-full {% if product.stock_quantity > 0 %}bg-emerald-500 animate-pulse{% else %}bg-rose-500{% endif %}"></span>
+                        <span>{% if product.stock_quantity > 0 %}In Stock ({{ product.stock_quantity }} units){% else %}Out of Stock{% endif %}</span>
+                    </div>
                 </div>
                 {% if product.short_description %}
                 <p

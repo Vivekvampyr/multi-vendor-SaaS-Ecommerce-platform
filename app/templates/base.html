@@ -65,7 +65,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/theme.css?v=2">
-    <link rel="stylesheet" href="/static/css/style.css?v=6">
+    <link rel="stylesheet" href="/static/css/style.css?v=7">
     <script src="/static/js/theme-config.js?v=2"></script>
     {% block head %}{% endblock %}
 </head>
@@ -119,14 +119,14 @@
                         </svg>
                     </a>
 
-                    <!-- Theme Toggle Button -->
-                    <button type="button" onclick="window.Nexus.toggleTheme(event)" class="theme-toggle-btn hidden md:flex w-10 h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors cursor-pointer select-none flex-shrink-0" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+                    <!-- Theme Toggle Button (Sun/Moon Icon Only) -->
+                    <button type="button" onclick="window.Nexus.toggleTheme(event)" class="theme-toggle-btn flex w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors cursor-pointer select-none flex-shrink-0" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
                         <!-- Sun Icon (shown in Dark mode to switch to light) -->
-                        <svg class="theme-icon-sun w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="theme-icon-sun w-4.5 h-4.5 sm:w-5 sm:h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
                         <!-- Moon Icon (shown in Light mode to switch to dark) -->
-                        <svg class="theme-icon-moon w-5 h-5 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="theme-icon-moon w-4.5 h-4.5 sm:w-5 sm:h-5 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
                         </svg>
                     </button>
@@ -136,7 +136,7 @@
                         <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
                         </svg>
-                        <span class="cart-count-badge absolute -top-1 -right-1 w-4.5 h-4.5 sm:w-5 sm:h-5 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-950 text-[9px] sm:text-[10px] font-black rounded-full flex items-center justify-center hidden shadow-sm">0</span>
+                        <span class="cart-count-badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-950 text-[10px] font-black rounded-full flex items-center justify-center hidden shadow-sm leading-none border border-white dark:border-zinc-950">0</span>
                     </a>
 
                     <!-- Desktop User Account / Portal Dropdown -->
@@ -224,21 +224,22 @@
                     <div class="w-8 h-8 rounded-lg bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-950 flex items-center justify-center font-black text-sm">N</div>
                     <span class="font-black text-base text-slate-900 dark:text-white">NexusSaaS</span>
                 </a>
-                <button type="button" onclick="window.Nexus.closeMobileDrawer()" class="p-1.5 rounded-lg text-slate-400 hover:text-black dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 cursor-pointer">
-                    <svg class="w-5 h-5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Theme Mode Switch Card in Drawer -->
-            <div class="p-3 rounded-2xl bg-slate-100 dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <span class="text-xs font-bold text-slate-800 dark:text-zinc-200">Theme Appearance</span>
+                    <!-- Sun/Moon Icon Only Theme Button for Mobile Drawer -->
+                    <button type="button" onclick="window.Nexus.toggleTheme(event)" class="theme-toggle-btn w-8 h-8 rounded-lg border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 flex items-center justify-center transition-colors cursor-pointer select-none" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+                        <svg class="theme-icon-sun w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                        <svg class="theme-icon-moon w-4 h-4 hidden pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                    <button type="button" onclick="window.Nexus.closeMobileDrawer()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-black dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 border border-slate-200 dark:border-zinc-800 flex items-center justify-center cursor-pointer" title="Close Menu" aria-label="Close Menu">
+                        <svg class="w-4.5 h-4.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
-                <button type="button" onclick="window.Nexus.toggleTheme(event)" class="px-3 py-1.5 rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-950 text-[11px] font-bold shadow-sm transition-all cursor-pointer">
-                    <span class="theme-text-indicator">Switch Mode</span>
-                </button>
             </div>
 
             <!-- User Status Card (if logged in) -->
@@ -385,15 +386,15 @@
                     </ul>
                 </div>
                 {% endif %}
+                {% if current_user and current_user.role.value == 'ADMIN' %}
                 <div>
-                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Platform</h4>
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Admin Portal</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="/docs" target="_blank" class="hover:text-slate-900 dark:hover:text-white transition-colors">API Docs (Swagger)</a></li>
-                        {% if current_user and current_user.role.value == 'ADMIN' %}
                         <li><a href="/admin/dashboard" class="hover:text-slate-900 dark:hover:text-white transition-colors">Admin Panel</a></li>
-                        {% endif %}
+                        <li><a href="/docs" target="_blank" class="hover:text-slate-900 dark:hover:text-white transition-colors">API Docs (Swagger)</a></li>
                     </ul>
                 </div>
+                {% endif %}
             </div>
             <div class="border-t border-slate-200 dark:border-zinc-900 pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 dark:text-zinc-500">
                 <p>&copy; 2026 NexusSaaS Platform. All rights reserved.</p>
@@ -407,7 +408,7 @@
     </footer>
 
     <!-- Main JavaScript Bundle -->
-    <script src="/static/js/main.js?v=6"></script>
+    <script src="/static/js/main.js?v=7"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>
