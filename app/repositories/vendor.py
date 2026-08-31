@@ -144,3 +144,67 @@ class VendorRepository:
         if status is not None:
             stmt = stmt.where(VendorProfile.status == status)
         return self.db.execute(stmt).scalar() or 0
+
+    def list_public_stores(
+        self,
+        search: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 50,
+    ) -> List[tuple[VendorProfile, int]]:
+        """
+        List active and approved vendor profiles with their product count.
+        """
+        from app.models.product import Product, ProductStatus
+
+        prod_count_sub = (
+            select(func.count(Product.id))
+            .where(
+                Product.vendor_id == VendorProfile.user_id,
+                Product.status == ProductStatus.PUBLISHED,
+                Product.is_approved.is_(True),
+            )
+            .correlate(VendorProfile)
+            .scalar_subquery()
+        )
+
+        stmt = (
+            select(VendorProfile, prod_count_sub.label("product_count"))
+            .options(joinedload(VendorProfile.user))
+            .where(
+                VendorProfile.status == VendorStatus.APPROVED,
+                VendorProfile.is_store_active.is_(True),
+            )
+        )
+
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            stmt = stmt.where(
+                or_(
+                    func.lower(VendorProfile.store_name).like(pattern),
+                    func.lower(VendorProfile.store_description).like(pattern),
+                    func.lower(VendorProfile.city).like(pattern),
+                    func.lower(VendorProfile.country).like(pattern),
+                )
+            )
+
+        stmt = stmt.offset(skip).limit(limit).order_by(VendorProfile.id.desc())
+        results = self.db.execute(stmt).all()
+        return [(row[0], row[1] or 0) for row in results]
+
+    def count_public_stores(self, search: Optional[str] = None) -> int:
+        """Count active, approved vendor profiles matching search."""
+        stmt = select(func.count(VendorProfile.id)).where(
+            VendorProfile.status == VendorStatus.APPROVED,
+            VendorProfile.is_store_active.is_(True),
+        )
+        if search:
+            pattern = f"%{search.strip().lower()}%"
+            stmt = stmt.where(
+                or_(
+                    func.lower(VendorProfile.store_name).like(pattern),
+                    func.lower(VendorProfile.store_description).like(pattern),
+                    func.lower(VendorProfile.city).like(pattern),
+                    func.lower(VendorProfile.country).like(pattern),
+                )
+            )
+        return self.db.execute(stmt).scalar() or 0

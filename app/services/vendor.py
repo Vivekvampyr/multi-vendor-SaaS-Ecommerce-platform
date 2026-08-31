@@ -125,6 +125,39 @@ class VendorService:
             )
         return profile
 
+    def list_public_stores(
+        self,
+        search: Optional[str] = None,
+        skip: int = 0,
+        limit: int = 50,
+    ) -> Tuple[List[dict], int]:
+        """List active public approved stores with their live product counts."""
+        stores_with_counts = self.vendor_repo.list_public_stores(search=search, skip=skip, limit=limit)
+        total = self.vendor_repo.count_public_stores(search=search)
+
+        data = []
+        for profile, count in stores_with_counts:
+            data.append({
+                "profile": profile,
+                "product_count": count,
+                "id": profile.id,
+                "user_id": profile.user_id,
+                "store_name": profile.store_name,
+                "slug": profile.slug,
+                "store_description": profile.store_description,
+                "logo_url": profile.logo_url,
+                "banner_url": profile.banner_url,
+                "support_email": profile.support_email,
+                "support_phone": profile.support_phone,
+                "city": profile.city,
+                "state": profile.state,
+                "country": profile.country,
+                "status": profile.status,
+                "is_store_active": profile.is_store_active,
+                "created_at": profile.created_at,
+            })
+        return data, total
+
     def get_vendor_dashboard(self, vendor_user: User) -> VendorDashboardOverview:
         """
         Aggregates vendor dashboard information including store profile,

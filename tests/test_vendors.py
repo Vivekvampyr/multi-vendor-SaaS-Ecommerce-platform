@@ -152,3 +152,28 @@ def test_vendor_revenue_excludes_cancelled_orders(
     sold_units_after, net_rev_after = order_service.get_vendor_sales_stats(vendor_id=test_vendor.id)
     assert sold_units_after == 0
     assert net_rev_after == 0.0
+
+
+def test_public_list_approved_stores_and_web_directory(
+    client, test_vendor_profile, test_product
+):
+    # Test API endpoint listing public stores
+    api_resp = client.get("/api/v1/vendors")
+    assert api_resp.status_code == 200
+    data = api_resp.json()["data"]
+    assert len(data) >= 1
+    store = data[0]
+    assert store["store_name"] == test_vendor_profile.store_name
+    assert store["slug"] == test_vendor_profile.slug
+    assert store["product_count"] >= 1
+
+    # Test API search filter
+    search_resp = client.get(f"/api/v1/vendors?search={test_vendor_profile.store_name[:4]}")
+    assert search_resp.status_code == 200
+    assert len(search_resp.json()["data"]) >= 1
+
+    # Test Web Directory HTML page
+    web_resp = client.get("/stores")
+    assert web_resp.status_code == 200
+    assert "Explore Merchant Stores" in web_resp.text
+    assert test_vendor_profile.store_name in web_resp.text

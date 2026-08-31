@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, status
+from typing import List, Optional
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -6,6 +7,7 @@ from app.core.dependencies import require_admin, require_vendor
 from app.models.user import User
 from app.schemas.common import APIResponse
 from app.schemas.vendor import (
+    PublicVendorStoreOut,
     VendorDashboardOverview,
     VendorProfileCreate,
     VendorProfileOut,
@@ -15,6 +17,28 @@ from app.schemas.vendor import (
 from app.services.vendor import VendorService
 
 router = APIRouter(prefix="/vendors", tags=["Vendor Management"])
+
+
+@router.get(
+    "",
+    response_model=APIResponse[List[PublicVendorStoreOut]],
+    status_code=status.HTTP_200_OK,
+    summary="List all approved public vendor stores (Public)",
+    description="Returns verified, approved and active vendor storefront profiles with product counts.",
+)
+def list_public_stores(
+    search: Optional[str] = Query(default=None, description="Filter by store name, bio, city, or country"),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=50, ge=1, le=100),
+    db: Session = Depends(get_db),
+) -> APIResponse[List[PublicVendorStoreOut]]:
+    vendor_service = VendorService(db)
+    stores, total = vendor_service.list_public_stores(search=search, skip=skip, limit=limit)
+    return APIResponse(
+        success=True,
+        message=f"Retrieved {len(stores)} public vendor stores (total: {total})",
+        data=[PublicVendorStoreOut.model_validate(s) for s in stores],
+    )
 
 
 @router.get(

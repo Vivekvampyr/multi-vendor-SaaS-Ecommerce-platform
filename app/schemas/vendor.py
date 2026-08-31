@@ -78,3 +78,24 @@ class VendorDashboardOverview(BaseModel):
     store_is_live: bool = Field(description="Whether the store is approved and active for public viewing")
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class PublicVendorStoreOut(BaseModel):
+    id: int
+    user_id: int
+    store_name: str
+    slug: str
+    store_description: Optional[str] = None
+    logo_url: Optional[str] = None
+    banner_url: Optional[str] = None
+    support_email: Optional[str] = None
+    support_phone: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    country: Optional[str] = None
+    status: VendorStatus
+    is_store_active: bool
+    product_count: int = 0
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)

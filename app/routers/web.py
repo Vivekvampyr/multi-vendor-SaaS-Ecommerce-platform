@@ -1,6 +1,6 @@
 from typing import Optional
 from pathlib import Path
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -207,10 +207,12 @@ async def home_page(
     plan_service = PlanService(db)
     cat_repo = CategoryRepository(db)
     prod_service = ProductService(db)
+    vendor_service = VendorService(db)
 
     plans, _ = plan_service.list_plans(only_active=True)
     categories = cat_repo.list(only_active=True, skip=0, limit=8)
     products, _ = prod_service.list_products(skip=0, limit=8)
+    featured_stores, _ = vendor_service.list_public_stores(skip=0, limit=4)
     user_wishlist_ids = _get_user_wishlist_ids(db, current_user)
 
     active_plan_id = None
@@ -229,6 +231,7 @@ async def home_page(
             "plans": plans,
             "categories": categories,
             "products": products,
+            "featured_stores": featured_stores,
             "active_plan_id": active_plan_id,
             "user_wishlist_ids": user_wishlist_ids,
         },
@@ -347,6 +350,31 @@ async def product_detail_page(
             "user_review": user_review,
             "user_wishlist_ids": user_wishlist_ids,
             "suggested_products": suggested_products,
+        },
+    )
+
+
+@web_router.get("/stores", response_class=HTMLResponse)
+async def stores_directory_page(
+    request: Request,
+    search: Optional[str] = Query(default=None),
+    skip: int = Query(default=0, ge=0),
+    limit: int = Query(default=24, ge=1, le=100),
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_user_for_web),
+):
+    vendor_service = VendorService(db)
+    stores, total = vendor_service.list_public_stores(search=search, skip=skip, limit=limit)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="stores/list.html",
+        context={
+            "request": request,
+            "current_user": current_user,
+            "stores": stores,
+            "total_stores": total,
+            "search_query": search or "",
         },
     )
 

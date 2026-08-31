@@ -105,6 +105,11 @@
                         Catalog
                     </a>
 
+                    <!-- Stores Link (hidden on small mobile, accessible via drawer) -->
+                    <a href="/stores" class="hidden sm:inline-block text-xs sm:text-sm font-semibold text-slate-600 dark:text-zinc-300 hover:text-slate-900 dark:hover:text-white transition-colors px-2 py-1">
+                        Stores
+                    </a>
+
                     <!-- Mobile Quick Search Button (Mobile Only) -->
                     <button type="button" onclick="window.Nexus.toggleMobileSearch(event)" class="md:hidden flex w-9 h-9 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-zinc-800 items-center justify-center transition-colors relative flex-shrink-0 cursor-pointer" title="Search Marketplace" aria-label="Search Marketplace">
                         <svg class="w-4.5 h-4.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,6 +264,9 @@
                 <a href="/products" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-slate-950 dark:hover:text-white transition-colors">
                     <span>Explore Catalog</span>
                 </a>
+                <a href="/stores" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-slate-950 dark:hover:text-white transition-colors">
+                    <span>Merchant Stores</span>
+                </a>
                 <a href="/cart" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 hover:text-slate-950 dark:hover:text-white transition-colors">
                     <div class="flex items-center space-x-3">
                         <span>Shopping Cart</span>
@@ -358,6 +366,7 @@
                     <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Marketplace</h4>
                     <ul class="space-y-2 text-xs">
                         <li><a href="/products" class="hover:text-slate-900 dark:hover:text-white transition-colors">All Products</a></li>
+                        <li><a href="/stores" class="hover:text-slate-900 dark:hover:text-white transition-colors">Merchant Stores</a></li>
                         <li><a href="/products" class="hover:text-slate-900 dark:hover:text-white transition-colors">Categories</a></li>
                         <li><a href="/cart" class="hover:text-slate-900 dark:hover:text-white transition-colors">Cart & Checkout</a></li>
                     </ul>
