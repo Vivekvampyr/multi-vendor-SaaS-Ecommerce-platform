@@ -78,63 +78,88 @@ html.light ::-webkit-scrollbar-track {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  z-index: 9999;
+  z-index: 99999;
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  flex-direction: column-reverse;
+  gap: 0.5rem;
   pointer-events: none;
+  max-width: calc(100vw - 2.5rem);
 }
 
 .toast {
   pointer-events: auto;
-  min-width: 280px;
-  max-width: 400px;
-  padding: 0.875rem 1.125rem;
-  border-radius: 0.875rem;
+  min-width: 260px;
+  max-width: 380px;
+  padding: 0.75rem 1rem;
+  border-radius: 1rem;
   font-size: 0.8125rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  animation: slideUpToast 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  backdrop-filter: blur(8px);
+  user-select: none;
 }
 
 html.dark .toast {
-  background: #18181b;
+  background: rgba(24, 24, 27, 0.95);
   color: #f4f4f5;
-  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 html.light .toast {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.95);
   color: #0f172a;
-  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.06), 0 0 0 1px rgba(15, 23, 42, 0.08);
 }
 
 .toast-success {
-  border: 1px solid #3f3f46;
-  border-left: 3px solid #10b981;
+  border-left: 3.5px solid #10b981 !important;
 }
 
 .toast-error {
-  border: 1px solid #3f3f46;
-  border-left: 3px solid #ef4444;
+  border-left: 3.5px solid #ef4444 !important;
 }
 
 .toast-info {
-  border: 1px solid #3f3f46;
-  border-left: 3px solid #3b82f6;
+  border-left: 3.5px solid #3b82f6 !important;
 }
 
-@keyframes slideInRight {
+.toast-bump {
+  animation: toastPulse 0.3s ease-in-out;
+}
+
+@keyframes slideUpToast {
   from {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateY(16px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@media (max-width: 640px) {
+  #toast-container {
+    bottom: 1.25rem;
+    left: 1rem;
+    right: 1rem;
+    align-items: center;
+    max-width: 100%;
+  }
+  .toast {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 }
 

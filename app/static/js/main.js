@@ -63,7 +63,7 @@ window.Nexus = {
     return data;
   },
 
-  // Floating Toast Notifications
+  // Floating Toast Notifications (Smart Capped Queue with Rapid-Click Deduplication)
   showToast: function (message, type = "success") {
     let container = document.getElementById("toast-container");
     if (!container) {
@@ -72,17 +72,54 @@ window.Nexus = {
       document.body.appendChild(container);
     }
 
+    // Deduplicate / bump if the exact same message is already visible
+    const existing = Array.from(container.children).find(
+      (el) => el.getAttribute("data-msg") === message && !el._dismissing
+    );
+    if (existing) {
+      clearTimeout(existing._timeout);
+      existing.classList.remove("toast-bump");
+      void existing.offsetWidth; // trigger reflow
+      existing.classList.add("toast-bump");
+      existing._timeout = setTimeout(() => this.dismissToast(existing), 2200);
+      return;
+    }
+
+    // Limit visible toasts to at most 2 on screen (dismiss oldest immediately)
+    const activeToasts = Array.from(container.children).filter((el) => !el._dismissing);
+    if (activeToasts.length >= 2) {
+      this.dismissToast(activeToasts[0]);
+    }
+
     const toast = document.createElement("div");
     toast.className = `toast toast-${type}`;
+    toast.setAttribute("data-msg", message);
     const icon = type === "success" ? "✓" : type === "error" ? "✕" : "ℹ";
-    toast.innerHTML = `<span class="font-bold text-lg">${icon}</span><span>${message}</span>`;
+    toast.innerHTML = `
+      <span class="font-bold text-base shrink-0">${icon}</span>
+      <span class="flex-1 text-xs leading-snug break-words">${message}</span>
+      <button type="button" class="text-slate-400 hover:text-slate-200 text-xs font-bold ml-1.5 p-0.5 shrink-0 opacity-70 hover:opacity-100" onclick="window.Nexus.dismissToast(this.parentElement)">✕</button>
+    `;
+
+    toast.onclick = (e) => {
+      if (e.target.tagName !== "BUTTON") {
+        this.dismissToast(toast);
+      }
+    };
 
     container.appendChild(toast);
+    toast._timeout = setTimeout(() => this.dismissToast(toast), type === "error" ? 3500 : 2200);
+  },
+
+  dismissToast: function (toast) {
+    if (!toast || toast._dismissing) return;
+    toast._dismissing = true;
+    clearTimeout(toast._timeout);
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(12px) scale(0.96)";
     setTimeout(() => {
-      toast.style.opacity = "0";
-      toast.style.transform = "translateX(100%)";
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
+      if (toast.parentElement) toast.remove();
+    }, 220);
   },
 
   // Cart Badge & Actions
