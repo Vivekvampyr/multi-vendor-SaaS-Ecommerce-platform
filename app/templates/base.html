@@ -166,7 +166,6 @@
                                         <a href="/vendor/coupons" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">Coupons & Discounts</a>
                                     {% elif current_user.role.value == "ADMIN" %}
                                         <a href="/admin/dashboard" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">Admin Control Panel</a>
-                                        <a href="/docs" class="block px-3 py-2 text-xs font-medium text-slate-700 dark:text-zinc-300 hover:text-slate-950 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-zinc-900 rounded-xl transition-colors">API Documentation</a>
                                     {% endif %}
                                     <div class="border-t border-slate-200 dark:border-zinc-800 my-1"></div>
                                     <button onclick="window.Nexus.logout()" class="w-full text-left px-3 py-2 text-xs font-semibold text-rose-500 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer">
@@ -302,9 +301,6 @@
                         <a href="/admin/dashboard" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
                             <span>Admin Control Panel</span>
                         </a>
-                        <a href="/docs" onclick="window.Nexus.closeMobileDrawer()" class="flex items-center space-x-3 px-3 py-2 rounded-xl hover:bg-slate-100 dark:hover:bg-zinc-900 transition-colors">
-                            <span>API Documentation</span>
-                        </a>
                     {% endif %}
                 {% endif %}
             </nav>
@@ -390,8 +386,7 @@
                 <div>
                     <h4 class="font-bold text-xs uppercase tracking-wider text-slate-900 dark:text-zinc-200 mb-3">Admin Portal</h4>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="/admin/dashboard" class="hover:text-slate-900 dark:hover:text-white transition-colors">Admin Panel</a></li>
-                        <li><a href="/docs" target="_blank" class="hover:text-slate-900 dark:hover:text-white transition-colors">API Docs (Swagger)</a></li>
+                        <li><a href="/admin/dashboard" class="hover:text-slate-900 dark:hover:text-white transition-colors">Admin Control Panel</a></li>
                     </ul>
                 </div>
                 {% endif %}
