@@ -155,6 +155,17 @@ class ProductService:
             )
         return prod
 
+    def get_suggested_products(self, product_id: int, limit: int = 4) -> List[Product]:
+        """Fetch relevant products strictly from the same category for a given product."""
+        prod = self.prod_repo.get_by_id(product_id)
+        if not prod:
+            raise NotFoundException(message=f"Product with ID {product_id} not found")
+        return self.prod_repo.get_suggested_products(
+            product_id=prod.id,
+            category_id=prod.category_id,
+            limit=limit,
+        )
+
     def update_product(
         self,
         user: User,

@@ -252,3 +252,70 @@ def test_create_product_with_initial_image_url(client, vendor_headers, test_vend
     assert len(prod["images"]) == 1
     assert prod["images"][0]["image_url"] == payload["image_url"]
     assert prod["images"][0]["is_primary"] is True
+
+
+def test_product_suggestions_feature(
+    client, vendor_headers, test_vendor_profile, active_vendor_subscription, test_category, test_product, db_session
+):
+    from app.models.product import Product, ProductStatus
+
+    # Seed 2 complementary products in the same category
+    p2 = Product(
+        vendor_id=test_vendor_profile.user_id,
+        category_id=test_category.id,
+        name="Related Wireless Mouse",
+        slug="related-wireless-mouse",
+        sku="MOUSE-REL-01",
+        price=49.99,
+        stock_quantity=20,
+        status=ProductStatus.PUBLISHED,
+        is_approved=True,
+    )
+    p3 = Product(
+        vendor_id=test_vendor_profile.user_id,
+        category_id=test_category.id,
+        name="Related Mouse Pad XXL",
+        slug="related-mouse-pad-xxl",
+        sku="PAD-REL-02",
+        price=19.99,
+        stock_quantity=15,
+        status=ProductStatus.PUBLISHED,
+        is_approved=True,
+    )
+    # Seed a product in a DIFFERENT category
+    from app.models.category import Category
+    diff_cat = Category(name="Different Category", slug="different-cat", is_active=True)
+    db_session.add(diff_cat)
+    db_session.commit()
+    p_diff = Product(
+        vendor_id=test_vendor_profile.user_id,
+        category_id=diff_cat.id,
+        name="Unrelated Appliance",
+        slug="unrelated-appliance",
+        sku="UNREL-01",
+        price=199.99,
+        stock_quantity=10,
+        status=ProductStatus.PUBLISHED,
+        is_approved=True,
+    )
+    db_session.add_all([p2, p3, p_diff])
+    db_session.commit()
+
+    # Test suggestions API endpoint
+    resp = client.get(f"/api/v1/products/{test_product.id}/suggestions?limit=4")
+    assert resp.status_code == 200
+    data = resp.json()["data"]
+    assert len(data) >= 2
+    # Ensure current product is not in suggestions
+    suggested_ids = [p["id"] for p in data]
+    assert test_product.id not in suggested_ids
+    assert p2.id in suggested_ids
+    assert p3.id in suggested_ids
+    assert p_diff.id not in suggested_ids  # Strictly category based!
+
+    # Test web view renders suggested products section
+    web_resp = client.get(f"/products/{test_product.slug}")
+    assert web_resp.status_code == 200
+    assert "Related Category" in web_resp.text
+    assert "Related Wireless Mouse" in web_resp.text
+    assert "Unrelated Appliance" not in web_resp.text

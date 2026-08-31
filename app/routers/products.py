@@ -93,6 +93,26 @@ def get_product_details(
     )
 
 
+@router.get(
+    "/{product_id}/suggestions",
+    response_model=APIResponse[List[ProductOut]],
+    status_code=status.HTTP_200_OK,
+    summary="Get relevant and complementary product suggestions (Public)",
+)
+def get_product_suggestions(
+    product_id: int,
+    limit: int = Query(default=4, ge=1, le=20, description="Max suggestions to return"),
+    db: Session = Depends(get_db),
+) -> APIResponse[List[ProductOut]]:
+    prod_service = ProductService(db)
+    suggestions = prod_service.get_suggested_products(product_id=product_id, limit=limit)
+    return APIResponse(
+        success=True,
+        message=f"Retrieved {len(suggestions)} product suggestions",
+        data=[ProductOut.model_validate(p) for p in suggestions],
+    )
+
+
 @router.post(
     "",
     response_model=APIResponse[ProductOut],

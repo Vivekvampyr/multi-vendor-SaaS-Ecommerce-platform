@@ -331,6 +331,7 @@ async def product_detail_page(
             has_reviewed = True
 
     user_wishlist_ids = _get_user_wishlist_ids(db, current_user)
+    suggested_products = prod_service.get_suggested_products(product_id=product.id, limit=4)
 
     return templates.TemplateResponse(
         request=request,
@@ -345,6 +346,7 @@ async def product_detail_page(
             "past_purchase": past_purchase,
             "user_review": user_review,
             "user_wishlist_ids": user_wishlist_ids,
+            "suggested_products": suggested_products,
         },
     )
 

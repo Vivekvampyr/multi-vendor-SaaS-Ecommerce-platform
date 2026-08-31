@@ -177,6 +177,40 @@ class ProductRepository:
             )
         return self.db.execute(stmt).scalar() or 0
 
+    def get_suggested_products(
+        self,
+        product_id: int,
+        category_id: Optional[int] = None,
+        limit: int = 4,
+    ) -> List[Product]:
+        """
+        Fetch product suggestions strictly from the same category:
+        1. Must match the exact category_id.
+        2. Must exclude current product_id.
+        3. Must be PUBLISHED and approved.
+        4. Ordered by stock availability and recency.
+        """
+        if category_id is None:
+            return []
+
+        stmt = (
+            select(Product)
+            .options(
+                joinedload(Product.images),
+                joinedload(Product.category),
+                joinedload(Product.vendor),
+            )
+            .where(
+                Product.category_id == category_id,
+                Product.id != product_id,
+                Product.status == ProductStatus.PUBLISHED,
+                Product.is_approved.is_(True),
+            )
+            .order_by(Product.stock_quantity.desc(), Product.id.desc())
+            .limit(limit)
+        )
+        return list(self.db.execute(stmt).unique().scalars().all())
+
 
 class ProductImageRepository:
     def __init__(self, db: Session):
